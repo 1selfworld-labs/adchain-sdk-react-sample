@@ -1,0 +1,465 @@
+import Foundation
+import React
+import AdchainSDK
+import UIKit
+
+@objc(AdchainSdk)
+class AdchainSdkModule: RCTEventEmitter {
+  
+  // Helper function to get the top view controller
+  private func getTopViewController() -> UIViewController? {
+    guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first,
+          let window = windowScene.windows.first(where: { $0.isKeyWindow }),
+          let rootViewController = window.rootViewController else {
+      return nil
+    }
+    
+    var topController = rootViewController
+    while let presentedViewController = topController.presentedViewController {
+      topController = presentedViewController
+    }
+    
+    return topController
+  }
+  
+  // MARK: - Properties
+  
+  // 내부 인스턴스 관리 (자동 생성/캐싱)
+  private var quizInstances: [String: AdchainQuiz] = [:]
+  private var missionInstances: [String: AdchainMission] = [:]
+  
+  // MARK: - RCTEventEmitter
+  
+  @objc override static func requiresMainQueueSetup() -> Bool { true }
+  
+  override func supportedEvents() -> [String]! {
+    return ["onQuizCompleted", "onMissionCompleted"] // Quiz, Mission 완료 이벤트 지원
+  }
+  
+  // MARK: - 1. SDK 초기화
+  
+  @objc func initialize(_ appKey: NSString,
+                       appSecret: NSString,
+                       options: NSDictionary?,
+                       resolver: @escaping RCTPromiseResolveBlock,
+                       rejecter: @escaping RCTPromiseRejectBlock) {
+    
+    // options에서 environment와 timeout 추출
+    let environment = options?["environment"] as? String
+    let timeout = options?["timeout"] as? NSNumber
+    
+    let env: AdchainSdkConfig.Environment
+    if let envString = environment {
+      switch envString.uppercased() {
+      case "STAGING":
+        env = .staging
+      case "DEVELOPMENT":
+        env = .development
+      default:
+        env = .production
+      }
+    } else {
+      env = .production
+    }
+    
+    var configBuilder = AdchainSdkConfig.Builder(appKey: appKey as String, appSecret: appSecret as String)
+      .setEnvironment(env)
+    
+    if let timeoutValue = timeout {
+      configBuilder = configBuilder.setTimeout(TimeInterval(timeoutValue.doubleValue))
+    }
+    
+    let config = configBuilder.build()
+    
+    // UI 관련 작업을 메인 스레드에서 실행
+    DispatchQueue.main.async {
+      if UIApplication.shared.delegate?.window??.rootViewController?.view.window?.windowScene?.delegate is UIWindowSceneDelegate {
+        AdchainSdk.shared.initialize(application: UIApplication.shared, sdkConfig: config)
+        resolver([
+          "success": true,
+          "message": "SDK initialized successfully"
+        ])
+      } else {
+        // Fallback
+        AdchainSdk.shared.initialize(application: UIApplication.shared, sdkConfig: config)
+        resolver([
+          "success": true,
+          "message": "SDK initialized successfully"
+        ])
+      }
+    }
+  }
+  
+  // MARK: - 2. 인증 관련 (4개)
+  
+  @objc func login(_ userId: NSString,
+                  userInfo: NSDictionary?,
+                  resolver: @escaping RCTPromiseResolveBlock,
+                  rejecter: @escaping RCTPromiseRejectBlock) {
+    
+    // userInfo에서 값 추출
+    let gender = userInfo?["gender"] as? String
+    let birthYear = userInfo?["birthYear"] as? NSNumber
+    let customProperties = userInfo?["customProperties"] as? NSDictionary
+    
+    var userGender: AdchainSdkUser.Gender = .other
+    if let genderString = gender {
+      switch genderString.uppercased() {
+      case "MALE", "M":
+        userGender = .male
+      case "FEMALE", "F":
+        userGender = .female
+      default:
+        userGender = .other
+      }
+    }
+    
+    let user = AdchainSdkUser(
+      userId: userId as String,
+      gender: userGender,
+      birthYear: birthYear?.intValue
+    )
+    
+    // Custom properties 처리 (iOS SDK가 지원한다면)
+    // 현재는 생략
+    
+    class LoginListenerImpl: NSObject, AdchainSdkLoginListener {
+      let resolver: RCTPromiseResolveBlock
+      let rejecter: RCTPromiseRejectBlock
+      
+      init(resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
+        self.resolver = resolver
+        self.rejecter = rejecter
+      }
+      
+      func onSuccess() {
+        resolver([
+          "success": true,
+          "message": "Login successful"
+        ])
+      }
+      
+      func onFailure(_ error: AdchainLoginError) {
+        rejecter("LOGIN_ERROR", error.description, nil)
+      }
+    }
+    
+    AdchainSdk.shared.login(adchainSdkUser: user, listener: LoginListenerImpl(resolver: resolver, rejecter: rejecter))
+  }
+  
+  @objc func logout(_ resolver: @escaping RCTPromiseResolveBlock,
+                   rejecter: @escaping RCTPromiseRejectBlock) {
+    AdchainSdk.shared.logout()
+    resolver([
+      "success": true,
+      "message": "Logout successful"
+    ])
+  }
+  
+  @objc func isLoggedIn(_ resolver: @escaping RCTPromiseResolveBlock,
+                       rejecter: @escaping RCTPromiseRejectBlock) {
+    resolver(AdchainSdk.shared.isLoggedIn)
+  }
+  
+  @objc func getCurrentUser(_ resolver: @escaping RCTPromiseResolveBlock,
+                           rejecter: @escaping RCTPromiseRejectBlock) {
+    if let user = AdchainSdk.shared.getCurrentUser() {
+      var userDict: [String: Any] = ["userId": user.userId]
+      
+      if let gender = user.gender {
+        userDict["gender"] = gender.rawValue
+      }
+      
+      if let birthYear = user.birthYear {
+        userDict["birthYear"] = birthYear
+      }
+      
+      resolver(userDict)
+    } else {
+      resolver(nil)
+    }
+  }
+  
+  // MARK: - 3. Quiz 관련 (2개)
+  
+  @objc func loadQuizList(_ unitId: NSString,
+                         resolver: @escaping RCTPromiseResolveBlock,
+                         rejecter: @escaping RCTPromiseRejectBlock) {
+    // 인스턴스 자동 생성/재사용
+    let quiz = quizInstances[unitId as String] ?? {
+      let newQuiz = AdchainQuiz(unitId: unitId as String)
+      quizInstances[unitId as String] = newQuiz
+      return newQuiz
+    }()
+    
+    // Android와 동일하게 직접 load 호출
+    // shouldStoreCallbacks: false로 설정하여 refreshAfterCompletion에서 재호출되지 않도록 함
+    quiz.load(
+      onSuccess: { quizList in
+        let array = quizList.map { quizEvent in
+          return [
+            "id": quizEvent.id,
+            "title": quizEvent.title,
+            "description": quizEvent.description ?? "",
+            "imageUrl": quizEvent.imageUrl,
+            "point": quizEvent.point,
+            "isCompleted": quizEvent.completed ?? false
+          ]
+        }
+        resolver(array)
+      },
+      onFailure: { error in
+        rejecter("QUIZ_LOAD_ERROR", error.localizedDescription, nil)
+      },
+      shouldStoreCallbacks: false
+    )
+  }
+  
+  @objc func clickQuiz(_ unitId: NSString,
+                      quizId: NSString,
+                      resolver: @escaping RCTPromiseResolveBlock,
+                      rejecter: @escaping RCTPromiseRejectBlock) {
+    // 인스턴스 자동 생성/재사용
+    let quiz = quizInstances[unitId as String] ?? {
+      let newQuiz = AdchainQuiz(unitId: unitId as String)
+      quizInstances[unitId as String] = newQuiz
+      return newQuiz
+    }()
+    
+    // QuizEventsListener 설정
+    class QuizEventListenerImpl: NSObject, AdchainQuizEventsListener {
+      weak var module: AdchainSdkModule?
+      let unitId: String
+      let quizId: String
+      
+      init(module: AdchainSdkModule?, unitId: String, quizId: String) {
+        self.module = module
+        self.unitId = unitId
+        self.quizId = quizId
+      }
+      
+      func onImpressed(_ quizEvent: QuizEvent) {
+        // 필요시 처리
+      }
+      
+      func onClicked(_ quizEvent: QuizEvent) {
+        // 필요시 처리
+      }
+      
+      func onQuizCompleted(_ quizEvent: QuizEvent, rewardAmount: Int) {
+        // React Native로 이벤트 전송
+        module?.sendEvent(withName: "onQuizCompleted", body: [
+          "unitId": unitId,
+          "quizId": quizId,
+          "rewardAmount": rewardAmount,
+          "timestamp": Date().timeIntervalSince1970
+        ])
+      }
+    }
+    
+    let listener = QuizEventListenerImpl(module: self, unitId: unitId as String, quizId: quizId as String)
+    quiz.setQuizEventsListener(listener)
+    
+    // iOS SDK가 ID 기반 클릭을 지원한다고 가정
+    DispatchQueue.main.async { [weak self] in
+      if let topVC = self?.getTopViewController() {
+        // iOS SDK의 네이티브 ID 기반 메서드 사용 (Android와 동일)
+        // 만약 이 메서드가 없다면 컴파일 오류가 발생할 것
+        quiz.clickQuiz(quizId as String, from: topVC)
+        resolver([
+          "success": true,
+          "message": "Quiz clicked"
+        ])
+      } else {
+        rejecter("QUIZ_ERROR", "No view controller available", nil)
+      }
+    }
+  }
+  
+  // MARK: - 4. Mission 관련 (3개)
+  
+  @objc func loadMissionList(_ unitId: NSString,
+                            resolver: @escaping RCTPromiseResolveBlock,
+                            rejecter: @escaping RCTPromiseRejectBlock) {
+    // 인스턴스 자동 생성/재사용
+    let mission = missionInstances[unitId as String] ?? {
+      let newMission = AdchainMission(unitId: unitId as String)
+      missionInstances[unitId as String] = newMission
+      return newMission
+    }()
+    
+    // Android와 동일하게 직접 load 호출
+    // shouldStoreCallbacks: false로 설정하여 refreshAfterCompletion에서 재호출되지 않도록 함
+    mission.load(
+      onSuccess: { (missionList, progress) in
+        let missionsArray = missionList.map { m in
+          return [
+            "id": m.id,
+            "title": m.title,
+            "description": m.description,
+            "imageUrl": m.imageUrl,
+            "point": m.point,
+            "isCompleted": m.status == "completed",
+            "type": m.type?.rawValue ?? "normal",
+            "actionUrl": m.landingUrl
+          ]
+        }
+        
+        let completedCount = progress.current
+        let totalCount = progress.total
+        
+        let result: [String: Any] = [
+          "missions": missionsArray,
+          "completedCount": completedCount,
+          "totalCount": totalCount,
+          "canClaimReward": progress.isCompleted && totalCount > 0
+        ]
+        
+        resolver(result)
+      },
+      onFailure: { error in
+        rejecter("MISSION_LOAD_ERROR", error.localizedDescription, nil)
+      },
+      shouldStoreCallbacks: false
+    )
+  }
+  
+  @objc func clickMission(_ unitId: NSString,
+                         missionId: NSString,
+                         resolver: @escaping RCTPromiseResolveBlock,
+                         rejecter: @escaping RCTPromiseRejectBlock) {
+    // 인스턴스 자동 생성/재사용
+    let mission = missionInstances[unitId as String] ?? {
+      let newMission = AdchainMission(unitId: unitId as String)
+      missionInstances[unitId as String] = newMission
+      return newMission
+    }()
+    
+    // MissionEventsListener 설정
+    class MissionEventListenerImpl: NSObject, AdchainMissionEventsListener {
+      weak var module: AdchainSdkModule?
+      let unitId: String
+      let missionId: String
+      
+      init(module: AdchainSdkModule?, unitId: String, missionId: String) {
+        self.module = module
+        self.unitId = unitId
+        self.missionId = missionId
+      }
+      
+      func onImpressed(_ mission: Mission) {
+        // 필요시 처리
+      }
+      
+      func onClicked(_ mission: Mission) {
+        // 필요시 처리
+      }
+      
+      func onCompleted(_ mission: Mission) {
+        // React Native로 이벤트 전송
+        module?.sendEvent(withName: "onMissionCompleted", body: [
+          "unitId": unitId,
+          "missionId": missionId,
+          "timestamp": Date().timeIntervalSince1970
+        ])
+      }
+    }
+    
+    let listener = MissionEventListenerImpl(module: self, unitId: unitId as String, missionId: missionId as String)
+    mission.setEventsListener(listener)
+    
+    // iOS SDK가 ID 기반 클릭을 지원한다고 가정
+    DispatchQueue.main.async { [weak self] in
+      if let topVC = self?.getTopViewController() {
+        // iOS SDK의 네이티브 ID 기반 메서드 사용 (Android와 동일)
+        // 만약 이 메서드가 없다면 컴파일 오류가 발생할 것
+        mission.clickMission(missionId as String, from: topVC)
+        resolver([
+          "success": true,
+          "message": "Mission clicked"
+        ])
+      } else {
+        rejecter("MISSION_ERROR", "No view controller available", nil)
+      }
+    }
+  }
+  
+  @objc func claimReward(_ unitId: NSString,
+                        resolver: @escaping RCTPromiseResolveBlock,
+                        rejecter: @escaping RCTPromiseRejectBlock) {
+    // 인스턴스 자동 생성/재사용
+    let mission = missionInstances[unitId as String] ?? {
+      let newMission = AdchainMission(unitId: unitId as String)
+      missionInstances[unitId as String] = newMission
+      return newMission
+    }()
+    
+    DispatchQueue.main.async { [weak self] in
+      if let topVC = self?.getTopViewController() {
+        mission.onRewardButtonClicked(from: topVC)
+        resolver([
+          "success": true,
+          "message": "Reward claimed"
+        ])
+      } else {
+        rejecter("MISSION_ERROR", "No view controller available", nil)
+      }
+    }
+  }
+  
+  // MARK: - 5. Offerwall (1개)
+  
+  @objc func openOfferwall(_ resolver: @escaping RCTPromiseResolveBlock,
+                          rejecter: @escaping RCTPromiseRejectBlock) {
+    class OfferwallCallbackImpl: NSObject, OfferwallCallback {
+      let resolver: RCTPromiseResolveBlock
+      var hasResolved = false
+      
+      init(resolver: @escaping RCTPromiseResolveBlock) {
+        self.resolver = resolver
+      }
+      
+      func onOpened() {
+        if !hasResolved {
+          hasResolved = true
+          resolver([
+            "success": true,
+            "message": "Offerwall opened"
+          ])
+        }
+      }
+      
+      func onClosed() {
+        // 이미 resolve 되었으므로 무시
+      }
+      
+      func onError(_ message: String) {
+        // 이미 resolve 되었으므로 무시
+      }
+      
+      func onRewardEarned(_ amount: Int) {
+        // 이미 resolve 되었으므로 무시
+      }
+    }
+    
+    DispatchQueue.main.async { [weak self] in
+      if let topVC = self?.getTopViewController() {
+        let callback = OfferwallCallbackImpl(resolver: resolver)
+        AdchainSdk.shared.openOfferwall(presentingViewController: topVC, callback: callback)
+      } else {
+        rejecter("OFFERWALL_ERROR", "No view controller available", nil)
+      }
+    }
+  }
+}
+
+// MARK: - Objective-C Export
+
+@objc(AdchainSdk)
+extension AdchainSdkModule {
+  @objc override static func moduleName() -> String! {
+    return "AdchainSdk"
+  }
+}

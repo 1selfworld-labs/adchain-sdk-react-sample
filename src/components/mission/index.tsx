@@ -1,0 +1,371 @@
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import MissionModule from './MissionModule';
+import AdchainSdk, { addMissionCompletedListener } from '../../index';
+
+// SDK Mission 타입
+interface SdkMission {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  point: string; // "150 포인트" 형태로 오는 문자열
+  isCompleted: boolean;
+  type: string;
+  actionUrl: string;
+}
+
+interface SdkMissionListResponse {
+  missions: SdkMission[];
+  completedCount: number;
+  totalCount: number;
+  canClaimReward: boolean;
+}
+
+// UI Mission 타입
+interface MissionItem {
+  id?: string;
+  imageUrl: string;
+  brandText: string;
+  titleText: string;
+  rewardsText: string;
+  url: string;
+  isCompleted?: boolean;
+  type?: string;
+}
+
+const MISSION_UNIT_ID = 'mission_unit_001'; // Mission Unit ID
+
+const Mission = () => {
+  const [networkError, setNetworkError] = useState(false);
+  const [networkError2, setNetworkError2] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [missionItems, setMissionItems] = useState<MissionItem[]>([]);
+  const [missionListCount, setMissionListCount] = useState(3);
+  const [currentMissionStep, setCurrentMissionStep] = useState(0);
+  const [maxMissionStep, setMaxMissionStep] = useState(3);
+  const [canClaimReward, setCanClaimReward] = useState(false);
+  const [completedCount, setCompletedCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  
+
+  useEffect(() => {
+    loadMissionList();
+  }, []);
+
+  useEffect(() => {
+    // 미션 완료 이벤트 리스너 등록
+    const subscription = addMissionCompletedListener((event) => {
+      console.log('📱 [React Native] Mission completed event received:', event);
+      
+      // 해당 unit의 미션인 경우 리스트 새로고침
+      if (event.unitId === MISSION_UNIT_ID) {
+        console.log('🔄 Refreshing mission list after completion');
+        loadMissionList();
+      }
+    });
+
+    // cleanup
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  // SDK에서 미션 리스트 로드
+  const loadMissionList = async () => {
+    try {
+      setLoading(true);
+      setNetworkError(false);
+
+      // SDK에서 실제 미션 데이터 로드
+      const response: SdkMissionListResponse = await AdchainSdk.loadMissionList(MISSION_UNIT_ID);
+      console.log('Mission SDK Response:', JSON.stringify(response, null, 2));
+      
+      // SDK 데이터를 UI 형식으로 변환
+      const transformedMissionList: MissionItem[] = response.missions.map((mission: SdkMission) => ({
+        id: mission.id,
+        imageUrl: mission.imageUrl || 'https://via.placeholder.com/240',
+        brandText: mission.type || '미션',
+        titleText: mission.title,
+        rewardsText: mission.point || '0 포인트', // point 필드 사용
+        url: mission.actionUrl || `https://mission.adchain.com/${mission.id}`,
+        isCompleted: mission.isCompleted,
+        type: mission.type,
+      }));
+
+      setMissionItems(transformedMissionList);
+      setCompletedCount(response.completedCount);
+      setTotalCount(response.totalCount);
+      setCanClaimReward(response.canClaimReward);
+      
+      // 미션 단계 계산 - currentMissionStep 사용
+      setCurrentMissionStep(response.completedCount);
+      setMaxMissionStep(response.totalCount || 3);
+    } catch (error) {
+      console.error('Mission load error:', error);
+      setNetworkError(true);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  // 미션 클릭 처리
+  const handleMissionClick = async (mission: MissionItem) => {
+    try {
+      if (mission.id) {
+        // SDK를 통해 미션 클릭 이벤트 전송
+        const result = await AdchainSdk.clickMission(MISSION_UNIT_ID, mission.id);
+        console.log('Mission clicked:', result);
+        
+        // 이벤트 리스너가 자동으로 처리하므로 여기서는 새로고침 하지 않음
+        // loadMissionList()는 이벤트 리스너에서 처리됨
+      }
+    } catch (error) {
+      console.error('Mission click error:', error);
+    }
+  };
+
+  // 보상 받기 처리
+  const handleClaimReward = async () => {
+    try {
+      const result = await AdchainSdk.claimReward(MISSION_UNIT_ID);
+      console.log('Reward claimed:', result);
+      
+      if (result.success) {
+        loadMissionList();
+      }
+    } catch (error) {
+      console.error('Claim reward error:', error);
+    }
+  };
+
+  // Offerwall 열기
+  const handleOpenOfferwall = async () => {
+    try {
+      const result = await AdchainSdk.openOfferwall();
+      console.log('Offerwall opened:', result);
+    } catch (error) {
+      console.error('Offerwall error:', error);
+    }
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setNetworkError(false);
+    setNetworkError2(false);
+    setMissionListCount(3);
+    setCurrentMissionStep(0);
+    setMaxMissionStep(3);
+    loadMissionList();
+  };
+
+  return (
+    <View>
+      {/* 개발자 컨트롤 패널 - jun 샘플과 동일 */}
+      <View style={styles.controlsContainer}>
+        <View style={styles.controlRow}>
+          <Text style={styles.controlLabel}>Network Error:</Text>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              networkError ? styles.toggleActive : styles.toggleInactive,
+            ]}
+            onPress={() => setNetworkError(!networkError)}>
+            <Text style={styles.toggleText}>{networkError ? 'ON' : 'OFF'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.controlRow}>
+          <Text style={styles.controlLabel}>Network Error #2:</Text>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              networkError2 ? styles.toggleActive : styles.toggleInactive,
+            ]}
+            onPress={() => setNetworkError2(!networkError2)}>
+            <Text style={styles.toggleText}>
+              {networkError2 ? 'ON' : 'OFF'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.controlRow}>
+          <Text style={styles.controlLabel}>
+            Mission List ({missionListCount}):
+          </Text>
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity
+              style={[
+                styles.countButton,
+                missionListCount <= 0 && styles.buttonDisabled,
+              ]}
+              onPress={() => {
+                setMissionListCount(Math.max(0, missionListCount - 1));
+                loadMissionList();
+              }}
+              disabled={missionListCount <= 0}>
+              <Text style={styles.buttonText}>-</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.countButton,
+                missionListCount >= 5 && styles.buttonDisabled,
+              ]}
+              onPress={() => {
+                setMissionListCount(Math.min(5, missionListCount + 1));
+                loadMissionList();
+              }}
+              disabled={missionListCount >= 5}>
+              <Text style={styles.buttonText}>+</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.controlRow}>
+          <Text style={styles.controlLabel}>
+            Current Step ({currentMissionStep}):
+          </Text>
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity
+              style={[
+                styles.countButton,
+                currentMissionStep <= 0 && styles.buttonDisabled,
+              ]}
+              onPress={() =>
+                setCurrentMissionStep(Math.max(0, currentMissionStep - 1))
+              }
+              disabled={currentMissionStep <= 0}>
+              <Text style={styles.buttonText}>-</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.countButton,
+                currentMissionStep >= maxMissionStep && styles.buttonDisabled,
+              ]}
+              disabled={currentMissionStep >= maxMissionStep}
+              onPress={() => setCurrentMissionStep(currentMissionStep + 1)}>
+              <Text style={styles.buttonText}>+</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.controlRow}>
+          <Text style={styles.controlLabel}>Max Step ({maxMissionStep}):</Text>
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity
+              style={[
+                styles.countButton,
+                maxMissionStep <= 2 && styles.buttonDisabled,
+              ]}
+              onPress={() => setMaxMissionStep(Math.max(1, maxMissionStep - 1))}
+              disabled={maxMissionStep <= 2}>
+              <Text style={styles.buttonText}>-</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.countButton,
+                maxMissionStep >= 5 && styles.buttonDisabled,
+              ]}
+              disabled={maxMissionStep >= 5}
+              onPress={() => setMaxMissionStep(maxMissionStep + 1)}>
+              <Text style={styles.buttonText}>+</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+
+      {/* 미션 모듈 */}
+      <View style={styles.missionModuleContainer}>
+        <MissionModule
+          titleText="데일리 미션"
+          missionList={missionItems.slice(0, missionListCount)}
+          description="미션 광고 참여하고 100 포인트 받기"
+          maxMissionStep={maxMissionStep}
+          currentMissionStep={currentMissionStep}
+          offerwallUrl={'https://www.google.com'}
+          missionColor={'#FF9500'}
+          ctaColor={'#046BD5'}
+          networkError={networkError}
+          networkError2={networkError2}
+          onRefresh={handleRefresh}
+          loading={loading}
+          onMissionClick={handleMissionClick}
+          onClaimReward={handleClaimReward}
+          onOpenOfferwall={handleOpenOfferwall}
+          canClaimReward={canClaimReward}
+          completedCount={completedCount}
+          totalCount={totalCount}
+        />
+      </View>
+
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  missionModuleContainer: {
+    backgroundColor: '#FFF',
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    borderRadius: 16,
+  },
+  controlsContainer: {
+    backgroundColor: '#FFF',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 20,
+    gap: 12,
+  },
+  controlRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  controlLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#333',
+  },
+  toggleButton: {
+    paddingHorizontal: 25,
+    paddingVertical: 6,
+    borderRadius: 6,
+    minWidth: 60,
+    alignItems: 'center',
+  },
+  toggleActive: {
+    backgroundColor: '#007AFF',
+  },
+  toggleInactive: {
+    backgroundColor: '#E0E0E0',
+  },
+  toggleText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  countButton: {
+    backgroundColor: '#007AFF',
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: '#E0E0E0',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+});
+
+export default Mission;

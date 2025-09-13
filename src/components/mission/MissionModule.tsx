@@ -1,0 +1,458 @@
+import React, {Fragment} from 'react';
+import {
+  Image,
+  Linking,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+interface MissionItem {
+  id?: string;
+  imageUrl: string;
+  brandText: string;
+  titleText: string;
+  rewardsText: string;
+  url: string;
+  isCompleted?: boolean;
+  type?: string;
+}
+
+interface MissionModuleProps {
+  titleText?: string;
+  description?: string;
+  currentMissionStep?: number;
+  maxMissionStep?: number;
+  missionList?: MissionItem[];
+  missionItems?: MissionItem[];
+  missionStep?: number;
+  missionColor?: string;
+  ctaColor?: string;
+  offerwallUrl?: string;
+  networkError: boolean;
+  networkError2?: boolean;
+  onRefresh: () => void;
+  loading?: boolean;
+  onMissionClick?: (mission: MissionItem) => void;
+  onClaimReward?: () => void;
+  onOpenOfferwall?: () => void;
+  canClaimReward?: boolean;
+  completedCount?: number;
+  totalCount?: number;
+}
+
+const MissionModule = ({
+  titleText = '데일리 미션',
+  description = '미션을 완료하고 포인트를 받아보세요',
+  currentMissionStep,
+  maxMissionStep,
+  missionList,
+  missionItems,
+  missionStep,
+  missionColor = '#FF8000',
+  ctaColor = '#FF8000',
+  offerwallUrl = '',
+  networkError,
+  networkError2 = false,
+  onRefresh,
+  loading = false,
+  onMissionClick,
+  onClaimReward,
+  onOpenOfferwall,
+  canClaimReward = false,
+  completedCount = 0,
+  totalCount = 0,
+}: MissionModuleProps) => {
+  // Use missionItems if provided, otherwise fall back to missionList
+  const missions = missionItems || missionList || [];
+  const currentStep = missionStep ?? currentMissionStep ?? 0;
+  const maxStep = totalCount || maxMissionStep || 3;
+  
+  const handleMissionPress = (mission: MissionItem | string) => {
+    if (typeof mission === 'string') {
+      Linking.openURL(mission);
+    } else if (onMissionClick) {
+      onMissionClick(mission);
+    } else {
+      Linking.openURL(mission.url);
+    }
+  };
+
+  const handleRefreshPress = () => {
+    onRefresh();
+  };
+
+  const isMissionListExist = missions.length > 0;
+  const isCompletedMission = canClaimReward || currentStep > maxStep;
+
+  const renderStepItem = (stepIndex: number) => {
+    const isCompleted = stepIndex < currentStep;
+    return (
+      <React.Fragment key={stepIndex}>
+        <View
+          style={[
+            styles.stepCircle,
+            isCompleted
+              ? {backgroundColor: missionColor}
+              : styles.stepCircleInactive,
+          ]}>
+          <Image
+            source={require('../../assets/images/img_mission_check.png')}
+            style={styles.stepCheckIcon}
+          />
+        </View>
+        {stepIndex < maxStep - 1 && (
+          <View
+            style={[
+              styles.stepLine,
+              isCompleted
+                ? {backgroundColor: missionColor}
+                : styles.stepLineInactive,
+            ]}
+          />
+        )}
+      </React.Fragment>
+    );
+  };
+
+  const renderCtaButton = () => {
+    if (isCompletedMission) {
+      return (
+        <TouchableOpacity onPress={() => onClaimReward ? onClaimReward() : handleMissionPress(offerwallUrl)}>
+          <View
+            style={[
+              styles.completedMissionCtaButton,
+              {backgroundColor: ctaColor},
+            ]}>
+            <Text style={styles.completedMissionCtaButtonText}>
+              {'보상 받기'}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+
+    if (networkError) {
+      return (
+        <View style={styles.offerwallButton}>
+          <View style={styles.offerwallBButtonTextWrapper}>
+            <Text style={styles.emptyMissionText}>
+              {'미션을 불러오지 못했어요.'}
+            </Text>
+            <TouchableOpacity onPress={handleRefreshPress}>
+              <Image
+                source={require('../../assets/images/img_mission_refresh.png')}
+                style={[
+                  styles.refreshButton,
+                  {width: 32, height: 32, marginLeft: 16},
+                ]}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
+
+    if (isMissionListExist === false || networkError2) {
+      return (
+        <TouchableOpacity onPress={() => onOpenOfferwall ? onOpenOfferwall() : handleMissionPress(offerwallUrl)}>
+          <View style={styles.offerwallButton}>
+            <View style={styles.offerwallBButtonTextWrapper}>
+              <Image
+                source={require('../../assets/images/img_offerwall_coin.png')}
+                style={[
+                  styles.offerwallButtonCoinIcon,
+                  {width: 56, height: 56, marginRight: 12},
+                ]}
+              />
+              <Text style={[styles.offerwallButtonText, {flex: 1}]}>
+                {'800만 포인트를\n지금 바로 받아보세요. '}
+              </Text>
+              <Image
+                source={require('../../assets/images/img_offerwall_right_arrow.png')}
+                style={styles.offerwallButtonArrowIcon}
+              />
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+
+    return (
+      <TouchableOpacity onPress={() => onOpenOfferwall ? onOpenOfferwall() : handleMissionPress(offerwallUrl)}>
+        <View style={styles.offerwallButton}>
+          <View style={styles.offerwallBButtonTextWrapper}>
+            <Image
+              source={require('../../assets/images/img_offerwall_coin.png')}
+              style={styles.offerwallButtonCoinIcon}
+            />
+            <Text style={styles.offerwallButtonText}>
+              {'800만 포인트 받으러 가기'}
+            </Text>
+            <Image
+              source={require('../../assets/images/img_offerwall_right_arrow.png')}
+              style={styles.offerwallButtonArrowIcon}
+            />
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.headerBox}>
+        <View style={styles.titleBox}>
+          <View style={styles.titleWrapper}>
+            <Text style={styles.titleText}>{titleText}</Text>
+            <TouchableOpacity onPress={handleRefreshPress}>
+              <Image
+                source={require('../../assets/images/img_mission_refresh.png')}
+                style={styles.refreshButton}
+              />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.descriptionText}>{description}</Text>
+        </View>
+        <TouchableOpacity onPress={() => handleMissionPress(offerwallUrl)}>
+          <Image
+            source={require('../../assets/images/img_reward_coin.png')}
+            style={styles.rewardCoinIcon}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.stepBox}>
+        {Array.from({length: maxStep}, (_, index) =>
+          renderStepItem(index),
+        )}
+      </View>
+      {isMissionListExist &&
+        !isCompletedMission &&
+        !networkError &&
+        !networkError2 && (
+          <Fragment>
+            <View style={styles.divider} />
+
+            <View style={styles.missionListBox}>
+              {missions.map((item, index) => (
+                <View key={index} style={[styles.missionItem, item.isCompleted && styles.missionItemCompleted]}>
+                  <Image
+                    source={{
+                      uri: item.imageUrl || 'https://via.placeholder.com/52x52/FF9500/FFFFFF?text=M',
+                      headers: {
+                        'User-Agent': 'Mozilla/5.0',
+                        'Referer': 'https://www.google.com'
+                      }
+                    }}
+                    style={styles.missionImage}
+                    onError={(e) => {
+                      console.log('Mission image error:', item.imageUrl);
+                    }}
+                    defaultSource={{uri: 'https://via.placeholder.com/52x52/FF9500/FFFFFF?text=M'}}
+                  />
+                  <View style={styles.missionContent}>
+                    <Text style={styles.brandText}>{item.brandText}</Text>
+                    <Text style={[styles.missionTitleText, item.isCompleted && styles.completedText]}>
+                      {item.titleText}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    style={[styles.ctaButton, {backgroundColor: item.isCompleted ? '#4CAF50' : ctaColor}]}
+                    onPress={() => handleMissionPress(item)}
+                    disabled={item.isCompleted}>
+                    <Text style={[styles.ctaButtonText, {color: '#FFFFFF'}]}>
+                      {item.isCompleted ? '완료됨' : item.rewardsText}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          </Fragment>
+        )}
+
+      <View style={styles.divider} />
+      {renderCtaButton()}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    gap: 20,
+  },
+  headerBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  titleBox: {
+    width: '100%',
+    flexDirection: 'column',
+    gap: 4,
+    flex: 1,
+  },
+  titleWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: 4,
+  },
+  titleText: {
+    color: '#26282B',
+    fontFamily: 'SUIT-Bold',
+    fontSize: 20,
+    fontWeight: 'bold',
+    letterSpacing: -0.4,
+  },
+  refreshButton: {
+    width: 24,
+    height: 24,
+  },
+  descriptionText: {
+    color: '#73787E',
+    fontFamily: 'SUIT-Medium',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  rewardCoinIcon: {
+    width: 47,
+    height: 70,
+  },
+  stepBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  stepCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  stepCircleInactive: {
+    backgroundColor: '#E0E0E0',
+  },
+  stepCheckIcon: {
+    width: 20,
+    height: 14,
+  },
+  stepLine: {
+    height: 5,
+    borderRadius: 99,
+    flex: 1,
+  },
+  stepLineInactive: {
+    backgroundColor: '#E0E0E0',
+  },
+  missionListBox: {
+    gap: 20,
+  },
+  missionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  missionImage: {
+    width: 52,
+    height: 52,
+    borderRadius: 8,
+    backgroundColor: '#F5F5F5',
+  },
+  missionContent: {
+    flex: 1,
+    gap: 4,
+  },
+  brandText: {
+    color: '#73787E',
+    fontFamily: 'SUIT-Medium',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  missionTitleText: {
+    color: '#1B1D1F',
+    fontFamily: 'SUIT-SemiBold',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  ctaButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 9,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  ctaButtonText: {
+    fontFamily: 'SUIT-Bold',
+    fontSize: 14,
+    lineHeight: 17,
+    fontWeight: 'bold',
+  },
+  divider: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#F2F3F5',
+  },
+  offerwallButton: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  offerwallBButtonTextWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 0,
+  },
+  offerwallButtonText: {
+    color: '#292929',
+    fontFamily: 'SUIT-SemiBold',
+    fontSize: 14,
+    lineHeight: 17,
+    fontWeight: 'bold',
+  },
+  offerwallButtonArrowIcon: {
+    width: 24,
+    height: 24,
+  },
+  offerwallButtonCoinIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 6,
+  },
+  emptyMissionText: {
+    color: '#73787E',
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 17,
+  },
+  completedMissionCtaButton: {
+    width: '100%',
+    height: 55,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  completedMissionCtaButtonText: {
+    color: '#FFFFFF',
+    fontFamily: 'Pretendard',
+    fontSize: 16,
+    fontWeight: '500',
+    lineHeight: 20,
+  },
+  missionItemCompleted: {
+    opacity: 0.6,
+  },
+  completedText: {
+    textDecorationLine: 'line-through',
+    color: '#999',
+  },
+});
+
+export default React.memo(MissionModule);
