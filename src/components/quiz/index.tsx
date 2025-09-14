@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, Animated} from 'react-native';
 import QuizModule from './QuizModule';
+import QuizSkeleton from './QuizSkeleton';
 import AdchainSdk, { addQuizCompletedListener } from '../../index';
 
 // SDK Quiz 타입
@@ -25,28 +26,62 @@ interface QuizItem {
 
 const QUIZ_UNIT_ID = 'quiz_unit_001'; // Quiz Unit ID
 
+// Cache duration: 5 minutes
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface QuizCache {
+  data: QuizItem[];
+  timestamp: number;
+}
+
+// Global cache store
+let quizCache: QuizCache | null = null;
+
 const Quiz = () => {
   const [networkError, setNetworkError] = useState(false);
   const [networkError2, setNetworkError2] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showSkeleton, setShowSkeleton] = useState(true);
   const [quizItems, setQuizItems] = useState<QuizItem[]>([]);
   const [quizListCount, setQuizListCount] = useState(2);
   const [refreshing, setRefreshing] = useState(false);
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
   
 
+  // Cache validation
+  const isCacheValid = () => {
+    return quizCache && (Date.now() - quizCache.timestamp) < CACHE_DURATION;
+  };
+
+  // Initial load with cache check
   useEffect(() => {
-    loadQuizList();
-  }, [quizListCount]); // quizListCount 변경 시 다시 로드
+    if (isCacheValid() && quizCache) {
+      // Use cached data immediately
+      setQuizItems(quizCache.data.slice(0, quizListCount));
+      setLoading(false);
+      setShowSkeleton(false);
+      fadeAnim.setValue(1);
+
+      // Background refresh if cache is getting old (>2 minutes)
+      if (Date.now() - quizCache.timestamp > 2 * 60 * 1000) {
+        loadQuizList(true); // Silent background refresh
+      }
+    } else {
+      // Load fresh data
+      loadQuizList();
+    }
+  }, [quizListCount]);
 
   useEffect(() => {
     // 퀴즈 완료 이벤트 리스너 등록
     const subscription = addQuizCompletedListener((event) => {
       console.log('📱 [React Native] Quiz completed event received:', event);
-      
-      // 해당 unit의 퀴즈인 경우 리스트 새로고침
+
+      // 해당 unit의 퀴즈인 경우 캐시 무효화 후 새로고침
       if (event.unitId === QUIZ_UNIT_ID) {
-        console.log('🔄 Refreshing quiz list after completion');
-        loadQuizList();
+        console.log('🔄 Invalidating cache and refreshing quiz list');
+        quizCache = null; // Invalidate cache
+        loadQuizList(); // Force refresh
       }
     });
 
@@ -56,20 +91,24 @@ const Quiz = () => {
     };
   }, []);
 
-  // SDK에서 퀴즈 리스트 로드
-  const loadQuizList = async () => {
+  // SDK에서 퀴즈 리스트 로드 (캐싱 포함)
+  const loadQuizList = async (isBackgroundRefresh = false) => {
     try {
-      setLoading(true);
-      setNetworkError(false);
+      if (!isBackgroundRefresh) {
+        setLoading(true);
+        setShowSkeleton(true);
+        setNetworkError(false);
+        fadeAnim.setValue(0);
+      }
 
       // SDK에서 실제 퀴즈 데이터 로드
-      const sdkQuizList = await AdchainSdk.loadQuizList(QUIZ_UNIT_ID);
-      
+      const sdkQuizList: any[] = await AdchainSdk.loadQuizList(QUIZ_UNIT_ID);
+
       // 디버깅: SDK 응답 확인
       console.log('SDK Quiz Response:', JSON.stringify(sdkQuizList, null, 2));
-      
+
       // SDK 데이터를 UI 형식으로 변환
-      const transformedQuizList: QuizItem[] = sdkQuizList.map((quiz: SdkQuizItem) => {
+      const transformedQuizList: QuizItem[] = sdkQuizList.map((quiz: any) => {
         console.log('Quiz item:', quiz);
         return {
           id: quiz.id,
@@ -81,14 +120,38 @@ const Quiz = () => {
         };
       });
 
-      // quizListCount로 제한
+      // Update cache
+      quizCache = {
+        data: transformedQuizList,
+        timestamp: Date.now(),
+      };
+
+      // Update UI
       setQuizItems(transformedQuizList.slice(0, quizListCount));
+
+      if (!isBackgroundRefresh) {
+        // Smooth fade in animation
+        setShowSkeleton(false);
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }
+
     } catch (error) {
       console.error('Quiz load error:', error);
       setNetworkError(true);
+
+      if (!isBackgroundRefresh) {
+        setShowSkeleton(false);
+        fadeAnim.setValue(1);
+      }
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (!isBackgroundRefresh) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
   };
 
@@ -120,6 +183,7 @@ const Quiz = () => {
 
   const handleRefresh = () => {
     setRefreshing(true);
+    quizCache = null; // Invalidate cache on manual refresh
     loadQuizList();
   };
 
@@ -188,16 +252,22 @@ const Quiz = () => {
 
       {/* 퀴즈 모듈 */}
       <View style={styles.quizModuleContainer}>
-        <QuizModule
-          titleText="데일리 1분 퀴즈"
-          quizItems={quizItems}
-          networkError={networkError}
-          networkError2={networkError2}
-          onRefresh={handleRefresh}
-          loading={loading}
-          onQuizClick={handleQuizClick}
-          onOpenOfferwall={handleOpenOfferwall}
-        />
+        {showSkeleton ? (
+          <QuizSkeleton count={quizListCount} />
+        ) : (
+          <Animated.View style={{opacity: fadeAnim}}>
+            <QuizModule
+              titleText="데일리 1분 퀴즈"
+              quizItems={quizItems}
+              networkError={networkError}
+              networkError2={networkError2}
+              onRefresh={handleRefresh}
+              loading={loading}
+              onQuizClick={handleQuizClick}
+              onOpenOfferwall={handleOpenOfferwall}
+            />
+          </Animated.View>
+        )}
       </View>
 
     </View>

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, Animated} from 'react-native';
 import MissionModule from './MissionModule';
+import MissionSkeleton from './MissionSkeleton';
 import AdchainSdk, { addMissionCompletedListener } from '../../index';
 
 // SDK Mission 타입
@@ -36,10 +37,25 @@ interface MissionItem {
 
 const MISSION_UNIT_ID = 'mission_unit_001'; // Mission Unit ID
 
+// Cache duration: 5 minutes
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface MissionCache {
+  data: MissionItem[];
+  completedCount: number;
+  totalCount: number;
+  canClaimReward: boolean;
+  timestamp: number;
+}
+
+// Global cache store
+let missionCache: MissionCache | null = null;
+
 const Mission = () => {
   const [networkError, setNetworkError] = useState(false);
   const [networkError2, setNetworkError2] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showSkeleton, setShowSkeleton] = useState(true);
   const [missionItems, setMissionItems] = useState<MissionItem[]>([]);
   const [missionListCount, setMissionListCount] = useState(3);
   const [currentMissionStep, setCurrentMissionStep] = useState(0);
@@ -48,21 +64,48 @@ const Mission = () => {
   const [completedCount, setCompletedCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
   
 
+  // Cache validation
+  const isCacheValid = () => {
+    return missionCache && (Date.now() - missionCache.timestamp) < CACHE_DURATION;
+  };
+
+  // Initial load with cache check
   useEffect(() => {
-    loadMissionList();
+    if (isCacheValid() && missionCache) {
+      // Use cached data immediately
+      setMissionItems(missionCache.data);
+      setCompletedCount(missionCache.completedCount);
+      setTotalCount(missionCache.totalCount);
+      setCanClaimReward(missionCache.canClaimReward);
+      setCurrentMissionStep(missionCache.completedCount);
+      setMaxMissionStep(missionCache.totalCount || 3);
+      setLoading(false);
+      setShowSkeleton(false);
+      fadeAnim.setValue(1);
+
+      // Background refresh if cache is getting old (>2 minutes)
+      if (Date.now() - missionCache.timestamp > 2 * 60 * 1000) {
+        loadMissionList(true); // Silent background refresh
+      }
+    } else {
+      // Load fresh data
+      loadMissionList();
+    }
   }, []);
 
   useEffect(() => {
     // 미션 완료 이벤트 리스너 등록
     const subscription = addMissionCompletedListener((event) => {
       console.log('📱 [React Native] Mission completed event received:', event);
-      
-      // 해당 unit의 미션인 경우 리스트 새로고침
+
+      // 해당 unit의 미션인 경우 캐시 무효화 후 새로고침
       if (event.unitId === MISSION_UNIT_ID) {
-        console.log('🔄 Refreshing mission list after completion');
-        loadMissionList();
+        console.log('🔄 Invalidating cache and refreshing mission list');
+        missionCache = null; // Invalidate cache
+        loadMissionList(); // Force refresh
       }
     });
 
@@ -72,18 +115,22 @@ const Mission = () => {
     };
   }, []);
 
-  // SDK에서 미션 리스트 로드
-  const loadMissionList = async () => {
+  // SDK에서 미션 리스트 로드 (캐싱 포함)
+  const loadMissionList = async (isBackgroundRefresh = false) => {
     try {
-      setLoading(true);
-      setNetworkError(false);
+      if (!isBackgroundRefresh) {
+        setLoading(true);
+        setShowSkeleton(true);
+        setNetworkError(false);
+        fadeAnim.setValue(0);
+      }
 
       // SDK에서 실제 미션 데이터 로드
-      const response: SdkMissionListResponse = await AdchainSdk.loadMissionList(MISSION_UNIT_ID);
+      const response: any = await AdchainSdk.loadMissionList(MISSION_UNIT_ID);
       console.log('Mission SDK Response:', JSON.stringify(response, null, 2));
-      
+
       // SDK 데이터를 UI 형식으로 변환
-      const transformedMissionList: MissionItem[] = response.missions.map((mission: SdkMission) => ({
+      const transformedMissionList: MissionItem[] = response.missions.map((mission: any) => ({
         id: mission.id,
         imageUrl: mission.imageUrl || 'https://via.placeholder.com/240',
         brandText: mission.type || '미션',
@@ -94,20 +141,46 @@ const Mission = () => {
         type: mission.type,
       }));
 
+      // Update cache
+      missionCache = {
+        data: transformedMissionList,
+        completedCount: response.completedCount,
+        totalCount: response.totalCount,
+        canClaimReward: response.canClaimReward,
+        timestamp: Date.now(),
+      };
+
+      // Update UI
       setMissionItems(transformedMissionList);
       setCompletedCount(response.completedCount);
       setTotalCount(response.totalCount);
       setCanClaimReward(response.canClaimReward);
-      
-      // 미션 단계 계산 - currentMissionStep 사용
       setCurrentMissionStep(response.completedCount);
       setMaxMissionStep(response.totalCount || 3);
+
+      if (!isBackgroundRefresh) {
+        // Smooth fade in animation
+        setShowSkeleton(false);
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }
+
     } catch (error) {
       console.error('Mission load error:', error);
       setNetworkError(true);
+
+      if (!isBackgroundRefresh) {
+        setShowSkeleton(false);
+        fadeAnim.setValue(1);
+      }
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (!isBackgroundRefresh) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
   };
 
@@ -153,6 +226,7 @@ const Mission = () => {
 
   const handleRefresh = () => {
     setRefreshing(true);
+    missionCache = null; // Invalidate cache on manual refresh
     setNetworkError(false);
     setNetworkError2(false);
     setMissionListCount(3);
@@ -278,26 +352,32 @@ const Mission = () => {
 
       {/* 미션 모듈 */}
       <View style={styles.missionModuleContainer}>
-        <MissionModule
-          titleText="데일리 미션"
-          missionList={missionItems.slice(0, missionListCount)}
-          description="미션 광고 참여하고 100 포인트 받기"
-          maxMissionStep={maxMissionStep}
-          currentMissionStep={currentMissionStep}
-          offerwallUrl={'https://www.google.com'}
-          missionColor={'#FF9500'}
-          ctaColor={'#046BD5'}
-          networkError={networkError}
-          networkError2={networkError2}
-          onRefresh={handleRefresh}
-          loading={loading}
-          onMissionClick={handleMissionClick}
-          onClaimReward={handleClaimReward}
-          onOpenOfferwall={handleOpenOfferwall}
-          canClaimReward={canClaimReward}
-          completedCount={completedCount}
-          totalCount={totalCount}
-        />
+        {showSkeleton ? (
+          <MissionSkeleton count={missionListCount} />
+        ) : (
+          <Animated.View style={{opacity: fadeAnim}}>
+            <MissionModule
+              titleText="데일리 미션"
+              missionList={missionItems.slice(0, missionListCount)}
+              description="미션 광고 참여하고 100 포인트 받기"
+              maxMissionStep={maxMissionStep}
+              currentMissionStep={currentMissionStep}
+              offerwallUrl={'https://www.google.com'}
+              missionColor={'#FF9500'}
+              ctaColor={'#046BD5'}
+              networkError={networkError}
+              networkError2={networkError2}
+              onRefresh={handleRefresh}
+              loading={loading}
+              onMissionClick={handleMissionClick}
+              onClaimReward={handleClaimReward}
+              onOpenOfferwall={handleOpenOfferwall}
+              canClaimReward={canClaimReward}
+              completedCount={completedCount}
+              totalCount={totalCount}
+            />
+          </Animated.View>
+        )}
       </View>
 
     </View>
