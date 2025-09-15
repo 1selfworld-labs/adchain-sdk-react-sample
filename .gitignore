@@ -39,7 +39,6 @@ ios/build/
 ios/Pods/
 ios/*.xcworkspace/xcuserdata/
 ios/*.xcodeproj/xcuserdata/
-ios/*.xcodeproj/xcshareddata/
 ios/*.xcodeproj/project.xcworkspace/xcuserdata/
 *.pbxuser
 !default.pbxuser
