@@ -22,14 +22,13 @@ interface MissionModuleProps {
   missionStep?: number;
   missionColor?: string;
   ctaColor?: string;
-  offerwallUrl?: string;
   networkError: boolean;
   networkError2?: boolean;
   onRefresh: () => void;
   loading?: boolean;
   onMissionClick?: (mission: MissionItem) => void;
   onClaimReward?: () => void;
-  onOpenOfferwall?: () => void;
+  onOpenOfferwall: () => void;
   canClaimReward?: boolean;
   completedCount?: number;
   totalCount?: number;
@@ -45,7 +44,6 @@ const MissionModule = ({
   missionStep,
   missionColor = "#FF8000",
   ctaColor = "#FF8000",
-  offerwallUrl = "",
   networkError,
   networkError2 = false,
   onRefresh,
@@ -96,7 +94,7 @@ const MissionModule = ({
   const renderCtaButton = () => {
     if (isCompletedMission) {
       return (
-        <TouchableOpacity onPress={() => (onClaimReward ? onClaimReward() : handleMissionPress(offerwallUrl))}>
+        <TouchableOpacity onPress={() => (onClaimReward ? onClaimReward() : onOpenOfferwall())}>
           <View style={[styles.completedMissionCtaButton, { backgroundColor: ctaColor }]}>
             <Text style={styles.completedMissionCtaButtonText}>{"보상 받기"}</Text>
           </View>
@@ -122,7 +120,7 @@ const MissionModule = ({
 
     if (isMissionListExist === false || networkError2) {
       return (
-        <TouchableOpacity onPress={() => (onOpenOfferwall ? onOpenOfferwall() : handleMissionPress(offerwallUrl))}>
+        <TouchableOpacity onPress={() => onOpenOfferwall()}>
           <View style={styles.offerwallButton}>
             <View style={styles.offerwallBButtonTextWrapper}>
               <Image
@@ -141,7 +139,7 @@ const MissionModule = ({
     }
 
     return (
-      <TouchableOpacity onPress={() => (onOpenOfferwall ? onOpenOfferwall() : handleMissionPress(offerwallUrl))}>
+      <TouchableOpacity onPress={() => onOpenOfferwall()}>
         <View style={styles.offerwallButton}>
           <View style={styles.offerwallBButtonTextWrapper}>
             <Image source={require("../../assets/images/img_offerwall_coin.png")} style={styles.offerwallButtonCoinIcon} />
@@ -168,7 +166,7 @@ const MissionModule = ({
           </View>
           <Text style={styles.descriptionText}>{description}</Text>
         </View>
-        <TouchableOpacity onPress={() => handleMissionPress(offerwallUrl)}>
+        <TouchableOpacity onPress={() => onOpenOfferwall()}>
           <Image source={require("../../assets/images/img_reward_coin.png")} style={styles.rewardCoinIcon} />
         </TouchableOpacity>
       </View>

@@ -261,7 +261,6 @@ const Mission = () => {
               description="간단 광고 참여하고 100 포인트 받기"
               maxMissionStep={maxMissionStep}
               currentMissionStep={currentMissionStep}
-              offerwallUrl={"https://www.google.com"}
               missionColor={"#FF9500"}
               ctaColor={"#046BD5"}
               networkError={networkError}
