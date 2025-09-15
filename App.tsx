@@ -25,11 +25,11 @@ import AdchainSdk from './src/index';
 // SDK 환경 설정
 const SDK_CONFIG = {
   android: {
-    APP_ID: '100000001',
+    APP_KEY: '100000001',
     APP_SECRET: 'gjFs586lLuUweJRN',
   },
   ios: {
-    APP_KEY: '100000002', 
+    APP_KEY: '100000002',
     APP_SECRET: '3ANgfF9Zfbm79oa6',
   }
 };
@@ -53,7 +53,7 @@ function App(): React.JSX.Element {
       // 플랫폼별 SDK 설정
       const sdkConfig = Platform.select({
         android: {
-          appKey: SDK_CONFIG.android.APP_ID,
+          appKey: SDK_CONFIG.android.APP_KEY,
           appSecret: SDK_CONFIG.android.APP_SECRET,
           environment: 'PRODUCTION' as const
         },
@@ -65,7 +65,7 @@ function App(): React.JSX.Element {
         default: {
           appKey: 'test-app',
           appSecret: 'test-secret',
-          environment: 'PRODUCTION' as const
+          environment: 'DEVELOPMENT' as const
         }
       });
       
