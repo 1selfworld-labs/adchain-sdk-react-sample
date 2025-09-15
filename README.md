@@ -16,6 +16,7 @@ React Native 앱에서 **AdChain SDK**를 사용하기 위해 Android와 iOS 각
 
 1. 기존 Pod 관련 파일 삭제
 
+```
   cd ios
   rm -rf Pods
   rm -rf Podfile.lock
@@ -27,6 +28,8 @@ React Native 앱에서 **AdChain SDK**를 사용하기 위해 Android와 iOS 각
   
   3. Pod 재설치
   pod install
+
+```
 
 ------------------------------------------------------------------------
 # 아래부터는 react-native 프로젝트에 SDK와 관련된 코드를 이식하는 방법을 설명합니다.
