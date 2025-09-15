@@ -178,34 +178,33 @@ const MissionModule = ({
 
           <View style={styles.missionListBox}>
             {missions.map((item, index) => (
-              <View key={index} style={[styles.missionItem, item.isCompleted && styles.missionItemCompleted]}>
-                <Image
-                  source={{
-                    uri: item.imageUrl || "https://via.placeholder.com/52x52/FF9500/FFFFFF?text=M",
-                    headers: {
-                      "User-Agent": "Mozilla/5.0",
-                      Referer: "https://www.google.com",
-                    },
-                  }}
-                  style={styles.missionImage}
-                  onError={(e) => {
-                    console.log("Mission image error:", item.imageUrl);
-                  }}
-                  defaultSource={{ uri: "https://via.placeholder.com/52x52/FF9500/FFFFFF?text=M" }}
-                />
-                <View style={styles.missionContent}>
-                  <Text style={styles.brandText}>{item.brandText}</Text>
-                  <Text style={[styles.missionTitleText, item.isCompleted && styles.completedText]}>{item.titleText}</Text>
+              <TouchableOpacity key={index} onPress={() => handleMissionPress(item)} disabled={item.isCompleted}>
+                <View style={[styles.missionItem, item.isCompleted && styles.missionItemCompleted]}>
+                  <Image
+                    source={{
+                      uri: item.imageUrl || "https://via.placeholder.com/52x52/FF9500/FFFFFF?text=M",
+                      headers: {
+                        "User-Agent": "Mozilla/5.0",
+                        Referer: "https://www.google.com",
+                      },
+                    }}
+                    style={styles.missionImage}
+                    onError={(e) => {
+                      console.log("Mission image error:", item.imageUrl);
+                    }}
+                    defaultSource={{ uri: "https://via.placeholder.com/52x52/FF9500/FFFFFF?text=M" }}
+                  />
+                  <View style={styles.missionContent}>
+                    <Text style={styles.brandText}>{item.brandText}</Text>
+                    <Text style={[styles.missionTitleText, item.isCompleted && styles.completedText]}>{item.titleText}</Text>
+                  </View>
+                  <View style={[styles.ctaButton, { backgroundColor: item.isCompleted ? "#4CAF50" : ctaColor }]}>
+                    <Text style={[styles.ctaButtonText, { color: "#FFFFFF" }]}>
+                      {item.isCompleted ? "완료됨" : item.rewardsText}
+                    </Text>
+                  </View>
                 </View>
-                <TouchableOpacity
-                  style={[styles.ctaButton, { backgroundColor: item.isCompleted ? "#4CAF50" : ctaColor }]}
-                  onPress={() => handleMissionPress(item)}
-                  disabled={item.isCompleted}>
-                  <Text style={[styles.ctaButtonText, { color: "#FFFFFF" }]}>
-                    {item.isCompleted ? "완료됨" : item.rewardsText}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </Fragment>
