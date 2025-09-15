@@ -109,7 +109,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
     
     // AdChain SDK - GitHub JitPack dependency
-    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.9'
+    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.10'
     
     // AdChain SDK dependencies
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"

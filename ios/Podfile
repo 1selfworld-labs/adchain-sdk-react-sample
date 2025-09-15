@@ -9,7 +9,7 @@ platform :ios, '14.0'
 prepare_react_native_project!
 
 # Use frameworks for Swift support
-# use_frameworks! :linkage => :static
+use_frameworks! :linkage => :static
 
 target 'TreasurerRN' do
   config = use_native_modules!
@@ -22,7 +22,7 @@ target 'TreasurerRN' do
   )
   
   # AdChain SDK - GitHub Release 버전 사용
-  pod 'AdchainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.8'
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.9'
   # pod 'AdchainSDK', :path => '../../adchain-sdk-ios'  # 로컬 디버깅용
 
   target 'TreasurerRNTests' do
