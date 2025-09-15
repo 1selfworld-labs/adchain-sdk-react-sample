@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View, Animated} from 'react-native';
-import MissionModule from './MissionModule';
-import MissionSkeleton from './MissionSkeleton';
-import AdchainSdk, { addMissionCompletedListener } from '../../index';
+import React, { useEffect, useState } from "react";
+import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import AdchainSdk, { addMissionCompletedListener } from "../../index";
+import MissionModule from "./MissionModule";
+import MissionSkeleton from "./MissionSkeleton";
 
 // SDK Mission 타입
 interface SdkMission {
@@ -35,7 +35,7 @@ interface MissionItem {
   type?: string;
 }
 
-const MISSION_UNIT_ID = 'mission_unit_001'; // Mission Unit ID
+const MISSION_UNIT_ID = "mission_unit_001"; // Mission Unit ID
 
 // Cache duration: 5 minutes
 const CACHE_DURATION = 5 * 60 * 1000;
@@ -57,19 +57,16 @@ const Mission = () => {
   const [loading, setLoading] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(true);
   const [missionItems, setMissionItems] = useState<MissionItem[]>([]);
-  const [missionListCount, setMissionListCount] = useState(3);
   const [currentMissionStep, setCurrentMissionStep] = useState(0);
   const [maxMissionStep, setMaxMissionStep] = useState(3);
   const [canClaimReward, setCanClaimReward] = useState(false);
   const [completedCount, setCompletedCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [refreshing, setRefreshing] = useState(false);
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  
 
   // Cache validation
   const isCacheValid = () => {
-    return missionCache && (Date.now() - missionCache.timestamp) < CACHE_DURATION;
+    return missionCache && Date.now() - missionCache.timestamp < CACHE_DURATION;
   };
 
   // Initial load with cache check
@@ -99,11 +96,11 @@ const Mission = () => {
   useEffect(() => {
     // 미션 완료 이벤트 리스너 등록
     const subscription = addMissionCompletedListener((event) => {
-      console.log('📱 [React Native] Mission completed event received:', event);
+      console.log("📱 [React Native] Mission completed event received:", event);
 
       // 해당 unit의 미션인 경우 캐시 무효화 후 새로고침
       if (event.unitId === MISSION_UNIT_ID) {
-        console.log('🔄 Invalidating cache and refreshing mission list');
+        console.log("🔄 Invalidating cache and refreshing mission list");
         missionCache = null; // Invalidate cache
         loadMissionList(); // Force refresh
       }
@@ -127,15 +124,15 @@ const Mission = () => {
 
       // SDK에서 실제 미션 데이터 로드
       const response: any = await AdchainSdk.loadMissionList(MISSION_UNIT_ID);
-      console.log('Mission SDK Response:', JSON.stringify(response, null, 2));
+      console.log("Mission SDK Response:", JSON.stringify(response, null, 2));
 
       // SDK 데이터를 UI 형식으로 변환
       const transformedMissionList: MissionItem[] = response.missions.map((mission: any) => ({
         id: mission.id,
-        imageUrl: mission.imageUrl || 'https://via.placeholder.com/240',
-        brandText: mission.type || '미션',
+        imageUrl: mission.imageUrl || "https://via.placeholder.com/240",
+        brandText: mission.description || "미션",
         titleText: mission.title,
-        rewardsText: mission.point || '0 포인트', // point 필드 사용
+        rewardsText: mission.point || "0 포인트", // point 필드 사용
         url: mission.actionUrl || `https://mission.adchain.com/${mission.id}`,
         isCompleted: mission.isCompleted,
         type: mission.type,
@@ -167,9 +164,8 @@ const Mission = () => {
           useNativeDriver: true,
         }).start();
       }
-
     } catch (error) {
-      console.error('Mission load error:', error);
+      console.error("Mission load error:", error);
       setNetworkError(true);
 
       if (!isBackgroundRefresh) {
@@ -179,7 +175,6 @@ const Mission = () => {
     } finally {
       if (!isBackgroundRefresh) {
         setLoading(false);
-        setRefreshing(false);
       }
     }
   };
@@ -190,13 +185,13 @@ const Mission = () => {
       if (mission.id) {
         // SDK를 통해 미션 클릭 이벤트 전송
         const result = await AdchainSdk.clickMission(MISSION_UNIT_ID, mission.id);
-        console.log('Mission clicked:', result);
-        
+        console.log("Mission clicked:", result);
+
         // 이벤트 리스너가 자동으로 처리하므로 여기서는 새로고침 하지 않음
         // loadMissionList()는 이벤트 리스너에서 처리됨
       }
     } catch (error) {
-      console.error('Mission click error:', error);
+      console.error("Mission click error:", error);
     }
   };
 
@@ -204,13 +199,13 @@ const Mission = () => {
   const handleClaimReward = async () => {
     try {
       const result = await AdchainSdk.claimReward(MISSION_UNIT_ID);
-      console.log('Reward claimed:', result);
-      
+      console.log("Reward claimed:", result);
+
       if (result.success) {
         loadMissionList();
       }
     } catch (error) {
-      console.error('Claim reward error:', error);
+      console.error("Claim reward error:", error);
     }
   };
 
@@ -218,20 +213,16 @@ const Mission = () => {
   const handleOpenOfferwall = async () => {
     try {
       const result = await AdchainSdk.openOfferwall();
-      console.log('Offerwall opened:', result);
+      console.log("Offerwall opened:", result);
     } catch (error) {
-      console.error('Offerwall error:', error);
+      console.error("Offerwall error:", error);
     }
   };
 
   const handleRefresh = () => {
-    setRefreshing(true);
     missionCache = null; // Invalidate cache on manual refresh
     setNetworkError(false);
     setNetworkError2(false);
-    setMissionListCount(3);
-    setCurrentMissionStep(0);
-    setMaxMissionStep(3);
     loadMissionList();
   };
 
@@ -242,129 +233,37 @@ const Mission = () => {
         <View style={styles.controlRow}>
           <Text style={styles.controlLabel}>Network Error:</Text>
           <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              networkError ? styles.toggleActive : styles.toggleInactive,
-            ]}
+            style={[styles.toggleButton, networkError ? styles.toggleActive : styles.toggleInactive]}
             onPress={() => setNetworkError(!networkError)}>
-            <Text style={styles.toggleText}>{networkError ? 'ON' : 'OFF'}</Text>
+            <Text style={styles.toggleText}>{networkError ? "ON" : "OFF"}</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.controlRow}>
           <Text style={styles.controlLabel}>Network Error #2:</Text>
           <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              networkError2 ? styles.toggleActive : styles.toggleInactive,
-            ]}
+            style={[styles.toggleButton, networkError2 ? styles.toggleActive : styles.toggleInactive]}
             onPress={() => setNetworkError2(!networkError2)}>
-            <Text style={styles.toggleText}>
-              {networkError2 ? 'ON' : 'OFF'}
-            </Text>
+            <Text style={styles.toggleText}>{networkError2 ? "ON" : "OFF"}</Text>
           </TouchableOpacity>
-        </View>
-
-        <View style={styles.controlRow}>
-          <Text style={styles.controlLabel}>
-            Mission List ({missionListCount}):
-          </Text>
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity
-              style={[
-                styles.countButton,
-                missionListCount <= 0 && styles.buttonDisabled,
-              ]}
-              onPress={() => {
-                setMissionListCount(Math.max(0, missionListCount - 1));
-                loadMissionList();
-              }}
-              disabled={missionListCount <= 0}>
-              <Text style={styles.buttonText}>-</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.countButton,
-                missionListCount >= 5 && styles.buttonDisabled,
-              ]}
-              onPress={() => {
-                setMissionListCount(Math.min(5, missionListCount + 1));
-                loadMissionList();
-              }}
-              disabled={missionListCount >= 5}>
-              <Text style={styles.buttonText}>+</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.controlRow}>
-          <Text style={styles.controlLabel}>
-            Current Step ({currentMissionStep}):
-          </Text>
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity
-              style={[
-                styles.countButton,
-                currentMissionStep <= 0 && styles.buttonDisabled,
-              ]}
-              onPress={() =>
-                setCurrentMissionStep(Math.max(0, currentMissionStep - 1))
-              }
-              disabled={currentMissionStep <= 0}>
-              <Text style={styles.buttonText}>-</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.countButton,
-                currentMissionStep >= maxMissionStep && styles.buttonDisabled,
-              ]}
-              disabled={currentMissionStep >= maxMissionStep}
-              onPress={() => setCurrentMissionStep(currentMissionStep + 1)}>
-              <Text style={styles.buttonText}>+</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.controlRow}>
-          <Text style={styles.controlLabel}>Max Step ({maxMissionStep}):</Text>
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity
-              style={[
-                styles.countButton,
-                maxMissionStep <= 2 && styles.buttonDisabled,
-              ]}
-              onPress={() => setMaxMissionStep(Math.max(1, maxMissionStep - 1))}
-              disabled={maxMissionStep <= 2}>
-              <Text style={styles.buttonText}>-</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.countButton,
-                maxMissionStep >= 5 && styles.buttonDisabled,
-              ]}
-              disabled={maxMissionStep >= 5}
-              onPress={() => setMaxMissionStep(maxMissionStep + 1)}>
-              <Text style={styles.buttonText}>+</Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
 
       {/* 미션 모듈 */}
       <View style={styles.missionModuleContainer}>
         {showSkeleton ? (
-          <MissionSkeleton count={missionListCount} />
+          <MissionSkeleton count={3} />
         ) : (
-          <Animated.View style={{opacity: fadeAnim}}>
+          <Animated.View style={{ opacity: fadeAnim }}>
             <MissionModule
-              titleText="데일리 미션"
-              missionList={missionItems.slice(0, missionListCount)}
-              description="미션 광고 참여하고 100 포인트 받기"
+              titleText="무료 포인트 모으기"
+              missionList={missionItems.slice(0, 3)}
+              description="간단 광고 참여하고 100 포인트 받기"
               maxMissionStep={maxMissionStep}
               currentMissionStep={currentMissionStep}
-              offerwallUrl={'https://www.google.com'}
-              missionColor={'#FF9500'}
-              ctaColor={'#046BD5'}
+              offerwallUrl={"https://www.google.com"}
+              missionColor={"#FF9500"}
+              ctaColor={"#046BD5"}
               networkError={networkError}
               networkError2={networkError2}
               onRefresh={handleRefresh}
@@ -379,72 +278,71 @@ const Mission = () => {
           </Animated.View>
         )}
       </View>
-
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   missionModuleContainer: {
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     paddingHorizontal: 16,
     paddingVertical: 20,
     borderRadius: 16,
   },
   controlsContainer: {
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     padding: 16,
     borderRadius: 8,
     marginBottom: 20,
     gap: 12,
   },
   controlRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   controlLabel: {
     fontSize: 12,
-    fontWeight: '500',
-    color: '#333',
+    fontWeight: "500",
+    color: "#333",
   },
   toggleButton: {
     paddingHorizontal: 25,
     paddingVertical: 6,
     borderRadius: 6,
     minWidth: 60,
-    alignItems: 'center',
+    alignItems: "center",
   },
   toggleActive: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
   },
   toggleInactive: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
   },
   toggleText: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontWeight: "bold",
+    color: "#FFF",
   },
   buttonGroup: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   countButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     width: 32,
     height: 32,
     borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonDisabled: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontWeight: "bold",
+    color: "#FFF",
   },
 });
 

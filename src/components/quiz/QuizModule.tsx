@@ -1,12 +1,5 @@
-import React from 'react';
-import {
-  Image,
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React from "react";
+import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface QuizItem {
   id?: string;
@@ -29,7 +22,7 @@ interface QuizModuleProps {
 }
 
 const QuizModule = ({
-  titleText = '데일리 1분 퀴즈',
+  titleText = "데일리 1분 퀴즈",
   quizItems,
   networkError,
   networkError2,
@@ -56,14 +49,9 @@ const QuizModule = ({
     if (networkError) {
       return (
         <View style={styles.networkErrorContainer}>
-          <Text style={styles.networkErrorText}>
-            {'퀴즈을 불러오지 못했어요.'}
-          </Text>
+          <Text style={styles.networkErrorText}>{"퀴즈를 불러오지 못했어요."}</Text>
           <TouchableOpacity onPress={handleRefreshPress}>
-            <Image
-              source={require('../../assets/images/img_mission_refresh.png')}
-              style={styles.refreshButton}
-            />
+            <Image source={require("../../assets/images/img_mission_refresh.png")} style={styles.refreshButton} />
           </TouchableOpacity>
         </View>
       );
@@ -71,13 +59,8 @@ const QuizModule = ({
 
     if (networkError2 || isQuizListExist === false) {
       return (
-        <TouchableOpacity 
-          style={styles.emptyBanner}
-          onPress={() => onOpenOfferwall && onOpenOfferwall()}>
-          <Image
-            source={require('../../assets/images/img_empty_quiz.png')}
-            style={styles.emptyBannerImage}
-          />
+        <TouchableOpacity style={styles.emptyBanner} onPress={() => onOpenOfferwall && onOpenOfferwall()}>
+          <Image source={require("../../assets/images/img_empty_quiz.png")} style={styles.emptyBannerImage} />
         </TouchableOpacity>
       );
     }
@@ -88,26 +71,24 @@ const QuizModule = ({
           key={index}
           style={[styles.quizItem, item.isCompleted && styles.quizItemCompleted]}
           onPress={() => handleQuizPress(item)}>
-          <Image 
+          <Image
             source={{
-              uri: item.imageUrl || 'https://via.placeholder.com/80x80/FF8000/FFFFFF?text=Quiz',
+              uri: item.imageUrl || "https://via.placeholder.com/80x80/FF8000/FFFFFF?text=Quiz",
               headers: {
-                'User-Agent': 'Mozilla/5.0',
-                'Referer': 'https://www.google.com'
-              }
-            }} 
+                "User-Agent": "Mozilla/5.0",
+                Referer: "https://www.google.com",
+              },
+            }}
             style={styles.image}
             onError={(e) => {
-              console.log('Image load error:', item.imageUrl, e.nativeEvent.error);
+              console.log("Image load error:", item.imageUrl, e.nativeEvent.error);
             }}
-            defaultSource={{uri: 'https://via.placeholder.com/80x80/FF8000/FFFFFF?text=Quiz'}}
+            defaultSource={{ uri: "https://via.placeholder.com/80x80/FF8000/FFFFFF?text=Quiz" }}
           />
           <View style={styles.rightContent}>
-            <Text style={[styles.itemTitleText, item.isCompleted && styles.completedText]}>
-              {item.titleText}
-            </Text>
+            <Text style={[styles.itemTitleText, item.isCompleted && styles.completedText]}>{item.titleText}</Text>
             <Text style={[styles.itemRewardsText, item.isCompleted && styles.completedRewardsText]}>
-              {item.isCompleted ? '완료됨' : item.rewardsText}
+              {item.isCompleted ? "완료됨" : item.rewardsText}
             </Text>
           </View>
         </TouchableOpacity>
@@ -115,13 +96,8 @@ const QuizModule = ({
     }
 
     return (
-      <TouchableOpacity 
-        style={styles.emptyBanner}
-        onPress={() => onOpenOfferwall && onOpenOfferwall()}>
-        <Image
-          source={require('../../assets/images/img_empty_quiz.png')}
-          style={styles.emptyBannerImage}
-        />
+      <TouchableOpacity style={styles.emptyBanner} onPress={() => onOpenOfferwall && onOpenOfferwall()}>
+        <Image source={require("../../assets/images/img_empty_quiz.png")} style={styles.emptyBannerImage} />
       </TouchableOpacity>
     );
   };
@@ -136,71 +112,71 @@ const QuizModule = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
     gap: 10,
   },
   titleText: {
-    color: '#292929',
-    fontFamily: 'Inter-Bold',
+    color: "#292929",
+    fontFamily: "Inter-Bold",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   quizItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 14,
   },
   image: {
     width: 80,
     height: 80,
     borderRadius: 8,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
   },
   rightContent: {
     flex: 1,
     gap: 6,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-start",
   },
   itemTitleText: {
-    color: '#292929',
-    fontFamily: 'Pretendard-SemiBold',
+    color: "#292929",
+    fontFamily: "Pretendard-SemiBold",
     fontSize: 16,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
+    fontWeight: "bold",
+    textTransform: "uppercase",
   },
   itemRewardsText: {
-    color: '#FF8000',
-    fontFamily: 'Pretendard-Bold',
+    color: "#FF8000",
+    fontFamily: "Pretendard-Bold",
     fontSize: 15,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   emptyBanner: {
-    width: '100%',
+    width: "100%",
     aspectRatio: 327 / 80,
   },
   emptyBannerImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'stretch',
+    width: "100%",
+    height: "100%",
+    resizeMode: "stretch",
   },
   networkErrorContainer: {
-    width: '100%',
+    width: "100%",
     height: 84,
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#FFFFFF",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 16,
   },
   networkErrorText: {
-    color: '#292929',
-    fontFamily: 'Pretendard-SemiBold',
+    color: "#292929",
+    fontFamily: "Pretendard-SemiBold",
     fontSize: 16,
-    fontWeight: '600',
-    textTransform: 'uppercase',
+    fontWeight: "600",
+    textTransform: "uppercase",
   },
   refreshButton: {
     width: 32,
@@ -210,12 +186,12 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   completedText: {
-    textDecorationLine: 'line-through',
-    color: '#999',
+    textDecorationLine: "line-through",
+    color: "#999",
   },
   completedRewardsText: {
-    color: '#4CAF50',
-    fontWeight: 'bold',
+    color: "#4CAF50",
+    fontWeight: "bold",
   },
 });
 

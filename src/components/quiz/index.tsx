@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View, Animated} from 'react-native';
-import QuizModule from './QuizModule';
-import QuizSkeleton from './QuizSkeleton';
-import AdchainSdk, { addQuizCompletedListener } from '../../index';
+import React, { useEffect, useState } from "react";
+import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import AdchainSdk, { addQuizCompletedListener } from "../../index";
+import QuizModule from "./QuizModule";
+import QuizSkeleton from "./QuizSkeleton";
 
 // SDK Quiz 타입
 interface SdkQuizItem {
@@ -24,7 +24,7 @@ interface QuizItem {
   isCompleted?: boolean;
 }
 
-const QUIZ_UNIT_ID = 'quiz_unit_001'; // Quiz Unit ID
+const QUIZ_UNIT_ID = "quiz_unit_001"; // Quiz Unit ID
 
 // Cache duration: 5 minutes
 const CACHE_DURATION = 5 * 60 * 1000;
@@ -43,21 +43,18 @@ const Quiz = () => {
   const [loading, setLoading] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(true);
   const [quizItems, setQuizItems] = useState<QuizItem[]>([]);
-  const [quizListCount, setQuizListCount] = useState(2);
-  const [refreshing, setRefreshing] = useState(false);
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  
 
   // Cache validation
   const isCacheValid = () => {
-    return quizCache && (Date.now() - quizCache.timestamp) < CACHE_DURATION;
+    return quizCache && Date.now() - quizCache.timestamp < CACHE_DURATION;
   };
 
   // Initial load with cache check
   useEffect(() => {
     if (isCacheValid() && quizCache) {
       // Use cached data immediately
-      setQuizItems(quizCache.data.slice(0, quizListCount));
+      setQuizItems(quizCache.data);
       setLoading(false);
       setShowSkeleton(false);
       fadeAnim.setValue(1);
@@ -66,20 +63,18 @@ const Quiz = () => {
       if (Date.now() - quizCache.timestamp > 2 * 60 * 1000) {
         loadQuizList(true); // Silent background refresh
       }
-    } else {
-      // Load fresh data
-      loadQuizList();
     }
-  }, [quizListCount]);
+    loadQuizList();
+  }, []);
 
   useEffect(() => {
     // 퀴즈 완료 이벤트 리스너 등록
     const subscription = addQuizCompletedListener((event) => {
-      console.log('📱 [React Native] Quiz completed event received:', event);
+      console.log("📱 [React Native] Quiz completed event received:", event);
 
       // 해당 unit의 퀴즈인 경우 캐시 무효화 후 새로고침
       if (event.unitId === QUIZ_UNIT_ID) {
-        console.log('🔄 Invalidating cache and refreshing quiz list');
+        console.log("🔄 Invalidating cache and refreshing quiz list");
         quizCache = null; // Invalidate cache
         loadQuizList(); // Force refresh
       }
@@ -105,16 +100,16 @@ const Quiz = () => {
       const sdkQuizList: any[] = await AdchainSdk.loadQuizList(QUIZ_UNIT_ID);
 
       // 디버깅: SDK 응답 확인
-      console.log('SDK Quiz Response:', JSON.stringify(sdkQuizList, null, 2));
+      console.log("SDK Quiz Response:", JSON.stringify(sdkQuizList, null, 2));
 
       // SDK 데이터를 UI 형식으로 변환
       const transformedQuizList: QuizItem[] = sdkQuizList.map((quiz: any) => {
-        console.log('Quiz item:', quiz);
+        console.log("Quiz item:", quiz);
         return {
           id: quiz.id,
-          imageUrl: quiz.imageUrl || 'https://via.placeholder.com/240',
+          imageUrl: quiz.imageUrl || "https://via.placeholder.com/240",
           titleText: quiz.title,
-          rewardsText: quiz.point || '0 포인트', // point 필드 그대로 사용
+          rewardsText: quiz.point || "0 포인트", // point 필드 그대로 사용
           url: `https://quiz.adchain.com/${quiz.id}`, // 실제 URL은 SDK에서 제공될 예정
           isCompleted: quiz.isCompleted,
         };
@@ -127,7 +122,7 @@ const Quiz = () => {
       };
 
       // Update UI
-      setQuizItems(transformedQuizList.slice(0, quizListCount));
+      setQuizItems(transformedQuizList);
 
       if (!isBackgroundRefresh) {
         // Smooth fade in animation
@@ -138,9 +133,8 @@ const Quiz = () => {
           useNativeDriver: true,
         }).start();
       }
-
     } catch (error) {
-      console.error('Quiz load error:', error);
+      console.error("Quiz load error:", error);
       setNetworkError(true);
 
       if (!isBackgroundRefresh) {
@@ -150,7 +144,6 @@ const Quiz = () => {
     } finally {
       if (!isBackgroundRefresh) {
         setLoading(false);
-        setRefreshing(false);
       }
     }
   };
@@ -161,13 +154,13 @@ const Quiz = () => {
       if (quiz.id) {
         // SDK를 통해 퀴즈 클릭 이벤트 전송
         const result = await AdchainSdk.clickQuiz(QUIZ_UNIT_ID, quiz.id);
-        console.log('Quiz clicked:', result);
-        
+        console.log("Quiz clicked:", result);
+
         // 이벤트 리스너가 자동으로 처리하므로 여기서는 새로고침 하지 않음
         // loadQuizList()는 이벤트 리스너에서 처리됨
       }
     } catch (error) {
-      console.error('Quiz click error:', error);
+      console.error("Quiz click error:", error);
     }
   };
 
@@ -175,14 +168,13 @@ const Quiz = () => {
   const handleOpenOfferwall = async () => {
     try {
       const result = await AdchainSdk.openOfferwall();
-      console.log('Offerwall opened:', result);
+      console.log("Offerwall opened:", result);
     } catch (error) {
-      console.error('Offerwall error:', error);
+      console.error("Offerwall error:", error);
     }
   };
 
   const handleRefresh = () => {
-    setRefreshing(true);
     quizCache = null; // Invalidate cache on manual refresh
     loadQuizList();
   };
@@ -194,68 +186,28 @@ const Quiz = () => {
         <View style={styles.controlRow}>
           <Text style={styles.controlLabel}>Network Error:</Text>
           <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              networkError ? styles.toggleActive : styles.toggleInactive,
-            ]}
+            style={[styles.toggleButton, networkError ? styles.toggleActive : styles.toggleInactive]}
             onPress={() => setNetworkError(!networkError)}>
-            <Text style={styles.toggleText}>{networkError ? 'ON' : 'OFF'}</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.controlRow}>
-          <Text style={styles.controlLabel}>Network Error #2:</Text>
-          <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              networkError2 ? styles.toggleActive : styles.toggleInactive,
-            ]}
-            onPress={() => setNetworkError2(!networkError2)}>
-            <Text style={styles.toggleText}>
-              {networkError2 ? 'ON' : 'OFF'}
-            </Text>
+            <Text style={styles.toggleText}>{networkError ? "ON" : "OFF"}</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.controlRow}>
-          <Text style={styles.controlLabel}>Quiz List ({quizListCount}):</Text>
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity
-              style={[
-                styles.countButton,
-                quizListCount <= 0 && styles.buttonDisabled,
-              ]}
-              onPress={() => {
-                const newCount = Math.max(0, quizListCount - 1);
-                setQuizListCount(newCount);
-                loadQuizList();
-              }}
-              disabled={quizListCount <= 0}>
-              <Text style={styles.buttonText}>-</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.countButton,
-                quizListCount >= 5 && styles.buttonDisabled,
-              ]}
-              onPress={() => {
-                const newCount = Math.min(5, quizListCount + 1);
-                setQuizListCount(newCount);
-                loadQuizList();
-              }}
-              disabled={quizListCount >= 5}>
-              <Text style={styles.buttonText}>+</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.controlLabel}>Network Error #2:</Text>
+          <TouchableOpacity
+            style={[styles.toggleButton, networkError2 ? styles.toggleActive : styles.toggleInactive]}
+            onPress={() => setNetworkError2(!networkError2)}>
+            <Text style={styles.toggleText}>{networkError2 ? "ON" : "OFF"}</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
       {/* 퀴즈 모듈 */}
       <View style={styles.quizModuleContainer}>
         {showSkeleton ? (
-          <QuizSkeleton count={quizListCount} />
+          <QuizSkeleton count={2} />
         ) : (
-          <Animated.View style={{opacity: fadeAnim}}>
+          <Animated.View style={{ opacity: fadeAnim }}>
             <QuizModule
               titleText="데일리 1분 퀴즈"
               quizItems={quizItems}
@@ -269,7 +221,6 @@ const Quiz = () => {
           </Animated.View>
         )}
       </View>
-
     </View>
   );
 };
@@ -279,59 +230,59 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   controlsContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     padding: 16,
     borderRadius: 8,
     marginBottom: 20,
     gap: 12,
   },
   controlRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   controlLabel: {
     fontSize: 12,
-    fontWeight: '500',
-    color: '#333',
+    fontWeight: "500",
+    color: "#333",
   },
   toggleButton: {
     paddingHorizontal: 25,
     paddingVertical: 6,
     borderRadius: 6,
     minWidth: 60,
-    alignItems: 'center',
+    alignItems: "center",
   },
   toggleActive: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
   },
   toggleInactive: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
   },
   toggleText: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontWeight: "bold",
+    color: "#FFF",
   },
   buttonGroup: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   countButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     width: 32,
     height: 32,
     borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonDisabled: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontWeight: "bold",
+    color: "#FFF",
   },
 });
 
