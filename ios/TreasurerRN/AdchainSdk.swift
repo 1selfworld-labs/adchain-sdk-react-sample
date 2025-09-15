@@ -1,6 +1,6 @@
 import Foundation
 import React
-import AdchainSDK
+import AdChainSDK
 import UIKit
 
 @objc(AdchainSdk)
@@ -35,7 +35,7 @@ class AdchainSdkModule: RCTEventEmitter {
   @objc override static func requiresMainQueueSetup() -> Bool { true }
   
   override func supportedEvents() -> [String]! {
-    return ["onQuizCompleted", "onMissionCompleted"] // Quiz, Mission 완료 이벤트 지원
+    return ["onQuizCompleted", "onMissionCompleted", "onMissionProgressed"] // Quiz, Mission 이벤트 지원
   }
   
   // MARK: - 1. SDK 초기화
@@ -360,6 +360,15 @@ class AdchainSdkModule: RCTEventEmitter {
       func onCompleted(_ mission: Mission) {
         // React Native로 이벤트 전송
         module?.sendEvent(withName: "onMissionCompleted", body: [
+          "unitId": unitId,
+          "missionId": missionId,
+          "timestamp": Date().timeIntervalSince1970
+        ])
+      }
+
+      func onProgressed(_ mission: Mission) {
+        // React Native로 이벤트 전송 (missionCompleted와 동일한 구조)
+        module?.sendEvent(withName: "onMissionProgressed", body: [
           "unitId": unitId,
           "missionId": missionId,
           "timestamp": Date().timeIntervalSince1970

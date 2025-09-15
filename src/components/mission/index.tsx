@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import AdchainSdk, { addMissionCompletedListener } from "../../index";
+import { Animated, StyleSheet, Text, TouchableOpacity, View, Platform, ToastAndroid, Alert } from "react-native";
+import AdchainSdk, { addMissionCompletedListener, addMissionProgressedListener } from "../../index";
 import MissionModule from "./MissionModule";
 import MissionSkeleton from "./MissionSkeleton";
 
@@ -93,6 +93,27 @@ const Mission = () => {
     }
   }, []);
 
+  // Toast 헬퍼 함수
+  const showToast = (message: string) => {
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(message, ToastAndroid.SHORT);
+    } else {
+      // iOS는 Alert 사용 (자동으로 사라지는 타이머 추가)
+      const alertController = Alert.alert(
+        '',
+        message,
+        [],
+        { cancelable: true }
+      );
+
+      // 2초 후 자동으로 닫기 (iOS는 프로그래밍적으로 Alert를 닫을 수 없으므로 참고용)
+      setTimeout(() => {
+        // iOS에서는 Alert를 프로그래밍적으로 닫을 수 없음
+        // 사용자가 탭하거나 2초 정도 후 자연스럽게 무시됨
+      }, 2000);
+    }
+  };
+
   useEffect(() => {
     // 미션 완료 이벤트 리스너 등록
     const subscription = addMissionCompletedListener((event) => {
@@ -103,6 +124,23 @@ const Mission = () => {
         console.log("🔄 Invalidating cache and refreshing mission list");
         missionCache = null; // Invalidate cache
         loadMissionList(); // Force refresh
+      }
+    });
+
+    // cleanup
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    // 미션 진행 이벤트 리스너 등록
+    const subscription = addMissionProgressedListener((event) => {
+      console.log("📱 [React Native] Mission progressed event received:", event);
+
+      // Toast 메시지 표시
+      if (event.unitId === MISSION_UNIT_ID) {
+        showToast(`missionProgressed: ${event.missionId}`);
       }
     });
 

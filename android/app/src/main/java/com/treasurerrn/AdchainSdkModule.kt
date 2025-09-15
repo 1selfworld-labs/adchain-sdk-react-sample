@@ -342,6 +342,17 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
               putDouble("timestamp", System.currentTimeMillis().toDouble())
             })
         }
+
+        override fun onProgressed(mission: Mission) {
+          // React Native로 이벤트 전송 (missionCompleted와 동일한 구조)
+          reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit("onMissionProgressed", Arguments.createMap().apply {
+              putString("unitId", unitId)
+              putString("missionId", missionId)
+              putDouble("timestamp", System.currentTimeMillis().toDouble())
+            })
+        }
       })
       
       mission.clickMission(missionId)

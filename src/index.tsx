@@ -151,6 +151,10 @@ export function addMissionCompletedListener(callback: (event: { missionId: strin
   return adchainEventEmitter.addListener('onMissionCompleted', callback);
 }
 
+export function addMissionProgressedListener(callback: (event: { missionId: string; unitId: string }) => void) {
+  return adchainEventEmitter.addListener('onMissionProgressed', callback);
+}
+
 // ===== Export =====
 
 const sdk = new AdchainSDK();
