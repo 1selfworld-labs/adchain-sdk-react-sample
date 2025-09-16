@@ -122,9 +122,8 @@ const Mission = () => {
       if (event.unitId === MISSION_UNIT_ID) {
         console.log("🔄 Invalidating cache and refreshing mission list");
 
-        // 임시 주석 처리
-        // missionCache = null; // Invalidate cache
-        // loadMissionList(); // Force refresh
+        missionCache = null; // Invalidate cache
+        loadMissionList(); // Force refresh
       }
     });
 
