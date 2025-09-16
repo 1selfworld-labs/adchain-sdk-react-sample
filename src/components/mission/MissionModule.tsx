@@ -9,6 +9,7 @@ interface MissionItem {
   rewardsText: string;
   url: string;
   isCompleted?: boolean;
+  isInprogress?: boolean;
   type?: string;
 }
 
@@ -18,7 +19,6 @@ interface MissionModuleProps {
   currentMissionStep?: number;
   maxMissionStep?: number;
   missionList?: MissionItem[];
-  missionItems?: MissionItem[];
   missionStep?: number;
   missionColor?: string;
   ctaColor?: string;
@@ -40,7 +40,6 @@ const MissionModule = ({
   currentMissionStep,
   maxMissionStep,
   missionList,
-  missionItems,
   missionStep,
   missionColor = "#FF8000",
   ctaColor = "#FF8000",
@@ -56,7 +55,7 @@ const MissionModule = ({
   totalCount = 0,
 }: MissionModuleProps) => {
   // Use missionItems if provided, otherwise fall back to missionList
-  const missions = missionItems || missionList || [];
+  const missions = missionList || [];
   const currentStep = missionStep ?? currentMissionStep ?? 0;
   const maxStep = totalCount || maxMissionStep || 3;
 
@@ -200,7 +199,7 @@ const MissionModule = ({
                   </View>
                   <View style={[styles.ctaButton, { backgroundColor: item.isCompleted ? "#4CAF50" : ctaColor }]}>
                     <Text style={[styles.ctaButtonText, { color: "#FFFFFF" }]}>
-                      {item.isCompleted ? "완료됨" : item.rewardsText}
+                      {item.isInprogress ? "참여중" : item.isCompleted ? "완료됨" : item.rewardsText}
                     </Text>
                   </View>
                 </View>

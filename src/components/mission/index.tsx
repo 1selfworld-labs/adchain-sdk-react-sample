@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Animated, StyleSheet, Text, TouchableOpacity, View, Platform, ToastAndroid, Alert } from "react-native";
+import { Alert, Animated, Platform, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import AdchainSdk, { addMissionCompletedListener, addMissionProgressedListener } from "../../index";
 import MissionModule from "./MissionModule";
 import MissionSkeleton from "./MissionSkeleton";
@@ -32,6 +32,7 @@ interface MissionItem {
   rewardsText: string;
   url: string;
   isCompleted?: boolean;
+  isInprogress?: boolean;
   type?: string;
 }
 
@@ -71,6 +72,7 @@ const Mission = () => {
 
   // Initial load with cache check
   useEffect(() => {
+    console.log("🔄 Mission useEffect");
     if (isCacheValid() && missionCache) {
       // Use cached data immediately
       setMissionItems(missionCache.data);
@@ -85,26 +87,23 @@ const Mission = () => {
 
       // Background refresh if cache is getting old (>2 minutes)
       if (Date.now() - missionCache.timestamp > 2 * 60 * 1000) {
+        console.log("🔄 Background refresh if cache is getting old (>2 minutes)");
         loadMissionList(true); // Silent background refresh
       }
     } else {
       // Load fresh data
+      console.log("🔄 Load fresh data");
       loadMissionList();
     }
   }, []);
 
   // Toast 헬퍼 함수
   const showToast = (message: string) => {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
       ToastAndroid.show(message, ToastAndroid.SHORT);
     } else {
       // iOS는 Alert 사용 (자동으로 사라지는 타이머 추가)
-      const alertController = Alert.alert(
-        '',
-        message,
-        [],
-        { cancelable: true }
-      );
+      const alertController = Alert.alert("", message, [], { cancelable: true });
 
       // 2초 후 자동으로 닫기 (iOS는 프로그래밍적으로 Alert를 닫을 수 없으므로 참고용)
       setTimeout(() => {
@@ -115,15 +114,17 @@ const Mission = () => {
   };
 
   useEffect(() => {
-    // 미션 완료 이벤트 리스너 등록
+    // 미션 참여 이벤트 리스너 등록
     const subscription = addMissionCompletedListener((event) => {
       console.log("📱 [React Native] Mission completed event received:", event);
 
       // 해당 unit의 미션인 경우 캐시 무효화 후 새로고침
       if (event.unitId === MISSION_UNIT_ID) {
         console.log("🔄 Invalidating cache and refreshing mission list");
-        missionCache = null; // Invalidate cache
-        loadMissionList(); // Force refresh
+
+        // 임시 주석 처리
+        // missionCache = null; // Invalidate cache
+        // loadMissionList(); // Force refresh
       }
     });
 
@@ -137,10 +138,15 @@ const Mission = () => {
     // 미션 진행 이벤트 리스너 등록
     const subscription = addMissionProgressedListener((event) => {
       console.log("📱 [React Native] Mission progressed event received:", event);
+      // 1) 함수형 setState로 최신 상태 기반 갱신
+      setMissionItems((prev) => prev.map((item) => (item.id === event.missionId ? { ...item, isInprogress: true } : item)));
 
-      // Toast 메시지 표시
-      if (event.unitId === MISSION_UNIT_ID) {
-        showToast(`missionProgressed: ${event.missionId}`);
+      // 2) 캐시까지 동기화(있을 때만)
+      if (missionCache?.data) {
+        missionCache = {
+          ...missionCache,
+          data: missionCache.data.map((item) => (item.id === event.missionId ? { ...item, isInprogress: true } : item)),
+        };
       }
     });
 
@@ -173,6 +179,7 @@ const Mission = () => {
         rewardsText: mission.point || "0 포인트", // point 필드 사용
         url: mission.actionUrl || `https://mission.adchain.com/${mission.id}`,
         isCompleted: mission.isCompleted,
+        isInprogress: mission.isInprogress || false,
         type: mission.type,
       }));
 
