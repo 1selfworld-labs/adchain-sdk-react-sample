@@ -1,7 +1,6 @@
 package com.treasurerrn
 
 import android.app.Application
-import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
@@ -9,18 +8,21 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
+import com.facebook.react.shell.MainReactPackage
 import com.facebook.soloader.SoLoader
 
 class MainApplication : Application(), ReactApplication {
 
   override val reactNativeHost: ReactNativeHost =
       object : DefaultReactNativeHost(this) {
-        override fun getPackages(): List<ReactPackage> =
-            PackageList(this).packages.apply {
-              // Packages that cannot be autolinked yet can be added manually here, for example:
-              // add(MyReactNativePackage())
-              add(AdchainSdkPackage())
-            }
+        override fun getPackages(): List<ReactPackage> {
+            // Android Studio를 위한 간소화된 패키지 등록
+            // 다른 네이티브 모듈들은 필요시 추가
+            val packages = mutableListOf<ReactPackage>()
+            packages.add(MainReactPackage())
+            packages.add(AdchainSdkPackage())
+            return packages
+        }
 
         override fun getJSMainModuleName(): String = "index"
 

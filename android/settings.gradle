@@ -1,8 +1,10 @@
 rootProject.name = 'TreasurerRN'
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+// React Native 자동 링킹 제거 - Android Studio 호환성 문제
+// apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-// AdChain SDK 로컬 모듈 추가
-include ':adchain-sdk'
-project(':adchain-sdk').projectDir = new File(rootProject.projectDir, '../../adchain-sdk-android/adchain-sdk')
+
+// AdChain SDK 로컬 모듈 추가 (주석처리 - JitPack 사용)
+// include ':adchain-sdk'
+// project(':adchain-sdk').projectDir = new File(rootProject.projectDir, '../../adchain-sdk-android/adchain-sdk')
