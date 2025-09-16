@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AdchainSdk, { addQuizCompletedListener } from "../../index";
+import Banner from "../banner";
 import QuizModule from "./QuizModule";
 import QuizSkeleton from "./QuizSkeleton";
 
@@ -37,7 +38,11 @@ interface QuizCache {
 // Global cache store
 let quizCache: QuizCache | null = null;
 
-const Quiz = () => {
+interface IProps {
+  isLoggedIn: boolean;
+}
+
+const Quiz = ({ isLoggedIn }: IProps) => {
   const [networkError, setNetworkError] = useState(false);
   const [networkError2, setNetworkError2] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -220,6 +225,7 @@ const Quiz = () => {
             />
           </Animated.View>
         )}
+        {isLoggedIn && <Banner imageUrl={""} onOpenBanner={handleOpenOfferwall} />}
       </View>
     </View>
   );
@@ -228,6 +234,7 @@ const Quiz = () => {
 const styles = StyleSheet.create({
   quizModuleContainer: {
     paddingVertical: 20,
+    gap: 50,
   },
   controlsContainer: {
     backgroundColor: "#ffffff",
