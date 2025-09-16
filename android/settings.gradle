@@ -2,3 +2,7 @@ rootProject.name = 'TreasurerRN'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
+
+// AdChain SDK 로컬 모듈 추가
+include ':adchain-sdk'
+project(':adchain-sdk').projectDir = new File(rootProject.projectDir, '../../adchain-sdk-android/adchain-sdk')

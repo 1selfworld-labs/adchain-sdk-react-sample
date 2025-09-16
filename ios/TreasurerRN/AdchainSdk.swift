@@ -1,6 +1,6 @@
 import Foundation
 import React
-import AdChainSDK
+import AdchainSDK
 import UIKit
 
 @objc(AdchainSdk)

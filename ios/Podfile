@@ -22,8 +22,8 @@ target 'TreasurerRN' do
   )
   
   # AdChain SDK - Remote repository
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.12'
-  # pod 'AdChainSDK', :path => '../../adchain-sdk-ios'  # 로컬 디버깅용 (주석 처리)
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.15'
+  #pod 'AdchainSDK', :path => '../../adchain-sdk-ios'  # 로컬 디버깅용 (주석 처리)
 
   target 'TreasurerRNTests' do
     inherit! :complete
