@@ -1,14 +1,6 @@
 import React from "react";
 import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-interface QuizItem {
-  id?: string;
-  imageUrl: string;
-  titleText: string;
-  rewardsText: string;
-  url: string;
-  isCompleted?: boolean;
-}
+import { QuizItem } from "../../interface/quiz";
 
 interface QuizModuleProps {
   titleText?: string;

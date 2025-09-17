@@ -1,17 +1,6 @@
 import React, { Fragment } from "react";
 import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-interface MissionItem {
-  id?: string;
-  imageUrl: string;
-  brandText: string;
-  titleText: string;
-  rewardsText: string;
-  url: string;
-  isCompleted?: boolean;
-  isInprogress?: boolean;
-  type?: string;
-}
+import { MissionItem } from "../../interface/mission";
 
 interface MissionModuleProps {
   titleText?: string;

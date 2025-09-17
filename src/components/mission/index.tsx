@@ -1,40 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Animated, Platform, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import AdchainSdk, { addMissionCompletedListener, addMissionProgressedListener } from "../../index";
+import { MissionItem } from "../../interface/mission";
 import MissionModule from "./MissionModule";
 import MissionSkeleton from "./MissionSkeleton";
-
-// SDK Mission 타입
-interface SdkMission {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  point: string; // "150 포인트" 형태로 오는 문자열
-  isCompleted: boolean;
-  type: string;
-  actionUrl: string;
-}
-
-interface SdkMissionListResponse {
-  missions: SdkMission[];
-  completedCount: number;
-  totalCount: number;
-  canClaimReward: boolean;
-}
-
-// UI Mission 타입
-interface MissionItem {
-  id?: string;
-  imageUrl: string;
-  brandText: string;
-  titleText: string;
-  rewardsText: string;
-  url: string;
-  isCompleted?: boolean;
-  isInprogress?: boolean;
-  type?: string;
-}
 
 const MISSION_UNIT_ID = "mission_unit_001"; // Mission Unit ID
 

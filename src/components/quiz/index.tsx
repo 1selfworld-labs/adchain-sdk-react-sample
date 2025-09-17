@@ -1,31 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AdchainSdk, { addQuizCompletedListener } from "../../index";
+import { BannerInfo } from "../../interface/banner";
+import { QuizItem } from "../../interface/quiz";
 import Banner from "../banner";
 import QuizModule from "./QuizModule";
 import QuizSkeleton from "./QuizSkeleton";
 
-// SDK Quiz 타입
-interface SdkQuizItem {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  point: string; // "1포인트" 형태로 오는 문자열
-  isCompleted: boolean;
-}
-
 // UI Quiz 타입
-interface QuizItem {
-  id?: string;
-  imageUrl: string;
-  titleText: string;
-  rewardsText: string;
-  url: string;
-  isCompleted?: boolean;
-}
 
 const QUIZ_UNIT_ID = "quiz_unit_001"; // Quiz Unit ID
+const BANNER_UNIT_ID = "banner_unit_001"; // Banner Unit ID
 
 // Cache duration: 5 minutes
 const CACHE_DURATION = 5 * 60 * 1000;
@@ -48,11 +33,18 @@ const Quiz = ({ isLoggedIn }: IProps) => {
   const [loading, setLoading] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(true);
   const [quizItems, setQuizItems] = useState<QuizItem[]>([]);
+  const [bannerInfo, setBannerInfo] = useState<BannerInfo | null>(null);
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
   // Cache validation
   const isCacheValid = () => {
     return quizCache && Date.now() - quizCache.timestamp < CACHE_DURATION;
+  };
+
+  const getBannerInfo = async () => {
+    const bannerInfo = await AdchainSdk.getBannerInfo(BANNER_UNIT_ID);
+    setBannerInfo(bannerInfo);
+    console.log("Banner info:", bannerInfo);
   };
 
   // Initial load with cache check
@@ -69,6 +61,7 @@ const Quiz = ({ isLoggedIn }: IProps) => {
         loadQuizList(true); // Silent background refresh
       }
     }
+    getBannerInfo();
     loadQuizList();
   }, []);
 
@@ -225,7 +218,7 @@ const Quiz = ({ isLoggedIn }: IProps) => {
             />
           </Animated.View>
         )}
-        {isLoggedIn && <Banner imageUrl={""} onOpenBanner={handleOpenOfferwall} />}
+        {isLoggedIn && bannerInfo && <Banner bannerInfo={bannerInfo} />}
       </View>
     </View>
   );

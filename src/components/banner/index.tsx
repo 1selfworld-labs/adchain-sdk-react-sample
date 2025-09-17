@@ -1,15 +1,15 @@
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { BannerInfo } from "../../interface/banner";
 
 interface BannerProps {
-  imageUrl?: string;
-  onOpenBanner: () => void;
+  bannerInfo: BannerInfo;
 }
 
-const Banner = ({ imageUrl, onOpenBanner }: BannerProps) => {
+const Banner = ({ bannerInfo }: BannerProps) => {
   return (
-    <TouchableOpacity style={styles.banner} onPress={onOpenBanner}>
+    <TouchableOpacity style={styles.banner} onPress={() => {}}>
       <Image
-        source={imageUrl ? { uri: imageUrl } : require("../../assets/images/img_empty_quiz.png")}
+        source={bannerInfo?.imageUrl ? { uri: bannerInfo.imageUrl } : require("../../assets/images/img_empty_quiz.png")}
         style={styles.bannerImage}
       />
     </TouchableOpacity>
