@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import { Colors } from "react-native/Libraries/NewAppScreen";
+import LoginForm from "./src/components/LoginForm";
 import TabNavigation from "./src/components/TabNavigation";
 
 // SDK import
@@ -28,10 +29,11 @@ function App(): React.JSX.Element {
   const [sdkInitialized, setSdkInitialized] = useState(false);
   const [sdkError, setSdkError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [debugInfo, setDebugInfo] = useState({
-    userId: '',
-    ifa: '',
-    isInitialized: false
+    userId: "",
+    ifa: "",
+    isInitialized: false,
   });
 
   const backgroundStyle = {
@@ -71,18 +73,9 @@ function App(): React.JSX.Element {
       // SDK 초기화 완료를 위해 잠시 대기
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // 자동 로그인 처리
-      const userId = "test_user_" + Math.random().toString(36).substr(2, 9);
+      // 로그인 상태 확인
       const loggedIn = await AdchainSdk.isLoggedIn();
-
-      if (!loggedIn) {
-        await AdchainSdk.login({
-          userId: userId,
-          gender: "MALE",
-          birthYear: 1990,
-        });
-        console.log("AdchainSDK logged in with userId:", userId);
-      }
+      setIsLoggedIn(loggedIn);
 
       setSdkInitialized(true);
     } catch (error) {
@@ -93,34 +86,51 @@ function App(): React.JSX.Element {
     }
   };
 
+  const handleLogin = async (userId: string, gender: "MALE" | "FEMALE", birthYear: number) => {
+    setIsLoggingIn(true);
+    try {
+      await AdchainSdk.login({
+        userId,
+        gender,
+        birthYear,
+      });
+      console.log("AdchainSDK logged in with userId:", userId);
+      setIsLoggedIn(true);
+
+      // 로그인 후 디버그 정보 갱신
+      await fetchDebugInfo();
+    } catch (error) {
+      console.error("Login error:", error);
+      setSdkError(error?.message || "로그인 실패");
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const fetchDebugInfo = async () => {
+    try {
+      // 디버깅 정보 수집
+      const [userId, ifa, isInit] = await Promise.all([
+        AdchainSdk.getUserId(),
+        AdchainSdk.getIFA(),
+        AdchainSdk.isInitialized(),
+      ]);
+
+      setDebugInfo({
+        userId: userId || "Not logged in",
+        ifa: ifa || "Not available",
+        isInitialized: isInit,
+      });
+    } catch (error) {
+      console.error("Error fetching debug info:", error);
+    }
+  };
+
   useEffect(() => {
     if (sdkInitialized) {
-      // 로그인 상태 체크 및 디버깅 정보 수집
-      const fetchDebugInfo = async () => {
-        try {
-          const loggedIn = await AdchainSdk.isLoggedIn();
-          setIsLoggedIn(loggedIn);
-
-          // 디버깅 정보 수집
-          const [userId, ifa, isInit] = await Promise.all([
-            AdchainSdk.getUserId(),
-            AdchainSdk.getIFA(),
-            AdchainSdk.isInitialized()
-          ]);
-
-          setDebugInfo({
-            userId: userId || 'Not logged in',
-            ifa: ifa || 'Not available',
-            isInitialized: isInit
-          });
-        } catch (error) {
-          console.error('Error fetching debug info:', error);
-        }
-      };
-
       fetchDebugInfo();
     }
-  }, [sdkInitialized]);
+  }, [sdkInitialized, isLoggedIn]);
 
   if (!sdkInitialized) {
     return (
@@ -137,15 +147,19 @@ function App(): React.JSX.Element {
         barStyle={"dark-content"} // 항상 어두운 아이콘 (흰 배경용)
         backgroundColor={backgroundStyle.backgroundColor}
       />
+      {sdkError && (
+        <View style={styles.errorBanner}>
+          <Text style={styles.errorText}>⚠️ {sdkError}</Text>
+        </View>
+      )}
+
       <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
         <View style={styles.container}>
-          {sdkError && (
-            <View style={styles.errorBanner}>
-              <Text style={styles.errorText}>⚠️ {sdkError}</Text>
-            </View>
+          {!isLoggedIn ? (
+            <LoginForm onLogin={handleLogin} isLoading={isLoggingIn} />
+          ) : (
+            <TabNavigation isLoggedIn={isLoggedIn} />
           )}
-          <TabNavigation isLoggedIn={isLoggedIn} />
-
           {/* Debug Information Panel */}
           <View style={styles.debugPanel}>
             <Text style={styles.debugTitle}>🔧 Debug Info</Text>
@@ -159,8 +173,8 @@ function App(): React.JSX.Element {
             </View>
             <View style={styles.debugRow}>
               <Text style={styles.debugLabel}>SDK Initialized:</Text>
-              <Text style={[styles.debugValue, { color: debugInfo.isInitialized ? '#4CAF50' : '#F44336' }]}>
-                {debugInfo.isInitialized ? '✓ Yes' : '✗ No'}
+              <Text style={[styles.debugValue, { color: debugInfo.isInitialized ? "#4CAF50" : "#F44336" }]}>
+                {debugInfo.isInitialized ? "✓ Yes" : "✗ No"}
               </Text>
             </View>
           </View>
@@ -195,6 +209,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 10,
     borderRadius: 8,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
   },
   errorText: {
     color: "#D32F2F",
@@ -243,7 +262,7 @@ const styles = StyleSheet.create({
     color: "#333",
     flex: 2,
     textAlign: "right",
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
 });
 
