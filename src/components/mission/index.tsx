@@ -59,11 +59,8 @@ const Mission = () => {
         console.log("🔄 Background refresh if cache is getting old (>2 minutes)");
         loadMissionList(true); // Silent background refresh
       }
-    } else {
-      // Load fresh data
-      console.log("🔄 Load fresh data");
-      loadMissionList();
     }
+    loadMissionList();
   }, []);
 
   // Toast 헬퍼 함수
