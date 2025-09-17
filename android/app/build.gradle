@@ -111,7 +111,7 @@ dependencies {
     // AdChain SDK - 로컬 모듈 참조
     // implementation project(':adchain-sdk')
 
-    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.12'
+    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.13'
     // AdChain SDK dependencies
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"

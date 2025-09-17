@@ -8,13 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* TreasurerRNTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TreasurerRNTests.m */; };
-		035E5D82780399CE66E0EE1C /* Pods_TreasurerRN_TreasurerRNTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74E7553C1771FE02FD9CEA4D /* Pods_TreasurerRN_TreasurerRNTests.framework */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		31827B7C540E98F56B43663A /* Pods_TreasurerRN.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 506E1E1131A0F133FA81B502 /* Pods_TreasurerRN.framework */; };
+		69E755457C508F6064827D73 /* Pods_TreasurerRN.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393A2F29377179C17115816A /* Pods_TreasurerRN.framework */; };
 		725855D22E6ED63B0045E37D /* AdchainSdk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725855D12E6ED63B0045E37D /* AdchainSdk.swift */; };
 		725855D52E6ED6790045E37D /* AdchainSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = 725855D32E6ED6790045E37D /* AdchainSdk.m */; };
+		72BE40E39B38E45CEFF23D21 /* Pods_TreasurerRN_TreasurerRNTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99CE7C18948273D570C60517 /* Pods_TreasurerRN_TreasurerRNTests.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -39,17 +39,17 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TreasurerRN/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = TreasurerRN/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = TreasurerRN/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		506E1E1131A0F133FA81B502 /* Pods_TreasurerRN.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TreasurerRN.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		70043A13DC9DAEC1A06063CD /* Pods-TreasurerRN.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN.release.xcconfig"; path = "Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN.release.xcconfig"; sourceTree = "<group>"; };
+		199598D17B492FE2942A631F /* Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig"; path = "Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig"; sourceTree = "<group>"; };
+		393A2F29377179C17115816A /* Pods_TreasurerRN.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TreasurerRN.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59FCF75701BC3F0717826C12 /* Pods-TreasurerRN.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN.release.xcconfig"; path = "Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN.release.xcconfig"; sourceTree = "<group>"; };
 		725855D12E6ED63B0045E37D /* AdchainSdk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AdchainSdk.swift; path = TreasurerRN/AdchainSdk.swift; sourceTree = "<group>"; };
 		725855D32E6ED6790045E37D /* AdchainSdk.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AdchainSdk.m; path = TreasurerRN/AdchainSdk.m; sourceTree = "<group>"; };
 		725855D62E6ED8110045E37D /* TreasurerRN-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "TreasurerRN-Bridging-Header.h"; path = "TreasurerRN/TreasurerRN-Bridging-Header.h"; sourceTree = "<group>"; };
-		74E7553C1771FE02FD9CEA4D /* Pods_TreasurerRN_TreasurerRNTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TreasurerRN_TreasurerRNTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TreasurerRN/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		A75337BD72A8D19D5F0A4DB8 /* Pods-TreasurerRN-TreasurerRNTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN-TreasurerRNTests.release.xcconfig"; path = "Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests.release.xcconfig"; sourceTree = "<group>"; };
-		D3A2E210B0BEAB45886368D4 /* Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig"; path = "Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig"; sourceTree = "<group>"; };
+		88E73EE4F77A9F52997E33B2 /* Pods-TreasurerRN.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN.debug.xcconfig"; path = "Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN.debug.xcconfig"; sourceTree = "<group>"; };
+		99CE7C18948273D570C60517 /* Pods_TreasurerRN_TreasurerRNTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TreasurerRN_TreasurerRNTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F81A3EE727926681DC0BCD86 /* Pods-TreasurerRN.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN.debug.xcconfig"; path = "Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN.debug.xcconfig"; sourceTree = "<group>"; };
+		FA94A388EF46DCC154637A3E /* Pods-TreasurerRN-TreasurerRNTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN-TreasurerRNTests.release.xcconfig"; path = "Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				035E5D82780399CE66E0EE1C /* Pods_TreasurerRN_TreasurerRNTests.framework in Frameworks */,
+				72BE40E39B38E45CEFF23D21 /* Pods_TreasurerRN_TreasurerRNTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,7 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				31827B7C540E98F56B43663A /* Pods_TreasurerRN.framework in Frameworks */,
+				69E755457C508F6064827D73 /* Pods_TreasurerRN.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,8 +110,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				506E1E1131A0F133FA81B502 /* Pods_TreasurerRN.framework */,
-				74E7553C1771FE02FD9CEA4D /* Pods_TreasurerRN_TreasurerRNTests.framework */,
+				393A2F29377179C17115816A /* Pods_TreasurerRN.framework */,
+				99CE7C18948273D570C60517 /* Pods_TreasurerRN_TreasurerRNTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -150,10 +150,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				F81A3EE727926681DC0BCD86 /* Pods-TreasurerRN.debug.xcconfig */,
-				70043A13DC9DAEC1A06063CD /* Pods-TreasurerRN.release.xcconfig */,
-				D3A2E210B0BEAB45886368D4 /* Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig */,
-				A75337BD72A8D19D5F0A4DB8 /* Pods-TreasurerRN-TreasurerRNTests.release.xcconfig */,
+				88E73EE4F77A9F52997E33B2 /* Pods-TreasurerRN.debug.xcconfig */,
+				59FCF75701BC3F0717826C12 /* Pods-TreasurerRN.release.xcconfig */,
+				199598D17B492FE2942A631F /* Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig */,
+				FA94A388EF46DCC154637A3E /* Pods-TreasurerRN-TreasurerRNTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -165,12 +165,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "TreasurerRNTests" */;
 			buildPhases = (
-				59109925AA6AF36DD4B075DF /* [CP] Check Pods Manifest.lock */,
+				8105EA0AB91A88ABD5F4981A /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				0D3A805BEDB9B53EC3BC5179 /* [CP] Embed Pods Frameworks */,
-				C1106F130625355DAF80247C /* [CP] Copy Pods Resources */,
+				07D418A7609EC139F5C50ACF /* [CP] Embed Pods Frameworks */,
+				9DA41D938D0AE7B3E4092A4E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -186,13 +186,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TreasurerRN" */;
 			buildPhases = (
-				D9FD36667B0B7E3CA2AF8D96 /* [CP] Check Pods Manifest.lock */,
+				24B6511CA63D3022EC27E45E /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				14C1A9F05E3E88510E9FF706 /* [CP] Embed Pods Frameworks */,
-				ECF90CC5C98EC3C560936009 /* [CP] Copy Pods Resources */,
+				DD9D4D76DD7E4F4F6259A850 /* [CP] Embed Pods Frameworks */,
+				2F175026571B37CAE908734F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -275,7 +275,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		0D3A805BEDB9B53EC3BC5179 /* [CP] Embed Pods Frameworks */ = {
+		07D418A7609EC139F5C50ACF /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -292,63 +292,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		14C1A9F05E3E88510E9FF706 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		59109925AA6AF36DD4B075DF /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TreasurerRN-TreasurerRNTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C1106F130625355DAF80247C /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D9FD36667B0B7E3CA2AF8D96 /* [CP] Check Pods Manifest.lock */ = {
+		24B6511CA63D3022EC27E45E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -370,7 +314,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		ECF90CC5C98EC3C560936009 /* [CP] Copy Pods Resources */ = {
+		2F175026571B37CAE908734F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -385,6 +329,62 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8105EA0AB91A88ABD5F4981A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TreasurerRN-TreasurerRNTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9DA41D938D0AE7B3E4092A4E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DD9D4D76DD7E4F4F6259A850 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -422,7 +422,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D3A2E210B0BEAB45886368D4 /* Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig */;
+			baseConfigurationReference = 199598D17B492FE2942A631F /* Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -449,7 +449,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A75337BD72A8D19D5F0A4DB8 /* Pods-TreasurerRN-TreasurerRNTests.release.xcconfig */;
+			baseConfigurationReference = FA94A388EF46DCC154637A3E /* Pods-TreasurerRN-TreasurerRNTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -473,7 +473,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F81A3EE727926681DC0BCD86 /* Pods-TreasurerRN.debug.xcconfig */;
+			baseConfigurationReference = 88E73EE4F77A9F52997E33B2 /* Pods-TreasurerRN.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -503,7 +503,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 70043A13DC9DAEC1A06063CD /* Pods-TreasurerRN.release.xcconfig */;
+			baseConfigurationReference = 59FCF75701BC3F0717826C12 /* Pods-TreasurerRN.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

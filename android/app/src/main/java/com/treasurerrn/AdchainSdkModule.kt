@@ -376,8 +376,66 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
     }
   }
 
-  // ===== 5. Offerwall (1개) =====
-  
+  // ===== 5. Debug/Utility Methods (3개) =====
+
+  @ReactMethod
+  fun isInitialized(promise: Promise) {
+    try {
+      promise.resolve(AdchainSdk.isInitialized())
+    } catch (t: Throwable) {
+      promise.reject("ERROR", t.message, t)
+    }
+  }
+
+  @ReactMethod
+  fun getUserId(promise: Promise) {
+    try {
+      val userId = AdchainSdk.getCurrentUser()?.userId ?: ""
+      promise.resolve(userId)
+    } catch (t: Throwable) {
+      promise.reject("ERROR", t.message, t)
+    }
+  }
+
+  @ReactMethod
+  fun getIFA(promise: Promise) {
+    try {
+      val context = reactContext.applicationContext
+      val ifa = com.adchain.sdk.utils.DeviceUtils.getAdvertisingIdSync(context) ?: ""
+      promise.resolve(ifa)
+    } catch (t: Throwable) {
+      promise.reject("ERROR", t.message, t)
+    }
+  }
+
+  // ===== 6. Banner (1개) =====
+
+  @ReactMethod
+  fun getBannerInfo(placementId: String, promise: Promise) {
+    try {
+      AdchainSdk.getBannerInfo(placementId) { result ->
+        if (result.isSuccess) {
+          val response = result.getOrNull()
+          val map = Arguments.createMap().apply {
+            putBoolean("success", response?.success ?: false)
+            putString("imageUrl", response?.imageUrl)
+            putString("titleText", response?.titleText)
+            putString("linkType", response?.linkType)
+            putString("internalLinkUrl", response?.internalLinkUrl)
+            putString("externalLinkUrl", response?.externalLinkUrl)
+          }
+          promise.resolve(map)
+        } else {
+          promise.reject("BANNER_ERROR", result.exceptionOrNull()?.message)
+        }
+      }
+    } catch (t: Throwable) {
+      promise.reject("BANNER_ERROR", t.message, t)
+    }
+  }
+
+  // ===== 7. Offerwall (1개) =====
+
   @ReactMethod
   fun openOfferwall(promise: Promise) {
     try {

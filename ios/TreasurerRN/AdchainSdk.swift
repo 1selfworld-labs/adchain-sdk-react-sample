@@ -418,8 +418,50 @@ class AdchainSdkModule: RCTEventEmitter {
     }
   }
   
-  // MARK: - 5. Offerwall (1개)
-  
+  // MARK: - 5. Debug/Utility Methods (3개)
+
+  @objc func isInitialized(_ resolver: @escaping RCTPromiseResolveBlock,
+                          rejecter: @escaping RCTPromiseRejectBlock) {
+    resolver(AdchainSdk.shared.isInitialized())
+  }
+
+  @objc func getUserId(_ resolver: @escaping RCTPromiseResolveBlock,
+                       rejecter: @escaping RCTPromiseRejectBlock) {
+    let userId = AdchainSdk.shared.getCurrentUser()?.userId ?? ""
+    resolver(userId)
+  }
+
+  @objc func getIFA(_ resolver: @escaping RCTPromiseResolveBlock,
+                    rejecter: @escaping RCTPromiseRejectBlock) {
+    let defaults = UserDefaults.standard
+    let ifa = defaults.string(forKey: "advertising_id") ?? ""
+    resolver(ifa)
+  }
+
+  // MARK: - 6. Banner (1개)
+
+  @objc func getBannerInfo(_ placementId: String,
+                          resolver: @escaping RCTPromiseResolveBlock,
+                          rejecter: @escaping RCTPromiseRejectBlock) {
+    AdchainSdk.shared.getBannerInfo(placementId: placementId) { result in
+      switch result {
+      case .success(let response):
+        resolver([
+          "success": response.success,
+          "imageUrl": response.imageUrl as Any,
+          "titleText": response.titleText as Any,
+          "linkType": response.linkType as Any,
+          "internalLinkUrl": response.internalLinkUrl as Any,
+          "externalLinkUrl": response.externalLinkUrl as Any
+        ])
+      case .failure(let error):
+        rejecter("BANNER_ERROR", error.localizedDescription, error)
+      }
+    }
+  }
+
+  // MARK: - 7. Offerwall (1개)
+
   @objc func openOfferwall(_ resolver: @escaping RCTPromiseResolveBlock,
                           rejecter: @escaping RCTPromiseRejectBlock) {
     class OfferwallCallbackImpl: NSObject, OfferwallCallback {

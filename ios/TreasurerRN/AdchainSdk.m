@@ -49,7 +49,22 @@ RCT_EXTERN_METHOD(claimReward:(NSString *)unitId
                   resolver:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
 
-// 5. Offerwall (1개)
+// 5. Debug/Utility Methods (3개)
+RCT_EXTERN_METHOD(isInitialized:(RCTPromiseResolveBlock)resolver
+                  rejecter:(RCTPromiseRejectBlock)rejecter)
+
+RCT_EXTERN_METHOD(getUserId:(RCTPromiseResolveBlock)resolver
+                  rejecter:(RCTPromiseRejectBlock)rejecter)
+
+RCT_EXTERN_METHOD(getIFA:(RCTPromiseResolveBlock)resolver
+                  rejecter:(RCTPromiseRejectBlock)rejecter)
+
+// 6. Banner (1개)
+RCT_EXTERN_METHOD(getBannerInfo:(NSString *)placementId
+                  resolver:(RCTPromiseResolveBlock)resolver
+                  rejecter:(RCTPromiseRejectBlock)rejecter)
+
+// 7. Offerwall (1개)
 RCT_EXTERN_METHOD(openOfferwall:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
 

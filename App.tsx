@@ -28,6 +28,11 @@ function App(): React.JSX.Element {
   const [sdkInitialized, setSdkInitialized] = useState(false);
   const [sdkError, setSdkError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [debugInfo, setDebugInfo] = useState({
+    userId: '',
+    ifa: '',
+    isInitialized: false
+  });
 
   const backgroundStyle = {
     backgroundColor: Colors.lighter, // 항상 흰색 배경
@@ -90,9 +95,30 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     if (sdkInitialized) {
-      AdchainSdk.isLoggedIn().then((loggedIn) => {
-        setIsLoggedIn(loggedIn);
-      });
+      // 로그인 상태 체크 및 디버깅 정보 수집
+      const fetchDebugInfo = async () => {
+        try {
+          const loggedIn = await AdchainSdk.isLoggedIn();
+          setIsLoggedIn(loggedIn);
+
+          // 디버깅 정보 수집
+          const [userId, ifa, isInit] = await Promise.all([
+            AdchainSdk.getUserId(),
+            AdchainSdk.getIFA(),
+            AdchainSdk.isInitialized()
+          ]);
+
+          setDebugInfo({
+            userId: userId || 'Not logged in',
+            ifa: ifa || 'Not available',
+            isInitialized: isInit
+          });
+        } catch (error) {
+          console.error('Error fetching debug info:', error);
+        }
+      };
+
+      fetchDebugInfo();
     }
   }, [sdkInitialized]);
 
@@ -119,6 +145,25 @@ function App(): React.JSX.Element {
             </View>
           )}
           <TabNavigation isLoggedIn={isLoggedIn} />
+
+          {/* Debug Information Panel */}
+          <View style={styles.debugPanel}>
+            <Text style={styles.debugTitle}>🔧 Debug Info</Text>
+            <View style={styles.debugRow}>
+              <Text style={styles.debugLabel}>User ID:</Text>
+              <Text style={styles.debugValue}>{debugInfo.userId}</Text>
+            </View>
+            <View style={styles.debugRow}>
+              <Text style={styles.debugLabel}>IFA (Ad ID):</Text>
+              <Text style={styles.debugValue}>{debugInfo.ifa}</Text>
+            </View>
+            <View style={styles.debugRow}>
+              <Text style={styles.debugLabel}>SDK Initialized:</Text>
+              <Text style={[styles.debugValue, { color: debugInfo.isInitialized ? '#4CAF50' : '#F44336' }]}>
+                {debugInfo.isInitialized ? '✓ Yes' : '✗ No'}
+              </Text>
+            </View>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -155,6 +200,50 @@ const styles = StyleSheet.create({
     color: "#D32F2F",
     fontSize: 14,
     textAlign: "center",
+  },
+  debugPanel: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 20,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  debugTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 12,
+    color: "#333",
+  },
+  debugRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+  },
+  debugLabel: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#666",
+    flex: 1,
+  },
+  debugValue: {
+    fontSize: 14,
+    color: "#333",
+    flex: 2,
+    textAlign: "right",
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
 });
 

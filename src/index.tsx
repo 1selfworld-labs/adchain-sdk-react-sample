@@ -139,6 +139,24 @@ class AdchainSDK {
   async openOfferwall(): Promise<SuccessResponse> {
     return AdchainSdk.openOfferwall();
   }
+
+  // 6. Debug/Utility Methods (3개)
+  async isInitialized(): Promise<boolean> {
+    return AdchainSdk.isInitialized();
+  }
+
+  async getUserId(): Promise<string> {
+    return AdchainSdk.getUserId();
+  }
+
+  async getIFA(): Promise<string> {
+    return AdchainSdk.getIFA();
+  }
+
+  // 7. Banner (1개)
+  async getBannerInfo(placementId: string): Promise<any> {
+    return AdchainSdk.getBannerInfo(placementId);
+  }
 }
 
 // ===== Event Helper Functions =====
