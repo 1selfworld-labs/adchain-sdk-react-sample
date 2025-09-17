@@ -3,13 +3,14 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Platform, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import LoginForm from "./src/components/LoginForm";
 import TabNavigation from "./src/components/TabNavigation";
 
 // SDK import
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AdchainSdk from "./src/index";
 
 // SDK 환경 설정
@@ -140,53 +141,57 @@ function App(): React.JSX.Element {
 
   if (!sdkInitialized) {
     return (
-      <SafeAreaView style={[backgroundStyle, styles.loadingContainer]}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>SDK 초기화 중...</Text>
-      </SafeAreaView>
+      <SafeAreaProvider>
+        <SafeAreaView style={[backgroundStyle, styles.loadingContainer]}>
+          <ActivityIndicator size="large" color="#007AFF" />
+          <Text style={styles.loadingText}>SDK 초기화 중...</Text>
+        </SafeAreaView>
+      </SafeAreaProvider>
     );
   }
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={"dark-content"} // 항상 어두운 아이콘 (흰 배경용)
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      {sdkError && (
-        <View style={styles.errorBanner}>
-          <Text style={styles.errorText}>⚠️ {sdkError}</Text>
-        </View>
-      )}
+    <SafeAreaProvider>
+      <SafeAreaView style={backgroundStyle}>
+        <StatusBar
+          barStyle={"dark-content"} // 항상 어두운 아이콘 (흰 배경용)
+          backgroundColor={backgroundStyle.backgroundColor}
+        />
+        {sdkError && (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorText}>⚠️ {sdkError}</Text>
+          </View>
+        )}
 
-      <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
-        <View style={styles.container}>
-          {!isLoggedIn ? (
-            <LoginForm onLogin={handleLogin} isLoading={isLoggingIn} />
-          ) : (
-            <TabNavigation isLoggedIn={isLoggedIn} />
-          )}
-          {/* Debug Information Panel */}
-          <View style={styles.debugPanel}>
-            <Text style={styles.debugTitle}>🔧 Debug Info</Text>
-            <View style={styles.debugRow}>
-              <Text style={styles.debugLabel}>User ID:</Text>
-              <Text style={styles.debugValue}>{debugInfo.userId}</Text>
-            </View>
-            <View style={styles.debugRow}>
-              <Text style={styles.debugLabel}>IFA (Ad ID):</Text>
-              <Text style={styles.debugValue}>{debugInfo.ifa}</Text>
-            </View>
-            <View style={styles.debugRow}>
-              <Text style={styles.debugLabel}>SDK Initialized:</Text>
-              <Text style={[styles.debugValue, { color: debugInfo.isInitialized ? "#4CAF50" : "#F44336" }]}>
-                {debugInfo.isInitialized ? "✓ Yes" : "✗ No"}
-              </Text>
+        <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
+          <View style={styles.container}>
+            {!isLoggedIn ? (
+              <LoginForm onLogin={handleLogin} isLoading={isLoggingIn} />
+            ) : (
+              <TabNavigation isLoggedIn={isLoggedIn} />
+            )}
+            {/* Debug Information Panel */}
+            <View style={styles.debugPanel}>
+              <Text style={styles.debugTitle}>🔧 Debug Info</Text>
+              <View style={styles.debugRow}>
+                <Text style={styles.debugLabel}>User ID:</Text>
+                <Text style={styles.debugValue}>{debugInfo.userId}</Text>
+              </View>
+              <View style={styles.debugRow}>
+                <Text style={styles.debugLabel}>IFA (Ad ID):</Text>
+                <Text style={styles.debugValue}>{debugInfo.ifa}</Text>
+              </View>
+              <View style={styles.debugRow}>
+                <Text style={styles.debugLabel}>SDK Initialized:</Text>
+                <Text style={[styles.debugValue, { color: debugInfo.isInitialized ? "#4CAF50" : "#F44336" }]}>
+                  {debugInfo.isInitialized ? "✓ Yes" : "✗ No"}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

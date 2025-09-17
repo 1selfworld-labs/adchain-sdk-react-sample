@@ -2,6 +2,7 @@ package com.treasurerrn
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.WindowCompat
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -13,6 +14,8 @@ class MainActivity : ReactActivity() {
     // Force light mode - disable dark mode completely
     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     super.onCreate(savedInstanceState)
+
+    WindowCompat.setDecorFitsSystemWindows(window, false)
   }
 
   /**
