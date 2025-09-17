@@ -21,6 +21,7 @@ class MainApplication : Application(), ReactApplication {
             val packages = mutableListOf<ReactPackage>()
             packages.add(MainReactPackage())
             packages.add(AdchainSdkPackage())
+            packages.add(StoragePackage())
             return packages
         }
 

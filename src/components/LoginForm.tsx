@@ -1,9 +1,9 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Storage from "../Storage";
 
 interface LoginFormProps {
-  onLogin: (userId: string, gender: "MALE" | "FEMALE", birthYear: number) => void;
+  onLogin: (userId: string, gender?: "MALE" | "FEMALE", birthYear?: number) => void;
   isLoading?: boolean;
 }
 
@@ -11,6 +11,7 @@ interface LoginData {
   userId: string;
   gender: "MALE" | "FEMALE";
   birthYear: number;
+  useOptionalData: boolean;
 }
 
 const STORAGE_KEY = "ADCHAIN_LOGIN_DATA";
@@ -19,6 +20,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading = false }) => 
   const [userId, setUserId] = useState("");
   const [gender, setGender] = useState<"MALE" | "FEMALE">("MALE");
   const [birthYear, setBirthYear] = useState("1990");
+  const [useOptionalData, setUseOptionalData] = useState(false);
 
   useEffect(() => {
     loadSavedLoginData();
@@ -26,12 +28,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading = false }) => 
 
   const loadSavedLoginData = async () => {
     try {
-      const savedData = await AsyncStorage.getItem(STORAGE_KEY);
+      const savedData = await Storage.getItem(STORAGE_KEY);
       if (savedData) {
         const loginData: LoginData = JSON.parse(savedData);
         setUserId(loginData.userId);
         setGender(loginData.gender);
         setBirthYear(loginData.birthYear.toString());
+        setUseOptionalData(loginData.useOptionalData);
+        console.log("Loaded saved login data from Storage module:", loginData);
       }
     } catch (error) {
       console.error("Failed to load saved login data:", error);
@@ -40,7 +44,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading = false }) => 
 
   const saveLoginData = async (data: LoginData) => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      await Storage.setItem(STORAGE_KEY, JSON.stringify(data));
+      console.log("Saved login data to Storage module:", data);
     } catch (error) {
       console.error("Failed to save login data:", error);
     }
@@ -52,20 +57,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading = false }) => 
       return;
     }
 
-    const year = parseInt(birthYear, 10);
-    if (isNaN(year) || year < 1900 || year > new Date().getFullYear()) {
-      Alert.alert("오류", "올바른 출생년도를 입력해주세요.");
-      return;
+    let year: number | undefined;
+    if (useOptionalData) {
+      year = parseInt(birthYear, 10);
+      if (isNaN(year) || year < 1900 || year > new Date().getFullYear()) {
+        Alert.alert("오류", "올바른 출생년도를 입력해주세요.");
+        return;
+      }
     }
 
     const loginData: LoginData = {
       userId: userId.trim(),
       gender,
-      birthYear: year,
+      birthYear: parseInt(birthYear, 10),
+      useOptionalData,
     };
 
     saveLoginData(loginData);
-    onLogin(loginData.userId, loginData.gender, loginData.birthYear);
+    onLogin(loginData.userId, useOptionalData ? loginData.gender : undefined, useOptionalData ? year : undefined);
   };
 
   return (
@@ -85,32 +94,43 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading = false }) => 
         />
       </View>
 
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Gender</Text>
-        <View style={styles.genderContainer}>
-          <Text style={styles.genderLabel}>MALE</Text>
+      <View style={[styles.inputGroup, { paddingTop: 20 }]}>
+        <Text style={[styles.label, { width: "50%" }]}>Use Optional Data</Text>
+        <Switch
+          value={useOptionalData}
+          onValueChange={setUseOptionalData}
+          disabled={isLoading}
+          trackColor={{ false: "#CCC", true: "#007AFF" }}
+          thumbColor="#FFF"
+        />
+      </View>
+
+      <View style={[styles.inputGroup, !useOptionalData && styles.disabledGroup]}>
+        <Text style={[styles.label, !useOptionalData && styles.disabledLabel]}>Gender</Text>
+        <View style={[styles.genderContainer, !useOptionalData && styles.disabledInput]}>
+          <Text style={[styles.genderLabel, !useOptionalData && styles.disabledLabel]}>MALE</Text>
           <Switch
             value={gender === "FEMALE"}
             onValueChange={(value) => setGender(value ? "FEMALE" : "MALE")}
-            disabled={isLoading}
+            disabled={isLoading || !useOptionalData}
             trackColor={{ false: "#007AFF", true: "#FF69B4" }}
             thumbColor={gender === "FEMALE" ? "#FFF" : "#FFF"}
           />
-          <Text style={styles.genderLabel}>FEMALE</Text>
+          <Text style={[styles.genderLabel, !useOptionalData && styles.disabledLabel]}>FEMALE</Text>
         </View>
       </View>
 
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Birth Year</Text>
+      <View style={[styles.inputGroup, !useOptionalData && styles.disabledGroup]}>
+        <Text style={[styles.label, !useOptionalData && styles.disabledLabel]}>Birth Year</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, !useOptionalData && styles.disabledInput]}
           value={birthYear}
           onChangeText={setBirthYear}
           placeholder="출생년도 (예: 1990)"
           placeholderTextColor="#999"
           keyboardType="numeric"
           maxLength={4}
-          editable={!isLoading}
+          editable={!isLoading && useOptionalData}
         />
       </View>
 
@@ -198,6 +218,16 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontSize: 18,
     fontWeight: "600",
+  },
+  disabledGroup: {
+    opacity: 0.5,
+  },
+  disabledLabel: {
+    color: "#999",
+  },
+  disabledInput: {
+    backgroundColor: "#F5F5F5",
+    borderColor: "#E0E0E0",
   },
 });
 

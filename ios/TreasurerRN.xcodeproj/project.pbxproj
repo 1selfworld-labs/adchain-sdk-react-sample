@@ -16,6 +16,8 @@
 		725855D52E6ED6790045E37D /* AdchainSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = 725855D32E6ED6790045E37D /* AdchainSdk.m */; };
 		72BE40E39B38E45CEFF23D21 /* Pods_TreasurerRN_TreasurerRNTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99CE7C18948273D570C60517 /* Pods_TreasurerRN_TreasurerRNTests.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		B87A08262E7A8100007959E4 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87A08252E7A8100007959E4 /* Storage.swift */; };
+		B8E25F972E7A801700FB02EA /* Storage.m in Sources */ = {isa = PBXBuildFile; fileRef = B8E25F962E7A801700FB02EA /* Storage.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +50,8 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TreasurerRN/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		88E73EE4F77A9F52997E33B2 /* Pods-TreasurerRN.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN.debug.xcconfig"; path = "Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN.debug.xcconfig"; sourceTree = "<group>"; };
 		99CE7C18948273D570C60517 /* Pods_TreasurerRN_TreasurerRNTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TreasurerRN_TreasurerRNTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B87A08252E7A8100007959E4 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		B8E25F962E7A801700FB02EA /* Storage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Storage.m; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FA94A388EF46DCC154637A3E /* Pods-TreasurerRN-TreasurerRNTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN-TreasurerRNTests.release.xcconfig"; path = "Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -96,6 +100,8 @@
 				725855D32E6ED6790045E37D /* AdchainSdk.m */,
 				725855D12E6ED63B0045E37D /* AdchainSdk.swift */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
+				B8E25F962E7A801700FB02EA /* Storage.m */,
+				B87A08252E7A8100007959E4 /* Storage.swift */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -404,8 +410,10 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				725855D52E6ED6790045E37D /* AdchainSdk.m in Sources */,
+				B8E25F972E7A801700FB02EA /* Storage.m in Sources */,
 				725855D22E6ED63B0045E37D /* AdchainSdk.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				B87A08262E7A8100007959E4 /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -86,15 +86,21 @@ function App(): React.JSX.Element {
     }
   };
 
-  const handleLogin = async (userId: string, gender: "MALE" | "FEMALE", birthYear: number) => {
+  const handleLogin = async (userId: string, gender?: "MALE" | "FEMALE", birthYear?: number) => {
     setIsLoggingIn(true);
     try {
-      await AdchainSdk.login({
+      const loginData: any = { userId };
+      if (gender) loginData.gender = gender;
+      if (birthYear) loginData.birthYear = birthYear;
+      console.log("loginData", loginData);
+
+      await AdchainSdk.login(loginData);
+      console.log(
+        "AdchainSDK logged in with userId:",
         userId,
-        gender,
-        birthYear,
-      });
-      console.log("AdchainSDK logged in with userId:", userId);
+        gender ? gender : undefined,
+        birthYear ? birthYear : undefined
+      );
       setIsLoggedIn(true);
 
       // 로그인 후 디버그 정보 갱신

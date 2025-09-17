@@ -1,4 +1,5 @@
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import AdchainSdk from "../../index";
 import { BannerInfo } from "../../interface/banner";
 
 interface BannerProps {
@@ -6,8 +7,18 @@ interface BannerProps {
 }
 
 const Banner = ({ bannerInfo }: BannerProps) => {
+  const handleBannerPress = () => {
+    if (bannerInfo.linkType === "internal") {
+      console.log("Internal link:", bannerInfo.internalLinkUrl);
+      AdchainSdk.openOfferwall();
+    } else {
+      console.log("External link:", bannerInfo.externalLinkUrl);
+      AdchainSdk.openOfferwall();
+    }
+  };
+
   return (
-    <TouchableOpacity style={styles.banner} onPress={() => {}}>
+    <TouchableOpacity style={styles.banner} onPress={handleBannerPress}>
       <Image
         source={bannerInfo?.imageUrl ? { uri: bannerInfo.imageUrl } : require("../../assets/images/img_empty_quiz.png")}
         style={styles.bannerImage}
