@@ -49,10 +49,18 @@ const QuizModule = ({
       );
     }
 
-    if (networkError2 || isQuizListExist === false) {
+    if (networkError2) {
       return (
         <TouchableOpacity style={styles.emptyBanner} onPress={() => onOpenOfferwall && onOpenOfferwall()}>
           <Image source={require("../../assets/images/img_empty_quiz.png")} style={styles.emptyBannerImage} />
+        </TouchableOpacity>
+      );
+    }
+
+    if (isQuizListExist === false) {
+      return (
+        <TouchableOpacity style={styles.emptyBanner} onPress={() => onOpenOfferwall && onOpenOfferwall()}>
+          <Image source={require("../../assets/images/img_empty_quiz_2.png")} style={styles.emptyBannerImage} />
         </TouchableOpacity>
       );
     }
