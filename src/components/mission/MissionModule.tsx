@@ -19,8 +19,6 @@ interface MissionModuleProps {
   onClaimReward?: () => void;
   onOpenOfferwall: () => void;
   canClaimReward?: boolean;
-  completedCount?: number;
-  totalCount?: number;
 }
 
 const MissionModule = ({
@@ -40,18 +38,17 @@ const MissionModule = ({
   onClaimReward,
   onOpenOfferwall,
   canClaimReward = false,
-  completedCount = 0,
-  totalCount = 0,
 }: MissionModuleProps) => {
   // Use missionItems if provided, otherwise fall back to missionList
   const missions = missionList || [];
   const currentStep = missionStep ?? currentMissionStep ?? 0;
-  const maxStep = totalCount || maxMissionStep || 3;
+  const maxStep = maxMissionStep || 3;
 
   const handleMissionPress = (mission: MissionItem | string) => {
     if (typeof mission === "string") {
       Linking.openURL(mission);
     } else if (onMissionClick) {
+      if (mission.isCompleted) return;
       onMissionClick(mission);
     } else {
       Linking.openURL(mission.url);
@@ -186,9 +183,9 @@ const MissionModule = ({
                     <Text style={styles.brandText}>{item.brandText}</Text>
                     <Text style={[styles.missionTitleText, item.isCompleted && styles.completedText]}>{item.titleText}</Text>
                   </View>
-                  <View style={[styles.ctaButton, { backgroundColor: item.isCompleted ? "#4CAF50" : ctaColor }]}>
+                  <View style={[styles.ctaButton, { backgroundColor: item.isCompleted ? "#CED5E0" : ctaColor }]}>
                     <Text style={[styles.ctaButtonText, { color: "#FFFFFF" }]}>
-                      {item.isInprogress ? "참여중" : item.isCompleted ? "완료됨" : item.rewardsText}
+                      {item.isInprogress ? "참여 확인 중" : item.isCompleted ? "완료" : item.rewardsText}
                     </Text>
                   </View>
                 </View>
@@ -306,6 +303,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   ctaButton: {
+    minWidth: 90,
     paddingVertical: 8,
     paddingHorizontal: 9,
     justifyContent: "center",

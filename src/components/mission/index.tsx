@@ -30,8 +30,6 @@ const Mission = () => {
   const [currentMissionStep, setCurrentMissionStep] = useState(0);
   const [maxMissionStep, setMaxMissionStep] = useState(3);
   const [canClaimReward, setCanClaimReward] = useState(false);
-  const [completedCount, setCompletedCount] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
   // Cache validation
@@ -45,8 +43,6 @@ const Mission = () => {
     if (isCacheValid() && missionCache) {
       // Use cached data immediately
       setMissionItems(missionCache.data);
-      setCompletedCount(missionCache.completedCount);
-      setTotalCount(missionCache.totalCount);
       setCanClaimReward(missionCache.canClaimReward);
       setCurrentMissionStep(missionCache.completedCount);
       setMaxMissionStep(missionCache.totalCount || 3);
@@ -159,8 +155,6 @@ const Mission = () => {
 
       // Update UI
       setMissionItems(transformedMissionList);
-      setCompletedCount(response.completedCount);
-      setTotalCount(response.totalCount);
       setCanClaimReward(response.canClaimReward);
       setCurrentMissionStep(response.completedCount);
       setMaxMissionStep(response.totalCount || 3);
@@ -281,8 +275,6 @@ const Mission = () => {
               onClaimReward={handleClaimReward}
               onOpenOfferwall={handleOpenOfferwall}
               canClaimReward={canClaimReward}
-              completedCount={completedCount}
-              totalCount={totalCount}
             />
           </Animated.View>
         )}
