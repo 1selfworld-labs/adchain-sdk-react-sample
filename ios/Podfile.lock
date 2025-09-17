@@ -1,5 +1,5 @@
 PODS:
-  - AdChainSDK (1.0.16)
+  - AdChainSDK (1.0.17)
   - boost (1.83.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.74.0)
@@ -1212,7 +1212,7 @@ PODS:
   - Yoga (0.0.0)
 
 DEPENDENCIES:
-  - AdChainSDK (from `https://github.com/1selfworld-labs/adchain-sdk-ios-release.git`, tag `v1.0.16`)
+  - AdChainSDK (from `https://github.com/1selfworld-labs/adchain-sdk-ios-release.git`, tag `v1.0.17`)
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -1280,7 +1280,7 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   AdChainSDK:
     :git: https://github.com/1selfworld-labs/adchain-sdk-ios-release.git
-    :tag: v1.0.16
+    :tag: v1.0.17
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   DoubleConversion:
@@ -1400,10 +1400,10 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   AdChainSDK:
     :git: https://github.com/1selfworld-labs/adchain-sdk-ios-release.git
-    :tag: v1.0.16
+    :tag: v1.0.17
 
 SPEC CHECKSUMS:
-  AdChainSDK: 27833f4cb41a3a557946bf78e7b8582eaa50ba11
+  AdChainSDK: 4674eb1d6855b09ab563ab790049b19822f991ac
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FBLazyVector: 026c8f4ae67b06e088ae01baa2271ef8a26c0e8c
@@ -1463,6 +1463,6 @@ SPEC CHECKSUMS:
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 3f9165051bbc60b66f6a88c5eeafd9e9faa29500
 
-PODFILE CHECKSUM: 3bd23b50c71c9d9642cf007be635e44e7425af6b
+PODFILE CHECKSUM: 0161a59051ad8d4846c13f9317058fdc65748e28
 
 COCOAPODS: 1.16.2
