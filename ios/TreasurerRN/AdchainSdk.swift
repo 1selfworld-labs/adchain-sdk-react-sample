@@ -197,8 +197,29 @@ class AdchainSdkModule: RCTEventEmitter {
     // Android와 동일하게 직접 load 호출
     // shouldStoreCallbacks: false로 설정하여 refreshAfterCompletion에서 재호출되지 않도록 함
     quiz.load(
-      onSuccess: { quizList in
-        let array = quizList.map { quizEvent in
+      onSuccess: { quizResponse in
+        var responseDict: [String: Any] = [
+          "success": quizResponse.success ?? true
+        ]
+
+        if let titleText = quizResponse.titleText {
+          responseDict["titleText"] = titleText
+        }
+        if let completedImageUrl = quizResponse.completedImageUrl {
+          responseDict["completedImageUrl"] = completedImageUrl
+        }
+        if let completedImageWidth = quizResponse.completedImageWidth {
+          responseDict["completedImageWidth"] = completedImageWidth
+        }
+        if let completedImageHeight = quizResponse.completedImageHeight {
+          responseDict["completedImageHeight"] = completedImageHeight
+        }
+        if let message = quizResponse.message {
+          responseDict["message"] = message
+        }
+
+        // events 배열 처리
+        let eventsArray = quizResponse.events.map { quizEvent in
           return [
             "id": quizEvent.id,
             "title": quizEvent.title,
@@ -208,7 +229,9 @@ class AdchainSdkModule: RCTEventEmitter {
             "isCompleted": quizEvent.completed ?? false
           ]
         }
-        resolver(array)
+        responseDict["events"] = eventsArray
+
+        resolver(responseDict)
       },
       onFailure: { error in
         rejecter("QUIZ_LOAD_ERROR", error.localizedDescription, nil)
@@ -314,7 +337,14 @@ class AdchainSdkModule: RCTEventEmitter {
           "missions": missionsArray,
           "completedCount": completedCount,
           "totalCount": totalCount,
-          "canClaimReward": progress.isCompleted && totalCount > 0
+          "canClaimReward": progress.isCompleted && totalCount > 0,
+
+          // 신규 필드 추가 (MissionResponse에서 가져오기)
+          "titleText": mission.missionResponse?.titleText ?? "무료 포인트 모으기!",
+          "descriptionText": mission.missionResponse?.descriptionText ?? "간단 광고 참여하고 100 포인트 받기",
+          "bottomText": mission.missionResponse?.bottomText ?? "800만 포인트 받으러 가기",
+          "rewardIconUrl": mission.missionResponse?.rewardIconUrl ?? "https://adchain-assets.1self.world/img_reward_coin.png",
+          "bottomIconUrl": mission.missionResponse?.bottomIconUrl ?? "https://adchain-assets.1self.world/img_offerwall_coin.png"
         ]
         
         resolver(result)
@@ -449,6 +479,8 @@ class AdchainSdkModule: RCTEventEmitter {
         resolver([
           "success": response.success,
           "imageUrl": response.imageUrl as Any,
+          "imageWidth": response.imageWidth as Any,
+          "imageHeight": response.imageHeight as Any,
           "titleText": response.titleText as Any,
           "linkType": response.linkType as Any,
           "internalLinkUrl": response.internalLinkUrl as Any,
@@ -460,18 +492,18 @@ class AdchainSdkModule: RCTEventEmitter {
     }
   }
 
-  // MARK: - 7. Offerwall (1개)
+  // MARK: - 7. Offerwall (3개)
 
   @objc func openOfferwall(_ resolver: @escaping RCTPromiseResolveBlock,
                           rejecter: @escaping RCTPromiseRejectBlock) {
     class OfferwallCallbackImpl: NSObject, OfferwallCallback {
       let resolver: RCTPromiseResolveBlock
       var hasResolved = false
-      
+
       init(resolver: @escaping RCTPromiseResolveBlock) {
         self.resolver = resolver
       }
-      
+
       func onOpened() {
         if !hasResolved {
           hasResolved = true
@@ -481,20 +513,20 @@ class AdchainSdkModule: RCTEventEmitter {
           ])
         }
       }
-      
+
       func onClosed() {
         // 이미 resolve 되었으므로 무시
       }
-      
+
       func onError(_ message: String) {
         // 이미 resolve 되었으므로 무시
       }
-      
+
       func onRewardEarned(_ amount: Int) {
         // 이미 resolve 되었으므로 무시
       }
     }
-    
+
     DispatchQueue.main.async { [weak self] in
       if let topVC = self?.getTopViewController() {
         let callback = OfferwallCallbackImpl(resolver: resolver)
@@ -502,6 +534,64 @@ class AdchainSdkModule: RCTEventEmitter {
       } else {
         rejecter("OFFERWALL_ERROR", "No view controller available", nil)
       }
+    }
+  }
+
+  @objc func openOfferwallWithUrl(_ url: NSString,
+                                  resolver: @escaping RCTPromiseResolveBlock,
+                                  rejecter: @escaping RCTPromiseRejectBlock) {
+    class OfferwallCallbackImpl: NSObject, OfferwallCallback {
+      let resolver: RCTPromiseResolveBlock
+      var hasResolved = false
+
+      init(resolver: @escaping RCTPromiseResolveBlock) {
+        self.resolver = resolver
+      }
+
+      func onOpened() {
+        if !hasResolved {
+          hasResolved = true
+          resolver([
+            "success": true,
+            "message": "Offerwall opened with URL"
+          ])
+        }
+      }
+
+      func onClosed() {
+        // 이미 resolve 되었으므로 무시
+      }
+
+      func onError(_ message: String) {
+        // 이미 resolve 되었으므로 무시
+      }
+
+      func onRewardEarned(_ amount: Int) {
+        // 이미 resolve 되었으므로 무시
+      }
+    }
+
+    DispatchQueue.main.async { [weak self] in
+      if let topVC = self?.getTopViewController() {
+        let callback = OfferwallCallbackImpl(resolver: resolver)
+        AdchainSdk.shared.openOfferwallWithUrl(url as String, presentingViewController: topVC, callback: callback)
+      } else {
+        rejecter("OFFERWALL_ERROR", "No view controller available", nil)
+      }
+    }
+  }
+
+  @objc func openExternalBrowser(_ url: NSString,
+                                resolver: @escaping RCTPromiseResolveBlock,
+                                rejecter: @escaping RCTPromiseRejectBlock) {
+    let success = AdchainSdk.shared.openExternalBrowser(url as String)
+    if success {
+      resolver([
+        "success": true,
+        "message": "External browser opened"
+      ])
+    } else {
+      rejecter("BROWSER_ERROR", "Failed to open external browser", nil)
     }
   }
 }

@@ -33,6 +33,7 @@ const Quiz = ({ isLoggedIn }: IProps) => {
   const [loading, setLoading] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(true);
   const [quizItems, setQuizItems] = useState<QuizItem[]>([]);
+  const [quizTitleText, setQuizTitleText] = useState<string>("데일리 1분 퀴즈"); // 퀴즈 타이틀 텍스트
   const [bannerInfo, setBannerInfo] = useState<BannerInfo | null>(null);
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
@@ -94,8 +95,14 @@ const Quiz = ({ isLoggedIn }: IProps) => {
         fadeAnim.setValue(0);
       }
 
-      // SDK에서 실제 퀴즈 데이터 로드
-      const sdkQuizList: any[] = await AdchainSdk.loadQuizList(QUIZ_UNIT_ID);
+      // SDK에서 실제 퀴즈 데이터 로드 (이제 전체 응답 반환)
+      const quizResponse = await AdchainSdk.loadQuizList(QUIZ_UNIT_ID);
+      const sdkQuizList: any[] = quizResponse.events || [];
+
+      // titleText가 있으면 업데이트
+      if (quizResponse.titleText) {
+        setQuizTitleText(quizResponse.titleText);
+      }
 
       // 디버깅: SDK 응답 확인
       console.log("SDK Quiz Response:", JSON.stringify(sdkQuizList, null, 2));
@@ -177,6 +184,47 @@ const Quiz = ({ isLoggedIn }: IProps) => {
     loadQuizList();
   };
 
+  // SDK 테스트 버튼 핸들러
+  const handleTestOfferwallWithUrl = async () => {
+    try {
+      // Banner 1 정보를 가져와서 URL 사용
+      const banner1 = await AdchainSdk.getBannerInfo("test_banner_1");
+      console.log("Banner 1 info for Offerwall test:", banner1);
+
+      if (banner1.internalLinkUrl) {
+        const result = await AdchainSdk.openOfferwallWithUrl(banner1.internalLinkUrl);
+        console.log("Offerwall with URL opened:", result);
+      } else {
+        console.log("No internalLinkUrl in banner 1");
+        // 테스트용 기본 URL 사용
+        const result = await AdchainSdk.openOfferwallWithUrl("https://reward.adchain.plus?test=offerwall");
+        console.log("Offerwall with default URL opened:", result);
+      }
+    } catch (error) {
+      console.error("Offerwall with URL error:", error);
+    }
+  };
+
+  const handleTestExternalBrowser = async () => {
+    try {
+      // Banner 2 정보를 가져와서 URL 사용
+      const banner2 = await AdchainSdk.getBannerInfo("test_banner_2");
+      console.log("Banner 2 info for Browser test:", banner2);
+
+      if (banner2.externalLinkUrl) {
+        const result = await AdchainSdk.openExternalBrowser(banner2.externalLinkUrl);
+        console.log("External browser opened:", result);
+      } else {
+        console.log("No externalLinkUrl in banner 2");
+        // 테스트용 기본 URL 사용
+        const result = await AdchainSdk.openExternalBrowser("https://www.google.com");
+        console.log("External browser with default URL opened:", result);
+      }
+    } catch (error) {
+      console.error("External browser error:", error);
+    }
+  };
+
   return (
     <View>
       {/* 개발자 컨트롤 패널 - jun 샘플과 동일 */}
@@ -200,6 +248,25 @@ const Quiz = ({ isLoggedIn }: IProps) => {
         </View>
       </View>
 
+      {/* SDK 테스트 버튼 */}
+      <View style={styles.testButtonsContainer}>
+        <Text style={styles.testSectionTitle}>SDK 테스트</Text>
+        <View style={styles.testButtonRow}>
+          <TouchableOpacity
+            style={[styles.testButton, { backgroundColor: "#FF9500" }]}
+            onPress={handleTestOfferwallWithUrl}>
+            <Text style={styles.testButtonText}>오퍼월 URL 테스트</Text>
+            <Text style={styles.testButtonSubtext}>(test_banner_1)</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.testButton, { backgroundColor: "#046BD5" }]}
+            onPress={handleTestExternalBrowser}>
+            <Text style={styles.testButtonText}>외부 브라우저 테스트</Text>
+            <Text style={styles.testButtonSubtext}>(test_banner_2)</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       {/* 퀴즈 모듈 */}
       <View style={styles.quizModuleContainer}>
         {showSkeleton ? (
@@ -207,7 +274,7 @@ const Quiz = ({ isLoggedIn }: IProps) => {
         ) : (
           <Animated.View style={{ opacity: fadeAnim }}>
             <QuizModule
-              titleText="데일리 1분 퀴즈"
+              titleText={quizTitleText}
               quizItems={quizItems}
               networkError={networkError}
               networkError2={networkError2}
@@ -283,6 +350,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#FFF",
+  },
+  testButtonsContainer: {
+    backgroundColor: "#ffffff",
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  testSectionTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 12,
+  },
+  testButtonRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  testButton: {
+    flex: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  testButtonText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#FFF",
+    marginBottom: 4,
+  },
+  testButtonSubtext: {
+    fontSize: 11,
+    color: "rgba(255, 255, 255, 0.8)",
   },
 });
 

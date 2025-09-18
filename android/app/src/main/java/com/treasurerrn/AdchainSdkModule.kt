@@ -173,20 +173,31 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
       }
       
       quiz.getQuizList(
-        onSuccess = { quizList ->
-          val array = Arguments.createArray()
-          quizList.forEach { quizEvent ->
-            val map = Arguments.createMap().apply {
-              putString("id", quizEvent.id)
-              putString("title", quizEvent.title)
-              putString("description", quizEvent.description ?: "")
-              putString("imageUrl", quizEvent.imageUrl)
-              putString("point", quizEvent.point) // 원본 문자열 그대로 전달
-              putBoolean("isCompleted", quizEvent.completed ?: false)
+        onSuccess = { quizResponse ->
+          val responseMap = Arguments.createMap().apply {
+            putBoolean("success", quizResponse.success ?: true)
+            putString("titleText", quizResponse.titleText)
+            putString("completedImageUrl", quizResponse.completedImageUrl)
+            quizResponse.completedImageWidth?.let { putInt("completedImageWidth", it) }
+            quizResponse.completedImageHeight?.let { putInt("completedImageHeight", it) }
+            putString("message", quizResponse.message)
+
+            // events 배열 처리
+            val eventsArray = Arguments.createArray()
+            quizResponse.events.forEach { quizEvent ->
+              val eventMap = Arguments.createMap().apply {
+                putString("id", quizEvent.id)
+                putString("title", quizEvent.title)
+                putString("description", quizEvent.description ?: "")
+                putString("imageUrl", quizEvent.imageUrl)
+                putString("point", quizEvent.point)
+                putBoolean("isCompleted", quizEvent.completed ?: false)
+              }
+              eventsArray.pushMap(eventMap)
             }
-            array.pushMap(map)
+            putArray("events", eventsArray)
           }
-          promise.resolve(array)
+          promise.resolve(responseMap)
         },
         onFailure = { error ->
           promise.reject("QUIZ_LOAD_ERROR", error.toString())
@@ -271,6 +282,24 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
                 putInt("completedCount", status.current) // getMissionStatus에서 가져온 값
                 putInt("totalCount", status.total) // getMissionStatus에서 가져온 값
                 putBoolean("canClaimReward", status.isCompleted && status.total > 0)
+
+                // 신규 필드 추가 (missionResponse에서 가져오기)
+                val missionInstance = missionInstances[unitId]
+                missionInstance?.let { m ->
+                  val response = m.getMissionResponse()
+                  putString("titleText", response?.titleText ?: "무료 포인트 모으기!")
+                  putString("descriptionText", response?.descriptionText ?: "간단 광고 참여하고 100 포인트 받기")
+                  putString("bottomText", response?.bottomText ?: "800만 포인트 받으러 가기")
+                  putString("rewardIconUrl", response?.rewardIconUrl ?: "https://adchain-assets.1self.world/img_reward_coin.png")
+                  putString("bottomIconUrl", response?.bottomIconUrl ?: "https://adchain-assets.1self.world/img_offerwall_coin.png")
+                } ?: run {
+                  // 기본값 설정
+                  putString("titleText", "무료 포인트 모으기!")
+                  putString("descriptionText", "간단 광고 참여하고 100 포인트 받기")
+                  putString("bottomText", "800만 포인트 받으러 가기")
+                  putString("rewardIconUrl", "https://adchain-assets.1self.world/img_reward_coin.png")
+                  putString("bottomIconUrl", "https://adchain-assets.1self.world/img_offerwall_coin.png")
+                }
               }
               
               promise.resolve(result)
@@ -419,6 +448,8 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
           val map = Arguments.createMap().apply {
             putBoolean("success", response?.success ?: false)
             putString("imageUrl", response?.imageUrl)
+            response?.imageWidth?.let { putInt("imageWidth", it) }
+            response?.imageHeight?.let { putInt("imageHeight", it) }
             putString("titleText", response?.titleText)
             putString("linkType", response?.linkType)
             putString("internalLinkUrl", response?.internalLinkUrl)
@@ -434,7 +465,7 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
     }
   }
 
-  // ===== 7. Offerwall (1개) =====
+  // ===== 7. Offerwall (3개) =====
 
   @ReactMethod
   fun openOfferwall(promise: Promise) {
@@ -444,15 +475,15 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
           override fun onOpened() {
             promise.resolve(createResponse(true, "Offerwall opened"))
           }
-          
+
           override fun onClosed() {
             // 이미 resolve 되었으므로 무시
           }
-          
+
           override fun onError(message: String) {
             // 이미 resolve 되었으므로 무시
           }
-          
+
           override fun onRewardEarned(amount: Int) {
             // 이미 resolve 되었으므로 무시
           }
@@ -460,6 +491,49 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
       } ?: promise.reject("OFFERWALL_ERROR", "Current activity is null")
     } catch (t: Throwable) {
       promise.reject("OFFERWALL_ERROR", t.message, t)
+    }
+  }
+
+  @ReactMethod
+  fun openOfferwallWithUrl(url: String, promise: Promise) {
+    try {
+      currentActivity?.let { activity ->
+        AdchainSdk.openOfferwallWithUrl(url, activity, object : OfferwallCallback {
+          override fun onOpened() {
+            promise.resolve(createResponse(true, "Offerwall opened with URL"))
+          }
+
+          override fun onClosed() {
+            // 이미 resolve 되었으므로 무시
+          }
+
+          override fun onError(message: String) {
+            // 이미 resolve 되었으므로 무시
+          }
+
+          override fun onRewardEarned(amount: Int) {
+            // 이미 resolve 되었으므로 무시
+          }
+        })
+      } ?: promise.reject("OFFERWALL_ERROR", "Current activity is null")
+    } catch (t: Throwable) {
+      promise.reject("OFFERWALL_ERROR", t.message, t)
+    }
+  }
+
+  @ReactMethod
+  fun openExternalBrowser(url: String, promise: Promise) {
+    try {
+      currentActivity?.let { activity ->
+        val success = AdchainSdk.openExternalBrowser(url, activity)
+        if (success) {
+          promise.resolve(createResponse(true, "External browser opened"))
+        } else {
+          promise.reject("BROWSER_ERROR", "Failed to open external browser")
+        }
+      } ?: promise.reject("BROWSER_ERROR", "Current activity is null")
+    } catch (t: Throwable) {
+      promise.reject("BROWSER_ERROR", t.message, t)
     }
   }
 
