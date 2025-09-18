@@ -31,14 +31,6 @@ function App(): React.JSX.Element {
   const [sdkError, setSdkError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [debugInfo, setDebugInfo] = useState({
-    userId: "",
-    ifa: "",
-    isInitialized: false,
-    bannerInfo: "" as any,
-    quizInfo: "" as any,
-    missionInfo: "" as any,
-  });
 
   const backgroundStyle = {
     backgroundColor: Colors.lighter, // 항상 흰색 배경
@@ -84,7 +76,7 @@ function App(): React.JSX.Element {
       setSdkInitialized(true);
     } catch (error) {
       console.error("AdchainSDK initialization error:", error);
-      setSdkError(error?.message || "SDK 초기화 실패");
+      setSdkError((error as string) || "SDK 초기화 실패");
       // UI는 계속 표시하되, SDK 기능은 비활성화
       setSdkInitialized(true);
     }
@@ -106,68 +98,13 @@ function App(): React.JSX.Element {
         birthYear ? birthYear : undefined
       );
       setIsLoggedIn(true);
-
-      // 로그인 후 디버그 정보 갱신
-      await fetchDebugInfo();
     } catch (error) {
       console.error("Login error:", error);
-      setSdkError(error?.message || "로그인 실패");
+      setSdkError((error as string) || "로그인 실패");
     } finally {
       setIsLoggingIn(false);
     }
   };
-
-  const fetchDebugInfo = async () => {
-    try {
-      // 디버깅 정보 수집
-      const [userId, ifa, isInit] = await Promise.all([
-        AdchainSdk.getUserId(),
-        AdchainSdk.getIFA(),
-        AdchainSdk.isInitialized(),
-      ]);
-
-      // getBannerInfo 호출
-      let bannerInfo = null;
-      try {
-        bannerInfo = await AdchainSdk.getBannerInfo("test_banner_001");
-      } catch (bannerError) {
-        bannerInfo = { error: bannerError?.message || "Failed to get banner info" };
-      }
-
-      // loadQuizList 호출 (전체 QuizResponse 반환)
-      let quizInfo = null;
-      try {
-        quizInfo = await AdchainSdk.loadQuizList("quiz_unit_001");
-      } catch (quizError) {
-        quizInfo = { error: quizError?.message || "Failed to get quiz info" };
-      }
-
-      // loadMissionList 호출
-      let missionInfo = null;
-      try {
-        missionInfo = await AdchainSdk.loadMissionList("mission_unit_001");
-      } catch (missionError) {
-        missionInfo = { error: missionError?.message || "Failed to get mission info" };
-      }
-
-      setDebugInfo({
-        userId: userId || "Not logged in",
-        ifa: ifa || "Not available",
-        isInitialized: isInit,
-        bannerInfo: bannerInfo,
-        quizInfo: quizInfo,
-        missionInfo: missionInfo,
-      });
-    } catch (error) {
-      console.error("Error fetching debug info:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (sdkInitialized) {
-      fetchDebugInfo();
-    }
-  }, [sdkInitialized, isLoggedIn]);
 
   if (!sdkInitialized) {
     return (
@@ -201,35 +138,6 @@ function App(): React.JSX.Element {
               <TabNavigation isLoggedIn={isLoggedIn} />
             )}
             {/* Debug Information Panel */}
-            <View style={styles.debugPanel}>
-              <Text style={styles.debugTitle}>🔧 Debug Info</Text>
-              <View style={styles.debugRow}>
-                <Text style={styles.debugLabel}>User ID:</Text>
-                <Text style={styles.debugValue}>{debugInfo.userId}</Text>
-              </View>
-              <View style={styles.debugRow}>
-                <Text style={styles.debugLabel}>IFA (Ad ID):</Text>
-                <Text style={styles.debugValue}>{debugInfo.ifa}</Text>
-              </View>
-              <View style={styles.debugRow}>
-                <Text style={styles.debugLabel}>SDK Initialized:</Text>
-                <Text style={[styles.debugValue, { color: debugInfo.isInitialized ? "#4CAF50" : "#F44336" }]}>
-                  {debugInfo.isInitialized ? "✓ Yes" : "✗ No"}
-                </Text>
-              </View>
-              <View style={styles.debugRow}>
-                <Text style={styles.debugLabel}>Banner Info:</Text>
-                <Text style={styles.debugValue}>{JSON.stringify(debugInfo.bannerInfo, null, 2)}</Text>
-              </View>
-              <View style={styles.debugRow}>
-                <Text style={styles.debugLabel}>Quiz Info:</Text>
-                <Text style={styles.debugValue}>{JSON.stringify(debugInfo.quizInfo, null, 2)}</Text>
-              </View>
-              <View style={styles.debugRow}>
-                <Text style={styles.debugLabel}>Mission Info:</Text>
-                <Text style={styles.debugValue}>{JSON.stringify(debugInfo.missionInfo, null, 2)}</Text>
-              </View>
-            </View>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -272,50 +180,6 @@ const styles = StyleSheet.create({
     color: "#D32F2F",
     fontSize: 14,
     textAlign: "center",
-  },
-  debugPanel: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 20,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  debugTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 12,
-    color: "#333",
-  },
-  debugRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
-  },
-  debugLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#666",
-    flex: 1,
-  },
-  debugValue: {
-    fontSize: 14,
-    color: "#333",
-    flex: 2,
-    textAlign: "right",
-    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
 });
 
