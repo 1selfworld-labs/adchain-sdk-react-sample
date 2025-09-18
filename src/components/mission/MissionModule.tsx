@@ -272,6 +272,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     letterSpacing: -0.4,
   },
+  refreshButton: {
+    width: 24,
+    height: 24,
+  },
   descriptionText: {
     color: "#73787E",
     fontFamily: "SUIT-Medium",
