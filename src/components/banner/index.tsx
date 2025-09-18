@@ -9,11 +9,9 @@ interface BannerProps {
 const Banner = ({ bannerInfo }: BannerProps) => {
   const handleBannerPress = () => {
     if (bannerInfo.linkType === "internal") {
-      console.log("Internal link:", bannerInfo.internalLinkUrl);
-      AdchainSdk.openOfferwall();
+      AdchainSdk.openOfferwallWithUrl(bannerInfo.internalLinkUrl);
     } else {
-      console.log("External link:", bannerInfo.externalLinkUrl);
-      AdchainSdk.openOfferwall();
+      AdchainSdk.openExternalBrowser(bannerInfo.externalLinkUrl);
     }
   };
 
