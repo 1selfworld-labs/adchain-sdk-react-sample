@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { Fragment, useEffect, useRef } from "react";
+import { Animated, Easing, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { MissionItem } from "../../interface/mission";
 
 interface MissionModuleProps {
@@ -39,6 +39,32 @@ const MissionModule = ({
   onOpenOfferwall,
   canClaimReward = false,
 }: MissionModuleProps) => {
+  const floatingAnimation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const upDown = Animated.sequence([
+      Animated.timing(floatingAnimation, {
+        toValue: 1,
+        duration: 1200,
+        easing: Easing.inOut(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.timing(floatingAnimation, {
+        toValue: 0,
+        duration: 1200,
+        easing: Easing.inOut(Easing.quad),
+        useNativeDriver: true,
+      }),
+    ]);
+
+    const loopAnim = Animated.loop(upDown);
+    loopAnim && loopAnim.start && loopAnim.start();
+
+    return () => {
+      loopAnim && loopAnim.stop && loopAnim.stop();
+    };
+  }, [floatingAnimation]);
+
   // Use missionItems if provided, otherwise fall back to missionList
   const missions = missionList || [];
   const currentStep = missionStep ?? currentMissionStep ?? 0;
@@ -152,7 +178,26 @@ const MissionModule = ({
           <Text style={styles.descriptionText}>{description}</Text>
         </View>
         <TouchableOpacity onPress={() => onOpenOfferwall()}>
-          <Image source={require("../../assets/images/img_reward_coin.png")} style={styles.rewardCoinIcon} />
+          <View style={styles.rewardCoinBox}>
+            <Image source={require("../../assets/images/img_reward_coin.png")} style={styles.rewardCoinIcon} />
+            <Animated.Image
+              source={require("../../assets/images/img_reward_floating_text.png")}
+              style={[
+                styles.rewardFloatingText,
+                {
+                  transform: [
+                    { translateX: -19.5 },
+                    {
+                      translateY: floatingAnimation.interpolate({
+                        inputRange: [0, 0.5, 1],
+                        outputRange: [-2, 2, -2],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            />
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -213,12 +258,11 @@ const styles = StyleSheet.create({
   },
   titleBox: {
     width: "100%",
-    flexDirection: "column",
+    justifyContent: "center",
     gap: 4,
     flex: 1,
   },
   titleWrapper: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
@@ -241,9 +285,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
   },
+  rewardCoinBox: {
+    position: "relative",
+    justifyContent: "flex-end",
+    marginTop: 20,
+  },
+  rewardFloatingText: {
+    width: 39,
+    height: 25,
+    position: "absolute",
+    top: -23,
+    left: "50%",
+  },
   rewardCoinIcon: {
     width: 47,
-    height: 70,
+    height: 47,
   },
   stepBox: {
     flexDirection: "row",
