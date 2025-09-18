@@ -171,9 +171,6 @@ const MissionModule = ({
         <View style={styles.titleBox}>
           <View style={styles.titleWrapper}>
             <Text style={styles.titleText}>{titleText}</Text>
-            <TouchableOpacity onPress={handleRefreshPress}>
-              <Image source={require("../../assets/images/img_mission_refresh.png")} style={styles.refreshButton} />
-            </TouchableOpacity>
           </View>
           <Text style={styles.descriptionText}>{description}</Text>
         </View>
@@ -274,10 +271,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     letterSpacing: -0.4,
-  },
-  refreshButton: {
-    width: 24,
-    height: 24,
   },
   descriptionText: {
     color: "#73787E",
