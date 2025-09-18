@@ -144,7 +144,7 @@ const MissionModule = ({
                 source={bottomIconUrl ? { uri: bottomIconUrl } : require("../../assets/images/img_offerwall_coin.png")}
                 style={[styles.offerwallButtonCoinIcon, { width: 35, height: 35 }]}
               />
-              <Text style={[styles.offerwallButtonText, { width: 35, height: 35 }]}>{bottomText}</Text>
+              <Text style={[styles.offerwallButtonText, { fontSize: 18, lineHeight: 22 }]}>{bottomText}</Text>
               <Image
                 source={require("../../assets/images/img_offerwall_right_arrow.png")}
                 style={styles.offerwallButtonArrowIcon}

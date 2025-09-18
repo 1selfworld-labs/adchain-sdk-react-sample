@@ -41,7 +41,7 @@ function App(): React.JSX.Element {
   });
 
   const backgroundStyle = {
-    backgroundColor: Colors.white, // 항상 흰색 배경
+    backgroundColor: Colors.lighter, // 항상 흰색 배경
   };
 
   useEffect(() => {
