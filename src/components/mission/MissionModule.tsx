@@ -19,6 +19,9 @@ interface MissionModuleProps {
   onClaimReward?: () => void;
   onOpenOfferwall: () => void;
   canClaimReward?: boolean;
+  bottomText?: string;
+  rewardIconUrl?: string;
+  bottomIconUrl?: string;
 }
 
 const MissionModule = ({
@@ -38,6 +41,9 @@ const MissionModule = ({
   onClaimReward,
   onOpenOfferwall,
   canClaimReward = false,
+  bottomText = "800만 포인트 받으러 가기",
+  rewardIconUrl,
+  bottomIconUrl,
 }: MissionModuleProps) => {
   const floatingAnimation = useRef(new Animated.Value(0)).current;
 
@@ -135,10 +141,10 @@ const MissionModule = ({
           <View style={styles.offerwallButton}>
             <View style={styles.offerwallBButtonTextWrapper}>
               <Image
-                source={require("../../assets/images/img_offerwall_coin.png")}
+                source={bottomIconUrl ? {uri: bottomIconUrl} : require("../../assets/images/img_offerwall_coin.png")}
                 style={[styles.offerwallButtonCoinIcon, { width: 56, height: 56, marginRight: 12 }]}
               />
-              <Text style={[styles.offerwallButtonText, { flex: 1 }]}>{"800만 포인트를\n지금 바로 받아보세요. "}</Text>
+              <Text style={[styles.offerwallButtonText, { flex: 1 }]}>{bottomText.includes("\n") ? bottomText : `${bottomText.split(" ").slice(0, -2).join(" ")}\n${bottomText.split(" ").slice(-2).join(" ")}`}</Text>
               <Image
                 source={require("../../assets/images/img_offerwall_right_arrow.png")}
                 style={styles.offerwallButtonArrowIcon}
@@ -153,8 +159,10 @@ const MissionModule = ({
       <TouchableOpacity onPress={() => onOpenOfferwall()}>
         <View style={styles.offerwallButton}>
           <View style={styles.offerwallBButtonTextWrapper}>
-            <Image source={require("../../assets/images/img_offerwall_coin.png")} style={styles.offerwallButtonCoinIcon} />
-            <Text style={styles.offerwallButtonText}>{"800만 포인트 받으러 가기"}</Text>
+            <Image
+              source={bottomIconUrl ? {uri: bottomIconUrl} : require("../../assets/images/img_offerwall_coin.png")}
+              style={styles.offerwallButtonCoinIcon} />
+            <Text style={styles.offerwallButtonText}>{bottomText}</Text>
             <Image
               source={require("../../assets/images/img_offerwall_right_arrow.png")}
               style={styles.offerwallButtonArrowIcon}
@@ -176,7 +184,9 @@ const MissionModule = ({
         </View>
         <TouchableOpacity onPress={() => onOpenOfferwall()}>
           <View style={styles.rewardCoinBox}>
-            <Image source={require("../../assets/images/img_reward_coin.png")} style={styles.rewardCoinIcon} />
+            <Image
+              source={rewardIconUrl ? {uri: rewardIconUrl} : require("../../assets/images/img_reward_coin.png")}
+              style={styles.rewardCoinIcon} />
             <Animated.Image
               source={require("../../assets/images/img_reward_floating_text.png")}
               style={[

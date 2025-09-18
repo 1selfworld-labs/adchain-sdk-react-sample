@@ -35,10 +35,13 @@ function App(): React.JSX.Element {
     userId: "",
     ifa: "",
     isInitialized: false,
+    bannerInfo: "" as any,
+    quizInfo: "" as any,
+    missionInfo: "" as any,
   });
 
   const backgroundStyle = {
-    backgroundColor: Colors.lighter, // 항상 흰색 배경
+    backgroundColor: Colors.white, // 항상 흰색 배경
   };
 
   useEffect(() => {
@@ -123,10 +126,37 @@ function App(): React.JSX.Element {
         AdchainSdk.isInitialized(),
       ]);
 
+      // getBannerInfo 호출
+      let bannerInfo = null;
+      try {
+        bannerInfo = await AdchainSdk.getBannerInfo("test_banner_001");
+      } catch (bannerError) {
+        bannerInfo = { error: bannerError?.message || "Failed to get banner info" };
+      }
+
+      // loadQuizList 호출 (전체 QuizResponse 반환)
+      let quizInfo = null;
+      try {
+        quizInfo = await AdchainSdk.loadQuizList("quiz_unit_001");
+      } catch (quizError) {
+        quizInfo = { error: quizError?.message || "Failed to get quiz info" };
+      }
+
+      // loadMissionList 호출
+      let missionInfo = null;
+      try {
+        missionInfo = await AdchainSdk.loadMissionList("mission_unit_001");
+      } catch (missionError) {
+        missionInfo = { error: missionError?.message || "Failed to get mission info" };
+      }
+
       setDebugInfo({
         userId: userId || "Not logged in",
         ifa: ifa || "Not available",
         isInitialized: isInit,
+        bannerInfo: bannerInfo,
+        quizInfo: quizInfo,
+        missionInfo: missionInfo,
       });
     } catch (error) {
       console.error("Error fetching debug info:", error);
@@ -186,6 +216,18 @@ function App(): React.JSX.Element {
                 <Text style={[styles.debugValue, { color: debugInfo.isInitialized ? "#4CAF50" : "#F44336" }]}>
                   {debugInfo.isInitialized ? "✓ Yes" : "✗ No"}
                 </Text>
+              </View>
+              <View style={styles.debugRow}>
+                <Text style={styles.debugLabel}>Banner Info:</Text>
+                <Text style={styles.debugValue}>{JSON.stringify(debugInfo.bannerInfo, null, 2)}</Text>
+              </View>
+              <View style={styles.debugRow}>
+                <Text style={styles.debugLabel}>Quiz Info:</Text>
+                <Text style={styles.debugValue}>{JSON.stringify(debugInfo.quizInfo, null, 2)}</Text>
+              </View>
+              <View style={styles.debugRow}>
+                <Text style={styles.debugLabel}>Mission Info:</Text>
+                <Text style={styles.debugValue}>{JSON.stringify(debugInfo.missionInfo, null, 2)}</Text>
               </View>
             </View>
           </View>

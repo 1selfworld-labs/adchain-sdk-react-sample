@@ -64,8 +64,16 @@ RCT_EXTERN_METHOD(getBannerInfo:(NSString *)placementId
                   resolver:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
 
-// 7. Offerwall (1개)
+// 7. Offerwall (3개)
 RCT_EXTERN_METHOD(openOfferwall:(RCTPromiseResolveBlock)resolver
+                  rejecter:(RCTPromiseRejectBlock)rejecter)
+
+RCT_EXTERN_METHOD(openOfferwallWithUrl:(NSString *)url
+                  resolver:(RCTPromiseResolveBlock)resolver
+                  rejecter:(RCTPromiseRejectBlock)rejecter)
+
+RCT_EXTERN_METHOD(openExternalBrowser:(NSString *)url
+                  resolver:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
 
 @end

@@ -16,6 +16,11 @@ interface MissionCache {
   totalCount: number;
   canClaimReward: boolean;
   timestamp: number;
+  titleText?: string;
+  descriptionText?: string;
+  bottomText?: string;
+  rewardIconUrl?: string;
+  bottomIconUrl?: string;
 }
 
 // Global cache store
@@ -30,6 +35,11 @@ const Mission = () => {
   const [currentMissionStep, setCurrentMissionStep] = useState(0);
   const [maxMissionStep, setMaxMissionStep] = useState(3);
   const [canClaimReward, setCanClaimReward] = useState(false);
+  const [titleText, setTitleText] = useState("무료 포인트 모으기");
+  const [descriptionText, setDescriptionText] = useState("간단 광고 참여하고 100 포인트 받기");
+  const [bottomText, setBottomText] = useState("800만 포인트 받으러 가기");
+  const [rewardIconUrl, setRewardIconUrl] = useState<string | undefined>();
+  const [bottomIconUrl, setBottomIconUrl] = useState<string | undefined>();
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
   // Cache validation
@@ -46,6 +56,12 @@ const Mission = () => {
       setCanClaimReward(missionCache.canClaimReward);
       setCurrentMissionStep(missionCache.completedCount);
       setMaxMissionStep(missionCache.totalCount || 3);
+      // 캐시에서 신규 필드도 복원
+      setTitleText(missionCache.titleText || "무료 포인트 모으기");
+      setDescriptionText(missionCache.descriptionText || "간단 광고 참여하고 100 포인트 받기");
+      setBottomText(missionCache.bottomText || "800만 포인트 받으러 가기");
+      setRewardIconUrl(missionCache.rewardIconUrl);
+      setBottomIconUrl(missionCache.bottomIconUrl);
       setLoading(false);
       setShowSkeleton(false);
       fadeAnim.setValue(1);
@@ -131,6 +147,13 @@ const Mission = () => {
       const response: any = await AdchainSdk.loadMissionList(MISSION_UNIT_ID);
       console.log("Mission SDK Response:", JSON.stringify(response, null, 2));
 
+      // 신규 필드 저장 (캐시에도 포함)
+      const titleText = response.titleText || "무료 포인트 모으기!";
+      const descriptionText = response.descriptionText || "간단 광고 참여하고 100 포인트 받기";
+      const bottomText = response.bottomText || "800만 포인트 받으러 가기";
+      const rewardIconUrl = response.rewardIconUrl;
+      const bottomIconUrl = response.bottomIconUrl;
+
       // SDK 데이터를 UI 형식으로 변환
       const transformedMissionList: MissionItem[] = response.missions.map((mission: any) => ({
         id: mission.id,
@@ -144,20 +167,30 @@ const Mission = () => {
         type: mission.type,
       }));
 
-      // Update cache
+      // Update cache (신규 필드 포함)
       missionCache = {
         data: transformedMissionList,
         completedCount: response.completedCount,
         totalCount: response.totalCount,
         canClaimReward: response.canClaimReward,
         timestamp: Date.now(),
+        titleText: titleText,
+        descriptionText: descriptionText,
+        bottomText: bottomText,
+        rewardIconUrl: rewardIconUrl,
+        bottomIconUrl: bottomIconUrl,
       };
 
-      // Update UI
+      // Update UI (신규 필드 포함)
       setMissionItems(transformedMissionList);
       setCanClaimReward(response.canClaimReward);
       setCurrentMissionStep(response.completedCount);
       setMaxMissionStep(response.totalCount || 3);
+      setTitleText(titleText);
+      setDescriptionText(descriptionText);
+      setBottomText(bottomText);
+      setRewardIconUrl(rewardIconUrl);
+      setBottomIconUrl(bottomIconUrl);
 
       if (!isBackgroundRefresh) {
         // Smooth fade in animation
@@ -260,9 +293,12 @@ const Mission = () => {
         ) : (
           <Animated.View style={{ opacity: fadeAnim }}>
             <MissionModule
-              titleText="무료 포인트 모으기"
+              titleText={titleText}
               missionList={missionItems.slice(0, 3)}
-              description="간단 광고 참여하고 100 포인트 받기"
+              description={descriptionText}
+              bottomText={bottomText}
+              rewardIconUrl={rewardIconUrl}
+              bottomIconUrl={bottomIconUrl}
               maxMissionStep={maxMissionStep}
               currentMissionStep={currentMissionStep}
               missionColor={"#FF9500"}

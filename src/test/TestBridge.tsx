@@ -67,7 +67,7 @@ const TestBridge: React.FC = () => {
   const testLoadQuizList = async () => {
     try {
       const result = await AdchainSdk.loadQuizList('quiz-unit-1');
-      addResult(`✅ LoadQuizList: ${result.length} quizzes loaded`);
+      addResult(`✅ LoadQuizList: ${result.events?.length || 0} quizzes loaded`);
     } catch (error: any) {
       addResult(`❌ LoadQuizList failed: ${error.message}`);
     }

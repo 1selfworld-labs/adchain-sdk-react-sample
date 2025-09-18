@@ -45,6 +45,16 @@ export interface Quiz {
   isCompleted: boolean;
 }
 
+export interface QuizResponse {
+  success: boolean;
+  titleText?: string;
+  completedImageUrl?: string;
+  completedImageWidth?: number;
+  completedImageHeight?: number;
+  events: Quiz[];
+  message?: string;
+}
+
 export interface Mission {
   id: string;
   title: string;
@@ -114,7 +124,7 @@ class AdchainSDK {
   }
 
   // 3. Quiz 관련 (2개)
-  async loadQuizList(unitId: string): Promise<Quiz[]> {
+  async loadQuizList(unitId: string): Promise<QuizResponse> {
     return AdchainSdk.loadQuizList(unitId);
   }
 
@@ -135,9 +145,17 @@ class AdchainSDK {
     return AdchainSdk.claimReward(unitId);
   }
 
-  // 5. Offerwall (1개)
+  // 5. Offerwall (3개)
   async openOfferwall(): Promise<SuccessResponse> {
     return AdchainSdk.openOfferwall();
+  }
+
+  async openOfferwallWithUrl(url: string): Promise<SuccessResponse> {
+    return AdchainSdk.openOfferwallWithUrl(url);
+  }
+
+  async openExternalBrowser(url: string): Promise<SuccessResponse> {
+    return AdchainSdk.openExternalBrowser(url);
   }
 
   // 6. Debug/Utility Methods (3개)
