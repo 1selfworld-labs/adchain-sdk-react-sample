@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AdchainSdk, { addQuizCompletedListener } from "../../index";
 import { BannerInfo } from "../../interface/banner";
-import { QuizItem } from "../../interface/quiz";
+import { CompletedQuizBanner, QuizItem } from "../../interface/quiz";
 import Banner from "../banner";
 import QuizModule from "./QuizModule";
 import QuizSkeleton from "./QuizSkeleton";
@@ -35,6 +35,11 @@ const Quiz = ({ isLoggedIn }: IProps) => {
   const [quizItems, setQuizItems] = useState<QuizItem[]>([]);
   const [quizTitleText, setQuizTitleText] = useState<string>("데일리 1분 퀴즈"); // 퀴즈 타이틀 텍스트
   const [bannerInfo, setBannerInfo] = useState<BannerInfo | null>(null);
+  const [completedQuizBanner, setCompletedQuizBanner] = useState<CompletedQuizBanner>({
+    completedImageHeight: 0,
+    completedImageUrl: "",
+    completedImageWidth: 0,
+  });
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
   // Cache validation
@@ -97,11 +102,18 @@ const Quiz = ({ isLoggedIn }: IProps) => {
 
       // SDK에서 실제 퀴즈 데이터 로드 (이제 전체 응답 반환)
       const quizResponse = await AdchainSdk.loadQuizList(QUIZ_UNIT_ID);
+      console.log("Quiz response:", quizResponse);
+      const sdkCompletedBanner = {
+        completedImageHeight: quizResponse.completedImageHeight || 0,
+        completedImageUrl: quizResponse.completedImageUrl || "",
+        completedImageWidth: quizResponse.completedImageWidth || 0,
+      };
       const sdkQuizList: any[] = quizResponse.events || [];
 
       // titleText가 있으면 업데이트
       if (quizResponse.titleText) {
         setQuizTitleText(quizResponse.titleText);
+        setCompletedQuizBanner(sdkCompletedBanner);
       }
 
       // 디버깅: SDK 응답 확인
@@ -252,15 +264,11 @@ const Quiz = ({ isLoggedIn }: IProps) => {
       <View style={styles.testButtonsContainer}>
         <Text style={styles.testSectionTitle}>SDK 테스트</Text>
         <View style={styles.testButtonRow}>
-          <TouchableOpacity
-            style={[styles.testButton, { backgroundColor: "#FF9500" }]}
-            onPress={handleTestOfferwallWithUrl}>
+          <TouchableOpacity style={[styles.testButton, { backgroundColor: "#FF9500" }]} onPress={handleTestOfferwallWithUrl}>
             <Text style={styles.testButtonText}>오퍼월 URL 테스트</Text>
             <Text style={styles.testButtonSubtext}>(test_banner_1)</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.testButton, { backgroundColor: "#046BD5" }]}
-            onPress={handleTestExternalBrowser}>
+          <TouchableOpacity style={[styles.testButton, { backgroundColor: "#046BD5" }]} onPress={handleTestExternalBrowser}>
             <Text style={styles.testButtonText}>외부 브라우저 테스트</Text>
             <Text style={styles.testButtonSubtext}>(test_banner_2)</Text>
           </TouchableOpacity>
@@ -276,6 +284,7 @@ const Quiz = ({ isLoggedIn }: IProps) => {
             <QuizModule
               titleText={quizTitleText}
               quizItems={quizItems}
+              completedQuizBanner={completedQuizBanner}
               networkError={networkError}
               networkError2={networkError2}
               onRefresh={handleRefresh}

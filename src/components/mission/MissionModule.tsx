@@ -141,10 +141,10 @@ const MissionModule = ({
           <View style={styles.offerwallButton}>
             <View style={styles.offerwallBButtonTextWrapper}>
               <Image
-                source={bottomIconUrl ? {uri: bottomIconUrl} : require("../../assets/images/img_offerwall_coin.png")}
-                style={[styles.offerwallButtonCoinIcon, { width: 56, height: 56, marginRight: 12 }]}
+                source={bottomIconUrl ? { uri: bottomIconUrl } : require("../../assets/images/img_offerwall_coin.png")}
+                style={[styles.offerwallButtonCoinIcon, { width: 35, height: 35 }]}
               />
-              <Text style={[styles.offerwallButtonText, { flex: 1 }]}>{bottomText.includes("\n") ? bottomText : `${bottomText.split(" ").slice(0, -2).join(" ")}\n${bottomText.split(" ").slice(-2).join(" ")}`}</Text>
+              <Text style={[styles.offerwallButtonText, { width: 35, height: 35 }]}>{bottomText}</Text>
               <Image
                 source={require("../../assets/images/img_offerwall_right_arrow.png")}
                 style={styles.offerwallButtonArrowIcon}
@@ -160,8 +160,9 @@ const MissionModule = ({
         <View style={styles.offerwallButton}>
           <View style={styles.offerwallBButtonTextWrapper}>
             <Image
-              source={bottomIconUrl ? {uri: bottomIconUrl} : require("../../assets/images/img_offerwall_coin.png")}
-              style={styles.offerwallButtonCoinIcon} />
+              source={bottomIconUrl ? { uri: bottomIconUrl } : require("../../assets/images/img_offerwall_coin.png")}
+              style={styles.offerwallButtonCoinIcon}
+            />
             <Text style={styles.offerwallButtonText}>{bottomText}</Text>
             <Image
               source={require("../../assets/images/img_offerwall_right_arrow.png")}
@@ -185,8 +186,9 @@ const MissionModule = ({
         <TouchableOpacity onPress={() => onOpenOfferwall()}>
           <View style={styles.rewardCoinBox}>
             <Image
-              source={rewardIconUrl ? {uri: rewardIconUrl} : require("../../assets/images/img_reward_coin.png")}
-              style={styles.rewardCoinIcon} />
+              source={rewardIconUrl ? { uri: rewardIconUrl } : require("../../assets/images/img_reward_coin.png")}
+              style={styles.rewardCoinIcon}
+            />
             <Animated.Image
               source={require("../../assets/images/img_reward_floating_text.png")}
               style={[

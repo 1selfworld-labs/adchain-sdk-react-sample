@@ -1,10 +1,11 @@
 import React from "react";
 import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { QuizItem } from "../../interface/quiz";
+import { CompletedQuizBanner, QuizItem } from "../../interface/quiz";
 
 interface QuizModuleProps {
   titleText?: string;
   quizItems: QuizItem[];
+  completedQuizBanner: CompletedQuizBanner;
   networkError: boolean;
   networkError2: boolean;
   onRefresh: () => void;
@@ -16,6 +17,7 @@ interface QuizModuleProps {
 const QuizModule = ({
   titleText = "데일리 1분 퀴즈",
   quizItems,
+  completedQuizBanner,
   networkError,
   networkError2,
   onRefresh,
@@ -58,11 +60,25 @@ const QuizModule = ({
     }
 
     if (isQuizListExist === false) {
-      return (
-        <TouchableOpacity style={styles.emptyBanner} onPress={() => onOpenOfferwall && onOpenOfferwall()}>
-          <Image source={require("../../assets/images/img_empty_quiz_2.png")} style={styles.emptyBannerImage} />
-        </TouchableOpacity>
-      );
+      if (completedQuizBanner.completedImageUrl === "") {
+        return (
+          <TouchableOpacity style={styles.emptyBanner} onPress={() => onOpenOfferwall && onOpenOfferwall()}>
+            <Image source={require("../../assets/images/img_empty_quiz_2.png")} style={styles.emptyBannerImage} />
+          </TouchableOpacity>
+        );
+      } else {
+        return (
+          <TouchableOpacity style={styles.emptyBanner} onPress={() => onOpenOfferwall && onOpenOfferwall()}>
+            <Image
+              source={{ uri: completedQuizBanner.completedImageUrl }}
+              style={[
+                styles.emptyBannerImage,
+                { aspectRatio: completedQuizBanner.completedImageWidth / completedQuizBanner.completedImageHeight },
+              ]}
+            />
+          </TouchableOpacity>
+        );
+      }
     }
 
     if (isQuizListExist) {

@@ -16,3 +16,9 @@ export interface QuizItem {
   url: string;
   isCompleted?: boolean;
 }
+
+export interface CompletedQuizBanner {
+  completedImageHeight: number;
+  completedImageWidth: number;
+  completedImageUrl: string;
+}
