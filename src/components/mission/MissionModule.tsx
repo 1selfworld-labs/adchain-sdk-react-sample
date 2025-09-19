@@ -234,8 +234,8 @@ const MissionModule = ({
                     defaultSource={{ uri: "https://via.placeholder.com/52x52/FF9500/FFFFFF?text=M" }}
                   />
                   <View style={styles.missionContent}>
-                    <Text style={styles.brandText}>{item.brandText}</Text>
                     <Text style={[styles.missionTitleText, item.isCompleted && styles.completedText]}>{item.titleText}</Text>
+                    <Text style={styles.brandText}>{item.brandText}</Text>
                   </View>
                   <View style={[styles.ctaButton, { backgroundColor: item.isCompleted ? "#CED5E0" : ctaColor }]}>
                     <Text style={[styles.ctaButtonText, { color: "#FFFFFF" }]}>
