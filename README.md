@@ -23,10 +23,16 @@ adchain-sdk-react-sample/
 │   │   ├── quiz/
 │   │   │   ├── QuizModule.tsx         ✅ 복사 가능 (Quiz UI 컴포넌트)
 │   │   │   └── QuizSkeleton.tsx       ✅ 복사 가능 (로딩 스켈레톤)
-│   │   └── mission/
-│   │       ├── MissionModule.tsx       ✅ 복사 가능 (Mission UI 컴포넌트)
-│   │       └── MissionSkeleton.tsx     ✅ 복사 가능 (로딩 스켈레톤)
-│   └── index.tsx                       ✅ 참고 필요 (TypeScript 인터페이스)
+│   │   ├── mission/
+│   │   │   ├── MissionModule.tsx       ✅ 복사 가능 (Mission UI 컴포넌트)
+│   │   │   └── MissionSkeleton.tsx     ✅ 복사 가능 (로딩 스켈레톤)
+│   │   ├── banner/
+│   │   │   └── index.tsx               ✅ 복사 가능 (Banner 광고 컴포넌트)
+│   │   └── debug/                      ⚠️  참고 (디버그 도구)
+│   ├── navigation/                     ⚠️  참고 (네비게이션 설정)
+│   ├── interface/                      ⚠️  참고 (TypeScript 인터페이스)
+│   ├── types/                          ⚠️  참고 (타입 정의)
+│   └── index.tsx                       ✅ 참고 필요 (SDK 래퍼)
 └── App.tsx                             ⚠️  참고 필요 (초기화 및 사용 예시)
 ```
 
@@ -51,7 +57,7 @@ dependencies {
     // 기존 dependencies는 그대로 유지하고 아래 내용 추가
 
     // AdChain SDK - 아래 한 줄만 추가하면 됩니다!
-    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.11'
+    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.15'
 
     // AdChain SDK가 필요로 하는 의존성들
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
@@ -71,7 +77,7 @@ target 'YourAppName' do
   # 기존 내용 유지...
 
   # AdChain SDK 추가 - 아래 한 줄만 추가!
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.12'
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.19'
 end
 ```
 
@@ -183,6 +189,17 @@ adchain-sdk-react-sample/src/components/mission/
 your-app/src/components/mission/
 ```
 
+### Banner 컴포넌트 복사 (신규)
+
+```bash
+# 샘플에서 복사
+adchain-sdk-react-sample/src/components/banner/
+└── index.tsx
+
+# 귀사 프로젝트로
+your-app/src/components/banner/
+```
+
 ---
 
 ## 🔧 Step 4: TypeScript 인터페이스 설정
@@ -223,6 +240,9 @@ export default AdchainSdk as {
   clickMission(unitId: string, missionId: string): Promise<void>;
   claimReward(unitId: string): Promise<any>;
   openOfferwall(): Promise<void>;
+  openOfferwallWithUrl(url: string): Promise<void>;  // 신규
+  openExternalBrowser(url: string): Promise<void>;   // 신규
+  loadBannerInfo(unitId: string): Promise<any>;      // 신규
 };
 ```
 
@@ -302,6 +322,49 @@ const openOfferwall = async () => {
 };
 ```
 
+### Banner 광고 사용 예시 (신규)
+
+```typescript
+// 배너 정보 불러오기
+const loadBanner = async () => {
+  const bannerInfo = await AdchainSdk.loadBannerInfo('BANNER_UNIT_001');
+  setBanner(bannerInfo);
+};
+
+// 배너 클릭 처리
+const handleBannerClick = (banner: BannerInfo) => {
+  if (banner.linkType === 'internal') {
+    // SDK 내부 페이지로 이동
+    AdchainSdk.openOfferwallWithUrl(banner.internalLinkUrl);
+  } else {
+    // 외부 브라우저로 이동
+    AdchainSdk.openExternalBrowser(banner.externalLinkUrl);
+  }
+};
+```
+
+### 이벤트 리스너 설정 (신규)
+
+```typescript
+import { NativeEventEmitter } from 'react-native';
+
+// 이벤트 에미터 생성
+const adchainEventEmitter = new NativeEventEmitter(AdchainSdk);
+
+// 이벤트 리스너 등록
+useEffect(() => {
+  const subscription = adchainEventEmitter.addListener(
+    'onMissionComplete',
+    (event) => {
+      console.log('미션 완료:', event.missionId);
+      // UI 업데이트 등
+    }
+  );
+
+  return () => subscription.remove();
+}, []);
+```
+
 ---
 
 ## ✅ 체크리스트
@@ -317,8 +380,58 @@ const openOfferwall = async () => {
 
 ### 선택 작업
 - [ ] Quiz/Mission UI 컴포넌트 복사
+- [ ] Banner 컴포넌트 복사
 - [ ] 샘플 앱 실행해보기
 - [ ] 이벤트 리스너 설정
+
+---
+
+## 📚 API Reference
+
+### 초기화 및 인증
+| 메서드 | 설명 | 파라미터 | 반환값 |
+|---------|------|----------|--------|
+| `initialize()` | SDK 초기화 | `appKey`, `appSecret`, `options` | `Promise<SuccessResponse>` |
+| `login()` | 사용자 로그인 | `user: AdchainUser` | `Promise<SuccessResponse>` |
+| `logout()` | 로그아웃 | - | `Promise<void>` |
+| `isLoggedIn()` | 로그인 상태 확인 | - | `Promise<boolean>` |
+
+### 퀴즈 및 미션
+| 메서드 | 설명 | 파라미터 | 반환값 |
+|---------|------|----------|--------|
+| `loadQuizList()` | 퀴즈 목록 불러오기 | `unitId: string` | `Promise<Quiz[]>` |
+| `clickQuiz()` | 퀴즈 클릭 | `unitId`, `quizId` | `Promise<void>` |
+| `loadMissionList()` | 미션 목록 불러오기 | `unitId: string` | `Promise<MissionListResponse>` |
+| `clickMission()` | 미션 클릭 | `unitId`, `missionId` | `Promise<void>` |
+| `claimReward()` | 보상 받기 | `unitId: string` | `Promise<any>` |
+
+### 광고 및 브라우저
+| 메서드 | 설명 | 파라미터 | 반환값 |
+|---------|------|----------|--------|
+| `openOfferwall()` | 오퍼월 열기 | - | `Promise<void>` |
+| `openOfferwallWithUrl()` 🆕 | URL로 오퍼월 열기 | `url: string` | `Promise<void>` |
+| `openExternalBrowser()` 🆕 | 외부 브라우저 열기 | `url: string` | `Promise<void>` |
+| `loadBannerInfo()` 🆕 | 배너 정보 불러오기 | `unitId: string` | `Promise<BannerInfo>` |
+
+---
+
+## ⚠️ 주의사항
+
+### iOS 설정
+- **필수**: `use_frameworks! :linkage => :static` 설정 필요
+- **최소 버전**: iOS 14.0 이상 요구
+- **Swift 브릿지**: Bridging Header 자동 생성 필요
+
+### Android 설정
+- **Kotlin 버전**: 1.9.21 이상 권장
+- **Coroutines**: 1.7.3 이상 필요
+- **androidx.core 충돌**: `implementation 'androidx.core:core:1.10.1'` 추가로 해결
+
+### React Navigation 호환성
+현재 샘플은 다음 버전을 사용:
+- `@react-navigation/native`: ^6.1.18
+- `@react-navigation/bottom-tabs`: ^6.6.1
+- `react-native-screens`: 3.29.0
 
 ---
 
@@ -366,6 +479,7 @@ npx react-native run-ios
 | `src/index.tsx` | `src/services/AdchainSdk.ts` | ✅ 필수 | 없음 |
 | `src/components/quiz/*` | `src/components/quiz/*` | ⭕ 선택 | 스타일 |
 | `src/components/mission/*` | `src/components/mission/*` | ⭕ 선택 | 스타일 |
+| `src/components/banner/*` | `src/components/banner/*` | ⭕ 선택 | 스타일 |
 | `App.tsx` | - | 참고용 | SDK_CONFIG |
 
 ---
@@ -393,6 +507,6 @@ npx react-native run-ios
 
 ---
 
-**Version**: 1.0.0
-**Last Updated**: 2025-09-15
+**Version**: 1.0.1
+**Last Updated**: 2025-09-19
 **Sample Project**: [adchain-sdk-react-sample](https://github.com/1selfworld-labs/adchain-sdk-react-sample)
