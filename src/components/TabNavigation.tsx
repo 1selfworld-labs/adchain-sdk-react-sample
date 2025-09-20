@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { AppState, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AdchainSdk from "../../src/index";
 import { DebugInfo } from "../interface/debug";
 import Debug from "./debug";
@@ -35,14 +35,14 @@ const TabNavigation = ({ isLoggedIn }: TabNavigationProps) => {
         missionInfo: "" as any,
       });
 
-      // 디버깅 정보 수집
+      // 디버깅 정보 수집 (SDK 상태 정보만)
       const [userId, ifa, isInit] = await Promise.all([
         AdchainSdk.getUserId(),
         AdchainSdk.getIFA(),
         AdchainSdk.isInitialized(),
       ]);
 
-      // getBannerInfo 호출
+      // getBannerInfo 호출 (디버깅 용도)
       let bannerInfo = null;
       try {
         bannerInfo = await AdchainSdk.getBannerInfo("test_banner_001");
@@ -50,21 +50,10 @@ const TabNavigation = ({ isLoggedIn }: TabNavigationProps) => {
         bannerInfo = { error: (bannerError as string) || "Failed to get banner info" };
       }
 
-      // loadQuizList 호출 (전체 QuizResponse 반환)
-      let quizInfo = null;
-      try {
-        quizInfo = await AdchainSdk.loadQuizList("quiz_unit_001");
-      } catch (quizError) {
-        quizInfo = { error: (quizError as string) || "Failed to get quiz info" };
-      }
-
-      // loadMissionList 호출
-      let missionInfo = null;
-      try {
-        missionInfo = await AdchainSdk.loadMissionList("mission_unit_001");
-      } catch (missionError) {
-        missionInfo = { error: (missionError as string) || "Failed to get mission info" };
-      }
+      // Quiz와 Mission 데이터는 각 컴포넌트가 직접 관리하도록 변경
+      // 중복 호출 방지를 위해 제거
+      const quizInfo = { note: "Quiz data managed by Quiz component" };
+      const missionInfo = { note: "Mission data managed by Mission component" };
 
       setDebugInfo({
         userId: userId || "Not logged in",
@@ -79,9 +68,27 @@ const TabNavigation = ({ isLoggedIn }: TabNavigationProps) => {
     }
   };
 
+  // 앱 포커스 이벤트 리스너 - iOS 추적 허용 후 IFA 갱신을 위해
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        console.log('App became active, refreshing debug info...');
+        fetchDebugInfo();
+      }
+    });
+
+    // 초기 로드
+    fetchDebugInfo();
+
+    return () => {
+      subscription?.remove();
+    };
+  }, []); // 한 번만 설정
+
+  // 탭 변경 및 로그인 상태 변경 시 갱신
   useEffect(() => {
     fetchDebugInfo();
-  }, [activeTab]);
+  }, [activeTab, isLoggedIn]);
 
   return (
     <View style={styles.container}>
@@ -104,7 +111,7 @@ const TabNavigation = ({ isLoggedIn }: TabNavigationProps) => {
       </View>
 
       <View style={styles.contentContainer}>{activeTab === "quiz" ? <Quiz isLoggedIn={isLoggedIn} /> : <Mission />}</View>
-      <Debug debugInfo={debugInfo} />
+      <Debug debugInfo={debugInfo} onRefresh={fetchDebugInfo} />
     </View>
   );
 };

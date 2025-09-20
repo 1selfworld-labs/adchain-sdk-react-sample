@@ -1,14 +1,22 @@
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DebugInfo } from "../../interface/debug";
 
 interface IProps {
   debugInfo: DebugInfo;
+  onRefresh?: () => void;
 }
 
-const Debug = ({ debugInfo }: IProps) => {
+const Debug = ({ debugInfo, onRefresh }: IProps) => {
   return (
     <View style={styles.debugPanel}>
-      <Text style={styles.debugTitle}>🔧 Debug Info</Text>
+      <View style={styles.debugHeader}>
+        <Text style={styles.debugTitle}>🔧 Debug Info</Text>
+        {onRefresh && (
+          <TouchableOpacity onPress={onRefresh} style={styles.refreshButton}>
+            <Text style={styles.refreshButtonText}>🔄 새로고침</Text>
+          </TouchableOpacity>
+        )}
+      </View>
       <View style={styles.debugRow}>
         <Text style={styles.debugLabel}>User ID:</Text>
         <Text style={styles.debugValue}>{debugInfo.userId}</Text>
@@ -57,11 +65,27 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  debugHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
   debugTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 12,
     color: "#333",
+  },
+  refreshButton: {
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  refreshButtonText: {
+    color: "#FFF",
+    fontSize: 12,
+    fontWeight: "600",
   },
   debugRow: {
     flexDirection: "row",
