@@ -1,6 +1,24 @@
-# AdChain SDK React Native 통합 가이드
+# AdChain SDK React Native 샘플 앱
 
-> 💡 **이 가이드는 AdChain SDK 샘플 프로젝트의 파일을 복사하여 귀사의 React Native 프로젝트에 빠르게 통합하는 방법을 안내합니다.**
+> 💡 **AdChain SDK를 React Native 프로젝트에 통합하는 완벽한 샘플 앱입니다. 이 샘플을 참고하여 귀사의 앱에 SDK를 빠르게 통합할 수 있습니다.**
+
+## 🎯 AdChain SDK란?
+
+AdChain SDK는 앱에 광고 기반 리워드 시스템을 쉽게 통합할 수 있게 해주는 모바일 SDK입니다:
+
+### 주요 기능
+- **Quiz 모듈**: 사용자가 퀴즈를 풀고 리워드를 받을 수 있는 게이미피케이션 광고
+- **Mission 모듈**: 특정 조건 달성 시 리워드를 제공하는 미션 시스템
+- **Banner 광고**: 네이티브 배너 광고 표시
+- **Offerwall**: 다양한 광고 상품을 한 곳에서 제공하는 오퍼월
+- **이벤트 트래킹**: 사용자 행동 분석 및 리워드 최적화
+
+### SDK 내부 동작
+- **자동 세션 관리**: 앱 실행/백그라운드 전환 시 자동으로 세션 관리
+- **배치 이벤트 처리**: 이벤트를 큐에 모아 효율적으로 서버에 전송 (v1.0.16+)
+- **오프라인 지원**: 네트워크가 없을 때도 이벤트를 로컬에 저장했다가 전송
+- **광고 ID 자동 갱신**: iOS IFA, Android ADID 변경 시 자동 감지 및 갱신
+- **보안 통신**: 모든 API 통신은 암호화되어 전송
 
 ## 📂 샘플 프로젝트 구조
 
@@ -57,7 +75,7 @@ dependencies {
     // 기존 dependencies는 그대로 유지하고 아래 내용 추가
 
     // AdChain SDK - 아래 한 줄만 추가하면 됩니다!
-    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.15'
+    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.16'
 
     // AdChain SDK가 필요로 하는 의존성들
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
@@ -77,7 +95,7 @@ target 'YourAppName' do
   # 기존 내용 유지...
 
   # AdChain SDK 추가 - 아래 한 줄만 추가!
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.19'
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.26'
 end
 ```
 
@@ -89,6 +107,8 @@ cd ios && pod install && cd ..
 ---
 
 ## 📋 Step 2: Native Bridge 파일 복사 (3분)
+
+> 💡 **Native Bridge란?** React Native JavaScript 코드에서 네이티브 SDK 기능을 호출할 수 있도록 연결해주는 브릿지 모듈입니다.
 
 ### Android Bridge 파일 복사
 
@@ -189,7 +209,7 @@ adchain-sdk-react-sample/src/components/mission/
 your-app/src/components/mission/
 ```
 
-### Banner 컴포넌트 복사 (신규)
+### Banner 컴포넌트 복사
 
 ```bash
 # 샘플에서 복사
@@ -240,9 +260,9 @@ export default AdchainSdk as {
   clickMission(unitId: string, missionId: string): Promise<void>;
   claimReward(unitId: string): Promise<any>;
   openOfferwall(): Promise<void>;
-  openOfferwallWithUrl(url: string): Promise<void>;  // 신규
-  openExternalBrowser(url: string): Promise<void>;   // 신규
-  loadBannerInfo(unitId: string): Promise<any>;      // 신규
+  openOfferwallWithUrl(url: string): Promise<void>;
+  openExternalBrowser(url: string): Promise<void>;
+  loadBannerInfo(unitId: string): Promise<any>;
 };
 ```
 
@@ -322,7 +342,7 @@ const openOfferwall = async () => {
 };
 ```
 
-### Banner 광고 사용 예시 (신규)
+### Banner 광고 사용 예시
 
 ```typescript
 // 배너 정보 불러오기
@@ -343,7 +363,7 @@ const handleBannerClick = (banner: BannerInfo) => {
 };
 ```
 
-### 이벤트 리스너 설정 (신규)
+### 이벤트 리스너 설정
 
 ```typescript
 import { NativeEventEmitter } from 'react-native';
@@ -409,9 +429,9 @@ useEffect(() => {
 | 메서드 | 설명 | 파라미터 | 반환값 |
 |---------|------|----------|--------|
 | `openOfferwall()` | 오퍼월 열기 | - | `Promise<void>` |
-| `openOfferwallWithUrl()` 🆕 | URL로 오퍼월 열기 | `url: string` | `Promise<void>` |
-| `openExternalBrowser()` 🆕 | 외부 브라우저 열기 | `url: string` | `Promise<void>` |
-| `loadBannerInfo()` 🆕 | 배너 정보 불러오기 | `unitId: string` | `Promise<BannerInfo>` |
+| `openOfferwallWithUrl()` | URL로 오퍼월 열기 | `url: string` | `Promise<void>` |
+| `openExternalBrowser()` | 외부 브라우저 열기 | `url: string` | `Promise<void>` |
+| `loadBannerInfo()` | 배너 정보 불러오기 | `unitId: string` | `Promise<BannerInfo>` |
 
 ---
 
@@ -495,6 +515,23 @@ npx react-native run-ios
 
 ---
 
+## 🆕 최신 업데이트
+
+### v1.0.16 (Android) / v1.0.26 (iOS)
+- ✨ 이벤트 큐 및 배치 처리 시스템 구현
+- 🔄 iOS/Android SDK 동작 통일화
+- 📊 오프라인 이벤트 처리 개선
+- 🆔 광고 ID (IFA/ADID) 자동 갱신 기능 강화
+- 🎭 WebView 전환 애니메이션 개선 (iOS)
+
+### 샘플 앱 최신 기능
+- 🔍 Debug 패널에 수동 새로고침 버튼 추가
+- 🚀 탭 전환 시 중복 API 호출 제거 (3회→1회)
+- 📱 iOS 추적 허용 후 IFA 실시간 갱신
+- 🎨 미션 모듈 레이아웃 개선
+
+---
+
 ## 📞 지원
 
 통합 중 문제가 발생하면:
@@ -507,6 +544,6 @@ npx react-native run-ios
 
 ---
 
-**Version**: 1.0.1
-**Last Updated**: 2025-09-19
+**Version**: 1.0.2
+**Last Updated**: 2025-09-22
 **Sample Project**: [adchain-sdk-react-sample](https://github.com/1selfworld-labs/adchain-sdk-react-sample)
