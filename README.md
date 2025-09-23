@@ -267,11 +267,19 @@ import { NativeModules } from 'react-native';
 // Native Module 가져오기
 const { AdchainSdk } = NativeModules;
 
-// 타입 정의
+// 타입 정의 (필수/선택 파라미터 표시)
 export interface AdchainConfig {
-  appKey: string;
-  appSecret: string;
-  environment: 'PRODUCTION' | 'STAGING' | 'DEVELOPMENT';
+  appKey: string;                    // 필수: 앱 키
+  appSecret: string;                 // 필수: 앱 시크릿
+  environment?: 'PRODUCTION' | 'STAGING' | 'DEVELOPMENT'; // 선택: 환경 (기본값: 'PRODUCTION')
+  timeout?: number;                  // 선택: 타임아웃 (ms, 기본값: 30000)
+}
+
+export interface AdchainUser {
+  userId: string;                    // 필수: 사용자 ID
+  gender?: 'MALE' | 'FEMALE' | 'OTHER' | 'M' | 'F'; // 선택: 성별
+  birthYear?: number;                // 선택: 출생년도
+  customProperties?: Record<string, string>; // 선택: 커스텀 속성
 }
 
 // AdchainSDK 클래스 정의 (예시)
@@ -379,19 +387,27 @@ const initializeSDK = async () => {
 
     if (!config) return;
 
-    // SDK 초기화 (하나의 config 객체로 전달)
+    // SDK 초기화 (필수 + 선택 파라미터)
     await AdchainSdk.initialize({
-      appKey: config.APP_KEY,
-      appSecret: config.APP_SECRET,
-      environment: 'PRODUCTION'
+      appKey: config.APP_KEY,        // 필수
+      appSecret: config.APP_SECRET,   // 필수
+      environment: 'PRODUCTION',      // 선택 (기본값: 'PRODUCTION')
+      timeout: 60000                  // 선택 (기본값: 30000ms)
     });
 
-    // 사용자 로그인 (객체로 전달)
+    // 사용자 로그인 - 모든 옵션 포함
     await AdchainSdk.login({
-      userId: 'user123',
-      gender: 'MALE', // 선택사항
-      birthYear: 1990  // 선택사항
+      userId: 'user123',              // 필수
+      gender: 'MALE',                 // 선택
+      birthYear: 1990,                // 선택
+      customProperties: {             // 선택
+        plan: 'premium',
+        level: '10'
+      }
     });
+
+    // 또는 최소 필수 파라미터만 사용
+    // await AdchainSdk.login({ userId: 'user123' });
 
     console.log('AdChain SDK 초기화 성공!');
   } catch (error) {
@@ -485,6 +501,51 @@ useEffect(() => {
 
 ---
 
+## 📘 타입 정의 참조
+
+### 주요 인터페이스
+
+```typescript
+// SDK 설정 타입
+interface AdchainConfig {
+  appKey: string;                    // 필수
+  appSecret: string;                 // 필수
+  environment?: 'PRODUCTION' | 'STAGING' | 'DEVELOPMENT'; // 선택 (기본: 'PRODUCTION')
+  timeout?: number;                  // 선택 (기본: 30000ms)
+}
+
+// 사용자 정보 타입
+interface AdchainUser {
+  userId: string;                    // 필수
+  gender?: 'MALE' | 'FEMALE' | 'OTHER' | 'M' | 'F'; // 선택
+  birthYear?: number;                // 선택 (1900-현재)
+  customProperties?: Record<string, string>; // 선택 (추가 속성)
+}
+
+// 응답 타입
+interface SuccessResponse {
+  success: boolean;
+  message?: string;
+}
+
+// 퀴즈 응답 타입
+interface QuizResponse {
+  success: boolean;
+  titleText?: string;
+  completedImageUrl?: string;
+  events: Quiz[];
+  message?: string;
+}
+
+// 미션 리스트 응답 타입
+interface MissionListResponse {
+  missions: Mission[];
+  availableReward?: number;
+}
+```
+
+---
+
 ## ✅ 체크리스트
 
 ### 필수 작업
@@ -509,8 +570,8 @@ useEffect(() => {
 ### 초기화 및 인증
 | 메서드 | 설명 | 파라미터 | 반환값 |
 |---------|------|----------|--------|
-| `initialize()` | SDK 초기화 | `config: AdchainConfig` | `Promise<SuccessResponse>` |
-| `login()` | 사용자 로그인 | `user: AdchainUser` | `Promise<SuccessResponse>` |
+| `initialize()` | SDK 초기화 | `config: {`<br>`  appKey: string,` 필수<br>`  appSecret: string,` 필수<br>`  environment?: string,` 선택<br>`  timeout?: number` 선택<br>`}` | `Promise<SuccessResponse>` |
+| `login()` | 사용자 로그인 | `user: {`<br>`  userId: string,` 필수<br>`  gender?: string,` 선택<br>`  birthYear?: number,` 선택<br>`  customProperties?: object` 선택<br>`}` | `Promise<SuccessResponse>` |
 | `logout()` | 로그아웃 | - | `Promise<SuccessResponse>` |
 | `isLoggedIn()` | 로그인 상태 확인 | - | `Promise<boolean>` |
 | `getCurrentUser()` | 현재 사용자 정보 | - | `Promise<AdchainUser \| null>` |
