@@ -45,6 +45,7 @@ const MissionModule = ({
   rewardIconUrl,
   bottomIconUrl,
 }: MissionModuleProps) => {
+  const HIT_SLOP = { top: 20, bottom: 20 } as const;
   const floatingAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -121,23 +122,23 @@ const MissionModule = ({
 
     if (networkError) {
       return (
-        <View style={styles.offerwallButton}>
-          <View style={styles.offerwallBButtonTextWrapper}>
-            <Text style={styles.emptyMissionText}>{"미션을 불러오지 못했어요."}</Text>
-            <TouchableOpacity onPress={handleRefreshPress}>
+        <TouchableOpacity onPress={handleRefreshPress} hitSlop={HIT_SLOP}>
+          <View style={styles.offerwallButton}>
+            <View style={styles.offerwallBButtonTextWrapper}>
+              <Text style={styles.emptyMissionText}>{"미션을 불러오지 못했어요."}</Text>
               <Image
                 source={require("../../assets/images/img_mission_refresh.png")}
                 style={[styles.refreshButton, { width: 32, height: 32, marginLeft: 16 }]}
               />
-            </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
       );
     }
 
     if (isMissionListExist === false || networkError2) {
       return (
-        <TouchableOpacity onPress={() => onOpenOfferwall()}>
+        <TouchableOpacity onPress={() => onOpenOfferwall()} hitSlop={HIT_SLOP}>
           <View style={styles.offerwallButton}>
             <View style={styles.offerwallBButtonTextWrapper}>
               <Image
@@ -156,7 +157,7 @@ const MissionModule = ({
     }
 
     return (
-      <TouchableOpacity onPress={() => onOpenOfferwall()}>
+      <TouchableOpacity onPress={() => onOpenOfferwall()} hitSlop={HIT_SLOP}>
         <View style={styles.offerwallButton}>
           <View style={styles.offerwallBButtonTextWrapper}>
             <Image
@@ -183,7 +184,7 @@ const MissionModule = ({
           </View>
           <Text style={styles.descriptionText}>{description}</Text>
         </View>
-        <TouchableOpacity onPress={() => onOpenOfferwall()}>
+        <TouchableOpacity onPress={() => onOpenOfferwall()} hitSlop={HIT_SLOP}>
           <View style={styles.rewardCoinBox}>
             <Image
               source={rewardIconUrl ? { uri: rewardIconUrl } : require("../../assets/images/img_reward_coin.png")}
