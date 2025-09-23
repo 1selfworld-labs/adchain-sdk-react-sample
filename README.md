@@ -75,7 +75,7 @@ dependencies {
     // 기존 dependencies는 그대로 유지하고 아래 내용 추가
 
     // AdChain SDK - 아래 한 줄만 추가하면 됩니다!
-    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.16'
+    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.18'
 
     // AdChain SDK가 필요로 하는 의존성들
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
@@ -95,7 +95,7 @@ target 'YourAppName' do
   # 기존 내용 유지...
 
   # AdChain SDK 추가 - 아래 한 줄만 추가!
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.26'
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.29'
 end
 ```
 
@@ -517,6 +517,11 @@ npx react-native run-ios
 
 ## 🆕 최신 업데이트
 
+### v1.0.18 (Android) / v1.0.29 (iOS) - 2025-09-23
+- 🔧 iOS PrivacyInfo.xcprivacy 중복 항목 제거 및 구조 정리
+- 📦 Android/iOS SDK 버전 업데이트
+- 🔄 네이티브 모듈 SDK 버전 참조 동기화
+
 ### v1.0.16 (Android) / v1.0.26 (iOS)
 - ✨ 이벤트 큐 및 배치 처리 시스템 구현
 - 🔄 iOS/Android SDK 동작 통일화
@@ -545,5 +550,5 @@ npx react-native run-ios
 ---
 
 **Version**: 1.0.2
-**Last Updated**: 2025-09-22
+**Last Updated**: 2025-09-23
 **Sample Project**: [adchain-sdk-react-sample](https://github.com/1selfworld-labs/adchain-sdk-react-sample)
