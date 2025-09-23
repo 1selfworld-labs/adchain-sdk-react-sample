@@ -31,11 +31,17 @@ adchain-sdk-react-sample/
 │       └── src/main/java/com/treasurerrn/
 │           ├── AdchainSdkModule.kt      ✅ 복사 필요 (Android Bridge)
 │           ├── AdchainSdkPackage.kt     ✅ 복사 필요 (Android Package)
+│           ├── StorageModule.kt        ⚠️  참고 (Storage 모듈)
+│           ├── StoragePackage.kt       ⚠️  참고 (Storage 패키지)
+│           ├── MainActivity.kt          ⚠️  참고 (메인 액티비티)
 │           └── MainApplication.kt       ⚠️  수정 참고
 ├── ios/
 │   └── TreasurerRN/
 │       ├── AdchainSdk.swift            ✅ 복사 필요 (iOS Bridge)
-│       └── AdchainSdk.m                ✅ 복사 필요 (iOS Objective-C Bridge)
+│       ├── AdchainSdk.m                ✅ 복사 필요 (iOS Objective-C Bridge)
+│       ├── Storage.swift               ⚠️  참고 (Storage 모듈)
+│       ├── Storage.m                   ⚠️  참고 (Storage Objective-C Bridge)
+│       └── AppDelegate.mm              ⚠️  참고 (앱 델리게이트)
 ├── src/
 │   ├── components/
 │   │   ├── quiz/
@@ -50,7 +56,8 @@ adchain-sdk-react-sample/
 │   ├── navigation/                     ⚠️  참고 (네비게이션 설정)
 │   ├── interface/                      ⚠️  참고 (TypeScript 인터페이스)
 │   ├── types/                          ⚠️  참고 (타입 정의)
-│   └── index.tsx                       ✅ 참고 필요 (SDK 래퍼)
+│   ├── Storage.ts                      ⚠️  참고 (Storage 유틸리티)
+│   └── index.tsx                       ✅ 복사 필요 (SDK 래퍼)
 └── App.tsx                             ⚠️  참고 필요 (초기화 및 사용 예시)
 ```
 
@@ -80,7 +87,23 @@ dependencies {
     // AdChain SDK가 필요로 하는 의존성들
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"
+
+    // Retrofit & Network
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation "com.squareup.moshi:moshi:1.15.0"
+    implementation "com.squareup.moshi:moshi-kotlin:1.15.0"
+    implementation "com.google.code.gson:gson:2.10.1"
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.12.0"
+
+    // AndroidX
+    implementation 'androidx.core:core:1.10.1'
+    implementation 'androidx.core:core-ktx:1.10.1'
+
+    // Google Play Services
+    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
 }
 ```
 
@@ -225,10 +248,13 @@ your-app/src/components/banner/
 ## 🔧 Step 4: TypeScript 인터페이스 설정
 
 ### 방법 1: 파일 복사 (권장)
-샘플의 `src/index.tsx` 파일을 복사하여 `src/services/AdchainSdk.ts`로 저장:
+샘플의 `src/index.tsx` 파일을 복사하여 귀사 프로젝트로:
 
 ```bash
-# 복사
+# 복사 (그대로 사용)
+cp adchain-sdk-react-sample/src/index.tsx your-app/src/index.tsx
+
+# 또는 다른 위치로 복사
 cp adchain-sdk-react-sample/src/index.tsx your-app/src/services/AdchainSdk.ts
 ```
 
@@ -248,22 +274,76 @@ export interface AdchainConfig {
   environment: 'PRODUCTION' | 'STAGING' | 'DEVELOPMENT';
 }
 
+// AdchainSDK 클래스 정의 (예시)
+class AdchainSDK {
+  async initialize(config: AdchainConfig): Promise<SuccessResponse> {
+    return AdchainSdk.initialize(
+      config.appKey,
+      config.appSecret,
+      { environment: config.environment, timeout: config.timeout }
+    );
+  }
+
+  async login(user: AdchainUser): Promise<SuccessResponse> {
+    return AdchainSdk.login(user.userId, {
+      gender: user.gender,
+      birthYear: user.birthYear,
+      customProperties: user.customProperties
+    });
+  }
+
+  async logout(): Promise<SuccessResponse> {
+    return AdchainSdk.logout();
+  }
+
+  async isLoggedIn(): Promise<boolean> {
+    return AdchainSdk.isLoggedIn();
+  }
+
+  async getCurrentUser(): Promise<AdchainUser | null> {
+    return AdchainSdk.getCurrentUser();
+  }
+
+  async loadQuizList(unitId: string): Promise<QuizResponse> {
+    return AdchainSdk.loadQuizList(unitId);
+  }
+
+  async clickQuiz(unitId: string, quizId: string): Promise<SuccessResponse> {
+    return AdchainSdk.clickQuiz(unitId, quizId);
+  }
+
+  async loadMissionList(unitId: string): Promise<MissionListResponse> {
+    return AdchainSdk.loadMissionList(unitId);
+  }
+
+  async clickMission(unitId: string, missionId: string): Promise<SuccessResponse> {
+    return AdchainSdk.clickMission(unitId, missionId);
+  }
+
+  async claimReward(unitId: string): Promise<any> {
+    return AdchainSdk.claimReward(unitId);
+  }
+
+  async openOfferwall(): Promise<SuccessResponse> {
+    return AdchainSdk.openOfferwall();
+  }
+
+  async openOfferwallWithUrl(url: string): Promise<SuccessResponse> {
+    return AdchainSdk.openOfferwallWithUrl(url);
+  }
+
+  async openExternalBrowser(url: string): Promise<SuccessResponse> {
+    return AdchainSdk.openExternalBrowser(url);
+  }
+
+  async getBannerInfo(placementId: string): Promise<any> {
+    return AdchainSdk.getBannerInfo(placementId);
+  }
+}
+
 // 내보내기
-export default AdchainSdk as {
-  initialize(appKey: string, appSecret: string, options: any): Promise<boolean>;
-  login(userId: string, userInfo?: any): Promise<boolean>;
-  logout(): Promise<void>;
-  isLoggedIn(): Promise<boolean>;
-  loadQuizList(unitId: string): Promise<any[]>;
-  clickQuiz(unitId: string, quizId: string): Promise<void>;
-  loadMissionList(unitId: string): Promise<any>;
-  clickMission(unitId: string, missionId: string): Promise<void>;
-  claimReward(unitId: string): Promise<any>;
-  openOfferwall(): Promise<void>;
-  openOfferwallWithUrl(url: string): Promise<void>;
-  openExternalBrowser(url: string): Promise<void>;
-  loadBannerInfo(unitId: string): Promise<any>;
-};
+const sdk = new AdchainSDK();
+export default sdk;
 ```
 
 ---
@@ -275,7 +355,7 @@ export default AdchainSdk as {
 샘플의 `App.tsx`에서 다음 부분을 복사하여 귀사 앱에 적용:
 
 ```typescript
-import AdchainSdk from './src/services/AdchainSdk';
+import AdchainSdk from './src/index'; // 또는 './src/services/AdchainSdk' (복사한 위치에 따라)
 
 // SDK 설정 (귀사의 APP_KEY와 APP_SECRET으로 변경)
 const SDK_CONFIG = {
@@ -299,15 +379,19 @@ const initializeSDK = async () => {
 
     if (!config) return;
 
-    // SDK 초기화
-    await AdchainSdk.initialize(
-      config.APP_KEY,
-      config.APP_SECRET,
-      { environment: 'PRODUCTION' }
-    );
+    // SDK 초기화 (하나의 config 객체로 전달)
+    await AdchainSdk.initialize({
+      appKey: config.APP_KEY,
+      appSecret: config.APP_SECRET,
+      environment: 'PRODUCTION'
+    });
 
-    // 사용자 로그인
-    await AdchainSdk.login('user123');
+    // 사용자 로그인 (객체로 전달)
+    await AdchainSdk.login({
+      userId: 'user123',
+      gender: 'MALE', // 선택사항
+      birthYear: 1990  // 선택사항
+    });
 
     console.log('AdChain SDK 초기화 성공!');
   } catch (error) {
@@ -347,7 +431,7 @@ const openOfferwall = async () => {
 ```typescript
 // 배너 정보 불러오기
 const loadBanner = async () => {
-  const bannerInfo = await AdchainSdk.loadBannerInfo('BANNER_UNIT_001');
+  const bannerInfo = await AdchainSdk.getBannerInfo('BANNER_UNIT_001');
   setBanner(bannerInfo);
 };
 
@@ -371,13 +455,27 @@ import { NativeEventEmitter } from 'react-native';
 // 이벤트 에미터 생성
 const adchainEventEmitter = new NativeEventEmitter(AdchainSdk);
 
-// 이벤트 리스너 등록
+// 방법 1: 헬퍼 함수 사용 (권장)
+import { addMissionCompletedListener, addQuizCompletedListener } from './src/index';
+
+useEffect(() => {
+  const subscription = addMissionCompletedListener((event) => {
+    console.log('미션 완료:', event.missionId);
+    // UI 업데이트 등
+  });
+
+  return () => subscription.remove();
+}, []);
+
+// 방법 2: NativeEventEmitter 직접 사용
+import { NativeEventEmitter } from 'react-native';
+const adchainEventEmitter = new NativeEventEmitter(AdchainSdk);
+
 useEffect(() => {
   const subscription = adchainEventEmitter.addListener(
-    'onMissionComplete',
+    'onMissionCompleted', // 'onMissionComplete' 아님 주의!
     (event) => {
       console.log('미션 완료:', event.missionId);
-      // UI 업데이트 등
     }
   );
 
@@ -411,27 +509,29 @@ useEffect(() => {
 ### 초기화 및 인증
 | 메서드 | 설명 | 파라미터 | 반환값 |
 |---------|------|----------|--------|
-| `initialize()` | SDK 초기화 | `appKey`, `appSecret`, `options` | `Promise<SuccessResponse>` |
+| `initialize()` | SDK 초기화 | `config: AdchainConfig` | `Promise<SuccessResponse>` |
 | `login()` | 사용자 로그인 | `user: AdchainUser` | `Promise<SuccessResponse>` |
-| `logout()` | 로그아웃 | - | `Promise<void>` |
+| `logout()` | 로그아웃 | - | `Promise<SuccessResponse>` |
 | `isLoggedIn()` | 로그인 상태 확인 | - | `Promise<boolean>` |
+| `getCurrentUser()` | 현재 사용자 정보 | - | `Promise<AdchainUser \| null>` |
 
 ### 퀴즈 및 미션
 | 메서드 | 설명 | 파라미터 | 반환값 |
 |---------|------|----------|--------|
-| `loadQuizList()` | 퀴즈 목록 불러오기 | `unitId: string` | `Promise<Quiz[]>` |
-| `clickQuiz()` | 퀴즈 클릭 | `unitId`, `quizId` | `Promise<void>` |
+| `loadQuizList()` | 퀴즈 목록 불러오기 | `unitId: string` | `Promise<QuizResponse>` |
+| `clickQuiz()` | 퀴즈 클릭 | `unitId: string`, `quizId: string` | `Promise<SuccessResponse>` |
 | `loadMissionList()` | 미션 목록 불러오기 | `unitId: string` | `Promise<MissionListResponse>` |
-| `clickMission()` | 미션 클릭 | `unitId`, `missionId` | `Promise<void>` |
+| `clickMission()` | 미션 클릭 | `unitId: string`, `missionId: string` | `Promise<SuccessResponse>` |
 | `claimReward()` | 보상 받기 | `unitId: string` | `Promise<any>` |
 
 ### 광고 및 브라우저
 | 메서드 | 설명 | 파라미터 | 반환값 |
 |---------|------|----------|--------|
-| `openOfferwall()` | 오퍼월 열기 | - | `Promise<void>` |
-| `openOfferwallWithUrl()` | URL로 오퍼월 열기 | `url: string` | `Promise<void>` |
-| `openExternalBrowser()` | 외부 브라우저 열기 | `url: string` | `Promise<void>` |
-| `loadBannerInfo()` | 배너 정보 불러오기 | `unitId: string` | `Promise<BannerInfo>` |
+| `openOfferwall()` | 오퍼월 열기 | - | `Promise<SuccessResponse>` |
+| `openOfferwallWithUrl()` | URL로 오퍼월 열기 | `url: string` | `Promise<SuccessResponse>` |
+| `openExternalBrowser()` | 외부 브라우저 열기 | `url: string` | `Promise<SuccessResponse>` |
+| `getBannerInfo()` | 배너 정보 불러오기 | `placementId: string` | `Promise<any>` |
+| `getIFA()` | 광고 ID 가져오기 | - | `Promise<string>` |
 
 ---
 
@@ -496,7 +596,7 @@ npx react-native run-ios
 | `android/.../AdchainSdkPackage.kt` | `android/.../AdchainSdkPackage.kt` | ✅ 필수 | 패키지명만 |
 | `ios/.../AdchainSdk.swift` | `ios/.../AdchainSdk.swift` | ✅ 필수 | 없음 |
 | `ios/.../AdchainSdk.m` | `ios/.../AdchainSdk.m` | ✅ 필수 | 없음 |
-| `src/index.tsx` | `src/services/AdchainSdk.ts` | ✅ 필수 | 없음 |
+| `src/index.tsx` | `src/index.tsx` 또는 `src/services/AdchainSdk.ts` | ✅ 필수 | 없음 |
 | `src/components/quiz/*` | `src/components/quiz/*` | ⭕ 선택 | 스타일 |
 | `src/components/mission/*` | `src/components/mission/*` | ⭕ 선택 | 스타일 |
 | `src/components/banner/*` | `src/components/banner/*` | ⭕ 선택 | 스타일 |
