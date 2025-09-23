@@ -430,7 +430,9 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
   fun getIFA(promise: Promise) {
     try {
       val context = reactContext.applicationContext
-      val ifa = com.adchain.sdk.utils.DeviceUtils.getAdvertisingIdSync(context) ?: ""
+      // SDK의 public 메서드를 사용하여 IFA 가져오기
+      // SDK가 캐싱, 권한 처리, 에러 처리 등을 모두 관리함
+      val ifa = AdchainSdk.getAdvertisingId(context) ?: ""
       promise.resolve(ifa)
     } catch (t: Throwable) {
       promise.reject("ERROR", t.message, t)

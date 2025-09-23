@@ -463,9 +463,11 @@ class AdchainSdkModule: RCTEventEmitter {
 
   @objc func getIFA(_ resolver: @escaping RCTPromiseResolveBlock,
                     rejecter: @escaping RCTPromiseRejectBlock) {
-    let defaults = UserDefaults.standard
-    let ifa = defaults.string(forKey: "advertising_id") ?? ""
-    resolver(ifa)
+    // SDK의 getAdvertisingId 메서드를 사용하여 IFA 가져오기
+    // SDK가 캐싱, 권한 처리, 에러 처리 등을 모두 관리함
+    AdchainSdk.shared.getAdvertisingId { advertisingId in
+      resolver(advertisingId)
+    }
   }
 
   // MARK: - 6. Banner (1개)
