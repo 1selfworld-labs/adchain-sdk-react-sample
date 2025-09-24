@@ -75,9 +75,6 @@ class AdchainSdkModule: RCTEventEmitter {
     
     // UI 관련 작업을 메인 스레드에서 실행
     DispatchQueue.main.async {
-      // 로그 레벨을 Debug로 설정하여 모든 로그 출력
-      AdchainLogger.logLevel = .debug
-
       if UIApplication.shared.delegate?.window??.rootViewController?.view.window?.windowScene?.delegate is UIWindowSceneDelegate {
         AdchainSdk.shared.initialize(application: UIApplication.shared, sdkConfig: config)
         resolver([
