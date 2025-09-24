@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Animated, Platform, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
-import AdchainSdk, { addMissionCompletedListener, addMissionProgressedListener } from "../../index";
+import AdchainSdk, { addMissionCompletedListener, addMissionProgressedListener, addMissionRefreshedListener } from "../../index";
 import { MissionItem } from "../../interface/mission";
 import MissionModule from "./MissionModule";
 import MissionSkeleton from "./MissionSkeleton";
@@ -128,6 +128,27 @@ const Mission = () => {
     });
 
     // cleanup
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  // Mission refreshed 이벤트 리스너 (WebView에서 호출됨)
+  useEffect(() => {
+    const subscription = addMissionRefreshedListener((event) => {
+      console.log(`[Mission Component] Mission refreshed event received for unitId: ${event.unitId}`);
+
+      // 이 컴포넌트의 unitId와 일치하거나, unitId가 없는 경우 (전체 새로고침)
+      if (!event.unitId || event.unitId === MISSION_UNIT_ID) {
+        // 캐시 무효화
+        missionCache = null;
+        console.log("[Mission Component] Cache cleared due to refresh event");
+
+        // 미션 리스트 즉시 재로드
+        loadMissionList();
+      }
+    });
+
     return () => {
       subscription.remove();
     };

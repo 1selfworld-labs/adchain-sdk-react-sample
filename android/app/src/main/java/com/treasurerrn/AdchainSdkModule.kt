@@ -9,6 +9,8 @@ import com.adchain.sdk.quiz.models.QuizEvent
 import com.adchain.sdk.mission.*
 import com.adchain.sdk.offerwall.*
 import android.app.Activity
+import android.os.Handler
+import android.os.Looper
 
 @ReactModule(name = AdchainSdkModule.NAME)
 class AdchainSdkModule(private val reactContext: ReactApplicationContext)
@@ -34,27 +36,55 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
       val timeout = if (options?.hasKey("timeout") == true && !options.isNull("timeout")) {
         options.getDouble("timeout")
       } else null
-      
+
       val env = when(environment?.uppercase()) {
         "STAGING" -> AdchainSdkConfig.Environment.STAGING
         "DEVELOPMENT" -> AdchainSdkConfig.Environment.DEVELOPMENT
         else -> AdchainSdkConfig.Environment.PRODUCTION
       }
-      
+
       val configBuilder = AdchainSdkConfig.Builder(appKey, appSecret)
         .setEnvironment(env)
-      
+
       timeout?.let {
         configBuilder.setTimeout(it.toLong())
       }
-      
+
       val config = configBuilder.build()
-      
-      currentActivity?.let { activity ->
-        AdchainSdk.initialize(activity.application, config)
+
+      // Activity가 null인 경우 최대 1초간 대기
+      if (currentActivity == null) {
+        val handler = Handler(Looper.getMainLooper())
+        var attempts = 0
+        val maxAttempts = 10 // 최대 10회 시도 (1초)
+
+        val runnable = object : Runnable {
+          override fun run() {
+            attempts++
+            val activity = currentActivity
+
+            if (activity != null) {
+              // Activity가 준비됨, SDK 초기화 진행
+              AdchainSdk.initialize(activity.application, config)
+              promise.resolve(createResponse(true, "SDK initialized successfully"))
+            } else if (attempts < maxAttempts) {
+              // 100ms 후 재시도
+              handler.postDelayed(this, 100)
+            } else {
+              // 최대 시도 횟수 초과
+              promise.reject("INIT_ERROR", "Current activity is null after waiting 1 second")
+            }
+          }
+        }
+
+        // 첫 시도는 100ms 후에
+        handler.postDelayed(runnable, 100)
+      } else {
+        // Activity가 이미 준비되어 있음
+        AdchainSdk.initialize(currentActivity!!.application, config)
         promise.resolve(createResponse(true, "SDK initialized successfully"))
-      } ?: promise.reject("INIT_ERROR", "Current activity is null")
-      
+      }
+
     } catch (t: Throwable) {
       promise.reject("INIT_ERROR", t.message, t)
     }
@@ -251,10 +281,55 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
   fun loadMissionList(unitId: String, promise: Promise) {
     try {
       // 인스턴스 자동 생성/재사용
-      val mission = missionInstances.getOrPut(unitId) { 
-        AdchainMission(unitId) 
+      val mission = missionInstances.getOrPut(unitId) {
+        AdchainMission(unitId)
       }
-      
+
+      // iOS와 동일하게 loadMissionList에서도 리스너 설정
+      // missionRefreshed 이벤트를 받기 위해 필수
+      val localUnitId = unitId
+      mission.setEventsListener(object : AdchainMissionEventsListener {
+        override fun onImpressed(mission: Mission) {
+          // 필요시 처리
+        }
+
+        override fun onClicked(mission: Mission) {
+          // 필요시 처리
+        }
+
+        override fun onCompleted(mission: Mission) {
+          // React Native로 이벤트 전송
+          reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit("onMissionCompleted", Arguments.createMap().apply {
+              putString("unitId", localUnitId)
+              putString("missionId", mission.id)
+              putDouble("timestamp", System.currentTimeMillis().toDouble())
+            })
+        }
+
+        override fun onProgressed(mission: Mission) {
+          // React Native로 이벤트 전송
+          reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit("onMissionProgressed", Arguments.createMap().apply {
+              putString("unitId", localUnitId)
+              putString("missionId", mission.id)
+              putDouble("timestamp", System.currentTimeMillis().toDouble())
+            })
+        }
+
+        override fun onRefreshed(refreshedUnitId: String?) {
+          // React Native로 이벤트 전송
+          reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit("onMissionRefreshed", Arguments.createMap().apply {
+              putString("unitId", refreshedUnitId ?: localUnitId)
+              putDouble("timestamp", System.currentTimeMillis().toDouble())
+            })
+        }
+      })
+
       mission.getMissionList(
         onSuccess = { missionList ->
           // getMissionStatus를 호출하여 정확한 진행 상태 가져오기
@@ -347,27 +422,31 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
   @ReactMethod
   fun clickMission(unitId: String, missionId: String, promise: Promise) {
     try {
-      val mission = missionInstances.getOrPut(unitId) { 
-        AdchainMission(unitId) 
+      val mission = missionInstances.getOrPut(unitId) {
+        AdchainMission(unitId)
       }
-      
+
+      // 외부 변수를 로컬 변수로 캡처
+      val localUnitId = unitId
+      val localMissionId = missionId
+
       // iOS와 동일한 방식: 리스너 설정
       mission.setEventsListener(object : AdchainMissionEventsListener {
         override fun onImpressed(mission: Mission) {
           // 필요시 처리
         }
-        
+
         override fun onClicked(mission: Mission) {
           // 필요시 처리
         }
-        
+
         override fun onCompleted(mission: Mission) {
           // React Native로 이벤트 전송
           reactContext
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
             .emit("onMissionCompleted", Arguments.createMap().apply {
-              putString("unitId", unitId)
-              putString("missionId", missionId)
+              putString("unitId", localUnitId)
+              putString("missionId", localMissionId)
               putDouble("timestamp", System.currentTimeMillis().toDouble())
             })
         }
@@ -377,13 +456,23 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
           reactContext
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
             .emit("onMissionProgressed", Arguments.createMap().apply {
-              putString("unitId", unitId)
-              putString("missionId", missionId)
+              putString("unitId", localUnitId)
+              putString("missionId", localMissionId)
+              putDouble("timestamp", System.currentTimeMillis().toDouble())
+            })
+        }
+
+        override fun onRefreshed(refreshedUnitId: String?) {
+          // React Native로 이벤트 전송
+          reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit("onMissionRefreshed", Arguments.createMap().apply {
+              putString("unitId", refreshedUnitId ?: localUnitId)
               putDouble("timestamp", System.currentTimeMillis().toDouble())
             })
         }
       })
-      
+
       mission.clickMission(missionId)
       promise.resolve(createResponse(true, "Mission clicked"))
     } catch (t: Throwable) {

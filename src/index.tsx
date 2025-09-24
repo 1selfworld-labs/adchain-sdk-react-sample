@@ -191,6 +191,10 @@ export function addMissionProgressedListener(callback: (event: { missionId: stri
   return adchainEventEmitter.addListener('onMissionProgressed', callback);
 }
 
+export function addMissionRefreshedListener(callback: (event: { unitId: string }) => void) {
+  return adchainEventEmitter.addListener('onMissionRefreshed', callback);
+}
+
 // ===== Export =====
 
 const sdk = new AdchainSDK();

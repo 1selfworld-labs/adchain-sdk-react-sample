@@ -37,8 +37,13 @@ function App(): React.JSX.Element {
   };
 
   useEffect(() => {
-    // SDK 초기화
-    initializeSDK();
+    // 3버튼 네비게이션 모드에서 Activity가 준비될 때까지 대기
+    // SDK 초기화를 500ms 지연시켜 Activity가 완전히 준비되도록 함
+    const initTimeout = setTimeout(() => {
+      initializeSDK();
+    }, 500);
+
+    return () => clearTimeout(initTimeout);
   }, []);
 
   const initializeSDK = async () => {

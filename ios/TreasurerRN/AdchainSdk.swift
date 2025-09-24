@@ -35,7 +35,7 @@ class AdchainSdkModule: RCTEventEmitter {
   @objc override static func requiresMainQueueSetup() -> Bool { true }
   
   override func supportedEvents() -> [String]! {
-    return ["onQuizCompleted", "onMissionCompleted", "onMissionProgressed"] // Quiz, Mission 이벤트 지원
+    return ["onQuizCompleted", "onMissionCompleted", "onMissionProgressed", "onMissionRefreshed"] // Quiz, Mission 이벤트 지원
   }
   
   // MARK: - 1. SDK 초기화
@@ -75,6 +75,9 @@ class AdchainSdkModule: RCTEventEmitter {
     
     // UI 관련 작업을 메인 스레드에서 실행
     DispatchQueue.main.async {
+      // 로그 레벨을 Debug로 설정하여 모든 로그 출력
+      AdchainLogger.logLevel = .debug
+
       if UIApplication.shared.delegate?.window??.rootViewController?.view.window?.windowScene?.delegate is UIWindowSceneDelegate {
         AdchainSdk.shared.initialize(application: UIApplication.shared, sdkConfig: config)
         resolver([
@@ -312,7 +315,58 @@ class AdchainSdkModule: RCTEventEmitter {
       missionInstances[unitId as String] = newMission
       return newMission
     }()
-    
+
+    // MissionEventsListener 설정 (missionRefreshed 이벤트를 받기 위해)
+    // eventsListener가 없으면 설정
+    if mission.eventsListener == nil {
+      class LoadMissionEventListenerImpl: NSObject, AdchainMissionEventsListener {
+        weak var module: AdchainSdkModule?
+        let unitId: String
+
+        init(module: AdchainSdkModule?, unitId: String) {
+          self.module = module
+          self.unitId = unitId
+        }
+
+        func onImpressed(_ mission: Mission) {
+          // 필요시 처리
+        }
+
+        func onClicked(_ mission: Mission) {
+          // 필요시 처리
+        }
+
+        func onCompleted(_ mission: Mission) {
+          // React Native로 이벤트 전송
+          module?.sendEvent(withName: "onMissionCompleted", body: [
+            "unitId": unitId,
+            "missionId": mission.id,
+            "timestamp": Date().timeIntervalSince1970
+          ])
+        }
+
+        func onProgressed(_ mission: Mission) {
+          // React Native로 이벤트 전송
+          module?.sendEvent(withName: "onMissionProgressed", body: [
+            "unitId": unitId,
+            "missionId": mission.id,
+            "timestamp": Date().timeIntervalSince1970
+          ])
+        }
+
+        func onRefreshed(unitId: String?) {
+          // React Native로 이벤트 전송
+          module?.sendEvent(withName: "onMissionRefreshed", body: [
+            "unitId": unitId ?? self.unitId,
+            "timestamp": Date().timeIntervalSince1970
+          ])
+        }
+      }
+
+      let listener = LoadMissionEventListenerImpl(module: self, unitId: unitId as String)
+      mission.setEventsListener(listener)
+    }
+
     // Android와 동일하게 직접 load 호출
     // shouldStoreCallbacks: false로 설정하여 refreshAfterCompletion에서 재호출되지 않도록 함
     mission.load(
@@ -401,6 +455,14 @@ class AdchainSdkModule: RCTEventEmitter {
         module?.sendEvent(withName: "onMissionProgressed", body: [
           "unitId": unitId,
           "missionId": missionId,
+          "timestamp": Date().timeIntervalSince1970
+        ])
+      }
+
+      func onRefreshed(unitId: String?) {
+        // React Native로 이벤트 전송
+        module?.sendEvent(withName: "onMissionRefreshed", body: [
+          "unitId": unitId ?? self.unitId,
           "timestamp": Date().timeIntervalSince1970
         ])
       }
