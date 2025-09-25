@@ -270,7 +270,7 @@ const Mission = () => {
   // Offerwall 열기
   const handleOpenOfferwall = async () => {
     try {
-      const result = await AdchainSdk.openOfferwall("test1");
+      const result = await AdchainSdk.openOfferwall("MISSION_BOTTOM_OFFERWALL");
       console.log("Offerwall opened:", result);
     } catch (error) {
       console.error("Offerwall error:", error);

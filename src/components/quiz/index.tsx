@@ -184,7 +184,7 @@ const Quiz = ({ isLoggedIn }: IProps) => {
   // Offerwall 열기
   const handleOpenOfferwall = async () => {
     try {
-      const result = await AdchainSdk.openOfferwall("test2");
+      const result = await AdchainSdk.openOfferwall("QUIZ_EMPTY_OFFERWALL");
       console.log("Offerwall opened:", result);
     } catch (error) {
       console.error("Offerwall error:", error);
@@ -204,12 +204,12 @@ const Quiz = ({ isLoggedIn }: IProps) => {
       console.log("Banner 1 info for Offerwall test:", banner1);
 
       if (banner1.internalLinkUrl) {
-        const result = await AdchainSdk.openOfferwallWithUrl(banner1.internalLinkUrl, "test3");
+        const result = await AdchainSdk.openOfferwallWithUrl(banner1.internalLinkUrl, "INTERNAL_LINK");
         console.log("Offerwall with URL opened:", result);
       } else {
         console.log("No internalLinkUrl in banner 1");
         // 테스트용 기본 URL 사용
-        const result = await AdchainSdk.openOfferwallWithUrl("https://reward.adchain.plus?test=offerwall", "test3");
+        const result = await AdchainSdk.openOfferwallWithUrl("https://reward.adchain.plus?test=offerwall", "EXTERNAL_LINK");
         console.log("Offerwall with default URL opened:", result);
       }
     } catch (error) {
