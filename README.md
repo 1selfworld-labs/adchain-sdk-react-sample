@@ -82,7 +82,7 @@ dependencies {
     // 기존 dependencies는 그대로 유지하고 아래 내용 추가
 
     // AdChain SDK - 아래 한 줄만 추가하면 됩니다!
-    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.18'
+    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.21'
 
     // AdChain SDK가 필요로 하는 의존성들
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
@@ -118,7 +118,7 @@ target 'YourAppName' do
   # 기존 내용 유지...
 
   # AdChain SDK 추가 - 아래 한 줄만 추가!
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.29'
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.33'
 end
 ```
 
@@ -436,9 +436,13 @@ const loadMissions = async () => {
   setMissions(response.missions);
 };
 
-// 오퍼월 열기
+// 오퍼월 열기 (placementId 선택적 사용)
 const openOfferwall = async () => {
+  // placementId 없이 호출
   await AdchainSdk.openOfferwall();
+
+  // 또는 placementId와 함께 호출
+  await AdchainSdk.openOfferwall("MAIN_OFFERWALL");
 };
 ```
 
@@ -451,11 +455,11 @@ const loadBanner = async () => {
   setBanner(bannerInfo);
 };
 
-// 배너 클릭 처리
-const handleBannerClick = (banner: BannerInfo) => {
+// 배너 클릭 처리 (placementId와 함께)
+const handleBannerClick = (banner: BannerInfo, placementId: string) => {
   if (banner.linkType === 'internal') {
-    // SDK 내부 페이지로 이동
-    AdchainSdk.openOfferwallWithUrl(banner.internalLinkUrl);
+    // SDK 내부 페이지로 이동 (placementId 전달)
+    AdchainSdk.openOfferwallWithUrl(banner.internalLinkUrl, placementId);
   } else {
     // 외부 브라우저로 이동
     AdchainSdk.openExternalBrowser(banner.externalLinkUrl);
@@ -588,8 +592,8 @@ interface MissionListResponse {
 ### 광고 및 브라우저
 | 메서드 | 설명 | 파라미터 | 반환값 |
 |---------|------|----------|--------|
-| `openOfferwall()` | 오퍼월 열기 | - | `Promise<SuccessResponse>` |
-| `openOfferwallWithUrl()` | URL로 오퍼월 열기 | `url: string` | `Promise<SuccessResponse>` |
+| `openOfferwall()` | 오퍼월 열기 | `placementId?: string` 선택 | `Promise<SuccessResponse>` |
+| `openOfferwallWithUrl()` | URL로 오퍼월 열기 | `url: string,`<br>`placementId?: string` 선택 | `Promise<SuccessResponse>` |
 | `openExternalBrowser()` | 외부 브라우저 열기 | `url: string` | `Promise<SuccessResponse>` |
 | `getBannerInfo()` | 배너 정보 불러오기 | `placementId: string` | `Promise<any>` |
 | `getIFA()` | 광고 ID 가져오기 | - | `Promise<string>` |
@@ -678,6 +682,13 @@ npx react-native run-ios
 
 ## 🆕 최신 업데이트
 
+### v1.0.21 (Android) / v1.0.33 (iOS) - 2025-09-26
+- ✨ Offerwall 메서드에 선택적 placementId 파라미터 추가
+  - `openOfferwall(placementId?: string)`
+  - `openOfferwallWithUrl(url: string, placementId?: string)`
+- 🎯 광고 위치별 추적 및 분석 기능 향상
+- 🔧 iOS/Android 동작 일관성 개선
+
 ### v1.0.18 (Android) / v1.0.29 (iOS) - 2025-09-23
 - 🔧 iOS PrivacyInfo.xcprivacy 중복 항목 제거 및 구조 정리
 - 📦 Android/iOS SDK 버전 업데이트
@@ -710,6 +721,6 @@ npx react-native run-ios
 
 ---
 
-**Version**: 1.0.2
-**Last Updated**: 2025-09-23
+**Version**: 1.0.3
+**Last Updated**: 2025-09-26
 **Sample Project**: [adchain-sdk-react-sample](https://github.com/1selfworld-labs/adchain-sdk-react-sample)
