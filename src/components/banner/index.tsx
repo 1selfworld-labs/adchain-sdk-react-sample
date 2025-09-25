@@ -4,14 +4,15 @@ import { BannerInfo } from "../../interface/banner";
 
 interface BannerProps {
   bannerInfo: BannerInfo;
+  placementId?: string;
 }
 
-const Banner = ({ bannerInfo }: BannerProps) => {
+const Banner = ({ bannerInfo, placementId }: BannerProps) => {
   const handleBannerPress = () => {
     if (bannerInfo.linkType === "internal") {
-      AdchainSdk.openOfferwallWithUrl(bannerInfo.internalLinkUrl);
+      AdchainSdk.openOfferwallWithUrl(bannerInfo.internalLinkUrl, placementId);
     } else {
-      AdchainSdk.openExternalBrowser(bannerInfo.externalLinkUrl);
+      AdchainSdk.openExternalBrowser(bannerInfo.externalLinkUrl, placementId);
     }
   };
 

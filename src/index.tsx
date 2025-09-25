@@ -146,16 +146,19 @@ class AdchainSDK {
   }
 
   // 5. Offerwall (3개)
-  async openOfferwall(): Promise<SuccessResponse> {
-    return AdchainSdk.openOfferwall();
+  async openOfferwall(placementId?: string): Promise<SuccessResponse> {
+    // SDK requires placementId, use empty string if not provided
+    return AdchainSdk.openOfferwall(placementId || "");
   }
 
-  async openOfferwallWithUrl(url: string): Promise<SuccessResponse> {
-    return AdchainSdk.openOfferwallWithUrl(url);
+  async openOfferwallWithUrl(url: string, placementId?: string): Promise<SuccessResponse> {
+    // SDK requires placementId, use empty string if not provided
+    return AdchainSdk.openOfferwallWithUrl(url, placementId || "");
   }
 
-  async openExternalBrowser(url: string): Promise<SuccessResponse> {
-    return AdchainSdk.openExternalBrowser(url);
+  async openExternalBrowser(url: string, placementId?: string): Promise<SuccessResponse> {
+    // SDK requires placementId, use empty string if not provided
+    return AdchainSdk.openExternalBrowser(url, placementId || "");
   }
 
   // 6. Debug/Utility Methods (3개)

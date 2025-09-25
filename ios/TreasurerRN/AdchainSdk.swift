@@ -189,7 +189,7 @@ class AdchainSdkModule: RCTEventEmitter {
                          rejecter: @escaping RCTPromiseRejectBlock) {
     // 인스턴스 자동 생성/재사용
     let quiz = quizInstances[unitId as String] ?? {
-      let newQuiz = AdchainQuiz(unitId: unitId as String)
+      let newQuiz = AdchainQuiz()
       quizInstances[unitId as String] = newQuiz
       return newQuiz
     }()
@@ -246,7 +246,7 @@ class AdchainSdkModule: RCTEventEmitter {
                       rejecter: @escaping RCTPromiseRejectBlock) {
     // 인스턴스 자동 생성/재사용
     let quiz = quizInstances[unitId as String] ?? {
-      let newQuiz = AdchainQuiz(unitId: unitId as String)
+      let newQuiz = AdchainQuiz()
       quizInstances[unitId as String] = newQuiz
       return newQuiz
     }()
@@ -308,7 +308,7 @@ class AdchainSdkModule: RCTEventEmitter {
                             rejecter: @escaping RCTPromiseRejectBlock) {
     // 인스턴스 자동 생성/재사용
     let mission = missionInstances[unitId as String] ?? {
-      let newMission = AdchainMission(unitId: unitId as String)
+      let newMission = AdchainMission()
       missionInstances[unitId as String] = newMission
       return newMission
     }()
@@ -413,7 +413,7 @@ class AdchainSdkModule: RCTEventEmitter {
                          rejecter: @escaping RCTPromiseRejectBlock) {
     // 인스턴스 자동 생성/재사용
     let mission = missionInstances[unitId as String] ?? {
-      let newMission = AdchainMission(unitId: unitId as String)
+      let newMission = AdchainMission()
       missionInstances[unitId as String] = newMission
       return newMission
     }()
@@ -489,7 +489,7 @@ class AdchainSdkModule: RCTEventEmitter {
                         rejecter: @escaping RCTPromiseRejectBlock) {
     // 인스턴스 자동 생성/재사용
     let mission = missionInstances[unitId as String] ?? {
-      let newMission = AdchainMission(unitId: unitId as String)
+      let newMission = AdchainMission()
       missionInstances[unitId as String] = newMission
       return newMission
     }()
@@ -555,7 +555,8 @@ class AdchainSdkModule: RCTEventEmitter {
 
   // MARK: - 7. Offerwall (3개)
 
-  @objc func openOfferwall(_ resolver: @escaping RCTPromiseResolveBlock,
+  @objc func openOfferwall(_ placementId: NSString?,
+                          resolver: @escaping RCTPromiseResolveBlock,
                           rejecter: @escaping RCTPromiseRejectBlock) {
     class OfferwallCallbackImpl: NSObject, OfferwallCallback {
       let resolver: RCTPromiseResolveBlock
@@ -591,7 +592,12 @@ class AdchainSdkModule: RCTEventEmitter {
     DispatchQueue.main.async { [weak self] in
       if let topVC = self?.getTopViewController() {
         let callback = OfferwallCallbackImpl(resolver: resolver)
-        AdchainSdk.shared.openOfferwall(presentingViewController: topVC, callback: callback)
+        let finalPlacementId = (placementId as String?) ?? ""
+        AdchainSdk.shared.openOfferwall(
+          presentingViewController: topVC,
+          placementId: finalPlacementId,
+          callback: callback
+        )
       } else {
         rejecter("OFFERWALL_ERROR", "No view controller available", nil)
       }
@@ -599,6 +605,7 @@ class AdchainSdkModule: RCTEventEmitter {
   }
 
   @objc func openOfferwallWithUrl(_ url: NSString,
+                                  placementId: NSString?,
                                   resolver: @escaping RCTPromiseResolveBlock,
                                   rejecter: @escaping RCTPromiseRejectBlock) {
     class OfferwallCallbackImpl: NSObject, OfferwallCallback {
@@ -635,7 +642,13 @@ class AdchainSdkModule: RCTEventEmitter {
     DispatchQueue.main.async { [weak self] in
       if let topVC = self?.getTopViewController() {
         let callback = OfferwallCallbackImpl(resolver: resolver)
-        AdchainSdk.shared.openOfferwallWithUrl(url as String, presentingViewController: topVC, callback: callback)
+        let finalPlacementId = (placementId as String?) ?? ""
+        AdchainSdk.shared.openOfferwallWithUrl(
+          url as String,
+          placementId: finalPlacementId,
+          presentingViewController: topVC,
+          callback: callback
+        )
       } else {
         rejecter("OFFERWALL_ERROR", "No view controller available", nil)
       }
@@ -643,9 +656,14 @@ class AdchainSdkModule: RCTEventEmitter {
   }
 
   @objc func openExternalBrowser(_ url: NSString,
+                                placementId: NSString?,
                                 resolver: @escaping RCTPromiseResolveBlock,
                                 rejecter: @escaping RCTPromiseRejectBlock) {
-    let success = AdchainSdk.shared.openExternalBrowser(url as String)
+    let finalPlacementId = (placementId as String?) ?? ""
+    let success = AdchainSdk.shared.openExternalBrowser(
+      url as String,
+      placementId: finalPlacementId
+    )
     if success {
       resolver([
         "success": true,

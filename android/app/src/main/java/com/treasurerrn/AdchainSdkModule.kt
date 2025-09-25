@@ -198,8 +198,8 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
   fun loadQuizList(unitId: String, promise: Promise) {
     try {
       // 인스턴스 자동 생성/재사용
-      val quiz = quizInstances.getOrPut(unitId) { 
-        AdchainQuiz(unitId) 
+      val quiz = quizInstances.getOrPut(unitId) {
+        AdchainQuiz()
       }
       
       quiz.getQuizList(
@@ -242,8 +242,8 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
   @ReactMethod
   fun clickQuiz(unitId: String, quizId: String, promise: Promise) {
     try {
-      val quiz = quizInstances.getOrPut(unitId) { 
-        AdchainQuiz(unitId) 
+      val quiz = quizInstances.getOrPut(unitId) {
+        AdchainQuiz()
       }
       
       // iOS와 동일한 방식: 리스너 설정
@@ -282,7 +282,7 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
     try {
       // 인스턴스 자동 생성/재사용
       val mission = missionInstances.getOrPut(unitId) {
-        AdchainMission(unitId)
+        AdchainMission()
       }
 
       // iOS와 동일하게 loadMissionList에서도 리스너 설정
@@ -423,7 +423,7 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
   fun clickMission(unitId: String, missionId: String, promise: Promise) {
     try {
       val mission = missionInstances.getOrPut(unitId) {
-        AdchainMission(unitId)
+        AdchainMission()
       }
 
       // 외부 변수를 로컬 변수로 캡처
@@ -483,8 +483,8 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
   @ReactMethod
   fun claimReward(unitId: String, promise: Promise) {
     try {
-      val mission = missionInstances.getOrPut(unitId) { 
-        AdchainMission(unitId) 
+      val mission = missionInstances.getOrPut(unitId) {
+        AdchainMission()
       }
       
       mission.clickGetReward()
@@ -559,10 +559,10 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
   // ===== 7. Offerwall (3개) =====
 
   @ReactMethod
-  fun openOfferwall(promise: Promise) {
+  fun openOfferwall(placementId: String?, promise: Promise) {
     try {
       currentActivity?.let { activity ->
-        AdchainSdk.openOfferwall(activity, object : OfferwallCallback {
+        val callback = object : OfferwallCallback {
           override fun onOpened() {
             promise.resolve(createResponse(true, "Offerwall opened"))
           }
@@ -578,7 +578,10 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
           override fun onRewardEarned(amount: Int) {
             // 이미 resolve 되었으므로 무시
           }
-        })
+        }
+
+        val finalPlacementId = placementId ?: ""
+        AdchainSdk.openOfferwall(activity, finalPlacementId, callback)
       } ?: promise.reject("OFFERWALL_ERROR", "Current activity is null")
     } catch (t: Throwable) {
       promise.reject("OFFERWALL_ERROR", t.message, t)
@@ -586,10 +589,10 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
   }
 
   @ReactMethod
-  fun openOfferwallWithUrl(url: String, promise: Promise) {
+  fun openOfferwallWithUrl(url: String, placementId: String?, promise: Promise) {
     try {
       currentActivity?.let { activity ->
-        AdchainSdk.openOfferwallWithUrl(url, activity, object : OfferwallCallback {
+        val callback = object : OfferwallCallback {
           override fun onOpened() {
             promise.resolve(createResponse(true, "Offerwall opened with URL"))
           }
@@ -605,7 +608,10 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
           override fun onRewardEarned(amount: Int) {
             // 이미 resolve 되었으므로 무시
           }
-        })
+        }
+
+        val finalPlacementId = placementId ?: ""
+        AdchainSdk.openOfferwallWithUrl(url, activity, finalPlacementId, callback)
       } ?: promise.reject("OFFERWALL_ERROR", "Current activity is null")
     } catch (t: Throwable) {
       promise.reject("OFFERWALL_ERROR", t.message, t)
@@ -613,10 +619,12 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
   }
 
   @ReactMethod
-  fun openExternalBrowser(url: String, promise: Promise) {
+  fun openExternalBrowser(url: String, placementId: String?, promise: Promise) {
     try {
       currentActivity?.let { activity ->
-        val success = AdchainSdk.openExternalBrowser(url, activity)
+        val finalPlacementId = placementId ?: ""
+        val success = AdchainSdk.openExternalBrowser(url, activity, finalPlacementId)
+
         if (success) {
           promise.resolve(createResponse(true, "External browser opened"))
         } else {

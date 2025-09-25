@@ -184,7 +184,7 @@ const Quiz = ({ isLoggedIn }: IProps) => {
   // Offerwall 열기
   const handleOpenOfferwall = async () => {
     try {
-      const result = await AdchainSdk.openOfferwall();
+      const result = await AdchainSdk.openOfferwall("test2");
       console.log("Offerwall opened:", result);
     } catch (error) {
       console.error("Offerwall error:", error);
@@ -204,12 +204,12 @@ const Quiz = ({ isLoggedIn }: IProps) => {
       console.log("Banner 1 info for Offerwall test:", banner1);
 
       if (banner1.internalLinkUrl) {
-        const result = await AdchainSdk.openOfferwallWithUrl(banner1.internalLinkUrl);
+        const result = await AdchainSdk.openOfferwallWithUrl(banner1.internalLinkUrl, "test3");
         console.log("Offerwall with URL opened:", result);
       } else {
         console.log("No internalLinkUrl in banner 1");
         // 테스트용 기본 URL 사용
-        const result = await AdchainSdk.openOfferwallWithUrl("https://reward.adchain.plus?test=offerwall");
+        const result = await AdchainSdk.openOfferwallWithUrl("https://reward.adchain.plus?test=offerwall", "test3");
         console.log("Offerwall with default URL opened:", result);
       }
     } catch (error) {
@@ -224,12 +224,12 @@ const Quiz = ({ isLoggedIn }: IProps) => {
       console.log("Banner 2 info for Browser test:", banner2);
 
       if (banner2.externalLinkUrl) {
-        const result = await AdchainSdk.openExternalBrowser(banner2.externalLinkUrl);
+        const result = await AdchainSdk.openExternalBrowser(banner2.externalLinkUrl, "test4");
         console.log("External browser opened:", result);
       } else {
         console.log("No externalLinkUrl in banner 2");
         // 테스트용 기본 URL 사용
-        const result = await AdchainSdk.openExternalBrowser("https://www.google.com");
+        const result = await AdchainSdk.openExternalBrowser("https://www.google.com", "test4");
         console.log("External browser with default URL opened:", result);
       }
     } catch (error) {
@@ -294,7 +294,7 @@ const Quiz = ({ isLoggedIn }: IProps) => {
             />
           </Animated.View>
         )}
-        {isLoggedIn && bannerInfo && <Banner bannerInfo={bannerInfo} />}
+        {isLoggedIn && bannerInfo && <Banner bannerInfo={bannerInfo} placementId={BANNER_UNIT_ID} />}
       </View>
     </View>
   );
