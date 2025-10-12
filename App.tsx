@@ -46,12 +46,12 @@ function App(): React.JSX.Element {
         android: {
           appKey: SDK_CONFIG.android.APP_KEY,
           appSecret: SDK_CONFIG.android.APP_SECRET,
-          environment: "DEVELOPMENT" as const,
+          environment: "PRODUCTION" as const,
         },
         ios: {
           appKey: SDK_CONFIG.ios.APP_KEY,
           appSecret: SDK_CONFIG.ios.APP_SECRET,
-          environment: "DEVELOPMENT" as const,
+          environment: "PRODUCTION" as const,
         },
         default: {
           appKey: "test-app",
