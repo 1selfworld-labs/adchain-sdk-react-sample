@@ -79,4 +79,9 @@ RCT_EXTERN_METHOD(openExternalBrowser:(NSString *)url
                   resolver:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
 
+// 8. Adjoe (1개)
+RCT_EXTERN_METHOD(openAdjoeOfferwall:(NSString * _Nullable)placementId
+                  resolver:(RCTPromiseResolveBlock)resolver
+                  rejecter:(RCTPromiseRejectBlock)rejecter)
+
 @end

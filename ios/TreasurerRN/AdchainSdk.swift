@@ -188,12 +188,12 @@ class AdchainSdkModule: RCTEventEmitter {
                          resolver: @escaping RCTPromiseResolveBlock,
                          rejecter: @escaping RCTPromiseRejectBlock) {
     // 인스턴스 자동 생성/재사용
-    let quiz = quizInstances[unitId as String] ?? {
+    let quiz: AdchainQuiz = quizInstances[unitId as String] ?? {
       let newQuiz = AdchainQuiz()
       quizInstances[unitId as String] = newQuiz
       return newQuiz
     }()
-    
+
     // Android와 동일하게 직접 load 호출
     // shouldStoreCallbacks: false로 설정하여 refreshAfterCompletion에서 재호출되지 않도록 함
     quiz.load(
@@ -245,7 +245,7 @@ class AdchainSdkModule: RCTEventEmitter {
                       resolver: @escaping RCTPromiseResolveBlock,
                       rejecter: @escaping RCTPromiseRejectBlock) {
     // 인스턴스 자동 생성/재사용
-    let quiz = quizInstances[unitId as String] ?? {
+    let quiz: AdchainQuiz = quizInstances[unitId as String] ?? {
       let newQuiz = AdchainQuiz()
       quizInstances[unitId as String] = newQuiz
       return newQuiz
@@ -307,7 +307,7 @@ class AdchainSdkModule: RCTEventEmitter {
                             resolver: @escaping RCTPromiseResolveBlock,
                             rejecter: @escaping RCTPromiseRejectBlock) {
     // 인스턴스 자동 생성/재사용
-    let mission = missionInstances[unitId as String] ?? {
+    let mission: AdchainMission = missionInstances[unitId as String] ?? {
       let newMission = AdchainMission()
       missionInstances[unitId as String] = newMission
       return newMission
@@ -412,12 +412,12 @@ class AdchainSdkModule: RCTEventEmitter {
                          resolver: @escaping RCTPromiseResolveBlock,
                          rejecter: @escaping RCTPromiseRejectBlock) {
     // 인스턴스 자동 생성/재사용
-    let mission = missionInstances[unitId as String] ?? {
+    let mission: AdchainMission = missionInstances[unitId as String] ?? {
       let newMission = AdchainMission()
       missionInstances[unitId as String] = newMission
       return newMission
     }()
-    
+
     // MissionEventsListener 설정
     class MissionEventListenerImpl: NSObject, AdchainMissionEventsListener {
       weak var module: AdchainSdkModule?
@@ -488,7 +488,7 @@ class AdchainSdkModule: RCTEventEmitter {
                         resolver: @escaping RCTPromiseResolveBlock,
                         rejecter: @escaping RCTPromiseRejectBlock) {
     // 인스턴스 자동 생성/재사용
-    let mission = missionInstances[unitId as String] ?? {
+    let mission: AdchainMission = missionInstances[unitId as String] ?? {
       let newMission = AdchainMission()
       missionInstances[unitId as String] = newMission
       return newMission
@@ -671,6 +671,55 @@ class AdchainSdkModule: RCTEventEmitter {
       ])
     } else {
       rejecter("BROWSER_ERROR", "Failed to open external browser", nil)
+    }
+  }
+
+  @objc func openAdjoeOfferwall(_ placementId: NSString?,
+                                resolver: @escaping RCTPromiseResolveBlock,
+                                rejecter: @escaping RCTPromiseRejectBlock) {
+    class OfferwallCallbackImpl: NSObject, OfferwallCallback {
+      let resolver: RCTPromiseResolveBlock
+      var hasResolved = false
+
+      init(resolver: @escaping RCTPromiseResolveBlock) {
+        self.resolver = resolver
+      }
+
+      func onOpened() {
+        if !hasResolved {
+          hasResolved = true
+          resolver([
+            "success": true,
+            "message": "Adjoe Offerwall opened"
+          ])
+        }
+      }
+
+      func onClosed() {
+        // 이미 resolve 되었으므로 무시
+      }
+
+      func onError(_ message: String) {
+        // 이미 resolve 되었으므로 무시
+      }
+
+      func onRewardEarned(_ amount: Int) {
+        // 이미 resolve 되었으므로 무시
+      }
+    }
+
+    DispatchQueue.main.async { [weak self] in
+      if let topVC = self?.getTopViewController() {
+        let callback = OfferwallCallbackImpl(resolver: resolver)
+        let finalPlacementId = (placementId as String?) ?? ""
+        AdchainSdk.shared.openAdjoeOfferwall(
+          presentingViewController: topVC,
+          placementId: finalPlacementId,
+          callback: callback
+        )
+      } else {
+        rejecter("ADJOE_ERROR", "No view controller available", nil)
+      }
     }
   }
 }

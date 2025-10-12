@@ -636,6 +636,36 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
     }
   }
 
+  @ReactMethod
+  fun openAdjoeOfferwall(placementId: String?, promise: Promise) {
+    try {
+      currentActivity?.let { activity ->
+        val callback = object : OfferwallCallback {
+          override fun onOpened() {
+            promise.resolve(createResponse(true, "Adjoe Offerwall opened"))
+          }
+
+          override fun onClosed() {
+            // 이미 resolve 되었으므로 무시
+          }
+
+          override fun onError(message: String) {
+            // 이미 resolve 되었으므로 무시
+          }
+
+          override fun onRewardEarned(amount: Int) {
+            // 이미 resolve 되었으므로 무시
+          }
+        }
+
+        val finalPlacementId = placementId ?: ""
+        AdchainSdk.openAdjoeOfferwall(activity, finalPlacementId, callback)
+      } ?: promise.reject("ADJOE_ERROR", "Current activity is null")
+    } catch (t: Throwable) {
+      promise.reject("ADJOE_ERROR", t.message, t)
+    }
+  }
+
   // ===== Event Emitter Methods =====
   
   @ReactMethod
