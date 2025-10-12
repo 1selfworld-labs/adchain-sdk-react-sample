@@ -161,6 +161,11 @@ class AdchainSDK {
     return AdchainSdk.openExternalBrowser(url, placementId || "");
   }
 
+  async openAdjoeOfferwall(placementId?: string): Promise<SuccessResponse> {
+    // SDK requires placementId, use empty string if not provided
+    return AdchainSdk.openAdjoeOfferwall(placementId || "");
+  }
+
   // 6. Debug/Utility Methods (3개)
   async isInitialized(): Promise<boolean> {
     return AdchainSdk.isInitialized();

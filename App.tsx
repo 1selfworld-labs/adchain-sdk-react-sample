@@ -31,20 +31,13 @@ function App(): React.JSX.Element {
   const [sdkError, setSdkError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isSkipMode, setIsSkipMode] = useState(false); // Skip Login mode for testing
 
   const backgroundStyle = {
     backgroundColor: Colors.lighter, // 항상 흰색 배경
   };
 
-  useEffect(() => {
-    // 3버튼 네비게이션 모드에서 Activity가 준비될 때까지 대기
-    // SDK 초기화를 500ms 지연시켜 Activity가 완전히 준비되도록 함
-    const initTimeout = setTimeout(() => {
-      initializeSDK();
-    }, 500);
-
-    return () => clearTimeout(initTimeout);
-  }, []);
+  // Auto SDK initialization removed - User must click "Initialize SDK" button
 
   const initializeSDK = async () => {
     try {
@@ -53,12 +46,12 @@ function App(): React.JSX.Element {
         android: {
           appKey: SDK_CONFIG.android.APP_KEY,
           appSecret: SDK_CONFIG.android.APP_SECRET,
-          environment: "PRODUCTION" as const,
+          environment: "DEVELOPMENT" as const,
         },
         ios: {
           appKey: SDK_CONFIG.ios.APP_KEY,
           appSecret: SDK_CONFIG.ios.APP_SECRET,
-          environment: "PRODUCTION" as const,
+          environment: "DEVELOPMENT" as const,
         },
         default: {
           appKey: "test-app",
@@ -79,12 +72,24 @@ function App(): React.JSX.Element {
       setIsLoggedIn(loggedIn);
 
       setSdkInitialized(true);
+      setSdkError(null); // Clear any previous errors
+      console.log(`AdchainSDK initialized successfully for ${Platform.OS}`);
     } catch (error) {
       console.error("AdchainSDK initialization error:", error);
-      setSdkError((error as string) || "SDK 초기화 실패");
-      // UI는 계속 표시하되, SDK 기능은 비활성화
-      setSdkInitialized(true);
+      setSdkError(
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : "SDK 초기화 실패"
+      );
+      setSdkInitialized(false); // Keep SDK uninitialized on error
     }
+  };
+
+  const handleSkipLogin = () => {
+    console.log("Skip Login - Testing without SDK initialization");
+    setIsSkipMode(true);
   };
 
   const handleLogin = async (userId: string, gender?: "MALE" | "FEMALE", birthYear?: number) => {
@@ -103,24 +108,20 @@ function App(): React.JSX.Element {
         birthYear ? birthYear : undefined
       );
       setIsLoggedIn(true);
+      setIsSkipMode(false); // Clear skip mode on successful login
     } catch (error) {
       console.error("Login error:", error);
-      setSdkError((error as string) || "로그인 실패");
+      setSdkError(
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : "로그인 실패"
+      );
     } finally {
       setIsLoggingIn(false);
     }
   };
-
-  if (!sdkInitialized) {
-    return (
-      <SafeAreaProvider>
-        <SafeAreaView style={[backgroundStyle, styles.loadingContainer]}>
-          <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>SDK 초기화 중...</Text>
-        </SafeAreaView>
-      </SafeAreaProvider>
-    );
-  }
 
   return (
     <SafeAreaProvider>
@@ -137,10 +138,16 @@ function App(): React.JSX.Element {
 
         <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
           <View style={styles.container}>
-            {!isLoggedIn ? (
-              <LoginForm onLogin={handleLogin} isLoading={isLoggingIn} />
+            {!isLoggedIn && !isSkipMode ? (
+              <LoginForm
+                onLogin={handleLogin}
+                onInitialize={initializeSDK}
+                onSkipLogin={handleSkipLogin}
+                isLoading={isLoggingIn}
+                sdkInitialized={sdkInitialized}
+              />
             ) : (
-              <TabNavigation isLoggedIn={isLoggedIn} />
+              <TabNavigation isLoggedIn={isLoggedIn} isSkipMode={isSkipMode} />
             )}
             {/* Debug Information Panel */}
           </View>

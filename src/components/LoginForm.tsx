@@ -4,7 +4,10 @@ import Storage from "../Storage";
 
 interface LoginFormProps {
   onLogin: (userId: string, gender?: "MALE" | "FEMALE", birthYear?: number) => void;
+  onInitialize: () => void;
+  onSkipLogin: () => void;
   isLoading?: boolean;
+  sdkInitialized?: boolean;
 }
 
 interface LoginData {
@@ -16,7 +19,13 @@ interface LoginData {
 
 const STORAGE_KEY = "ADCHAIN_LOGIN_DATA";
 
-const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading = false }) => {
+const LoginForm: React.FC<LoginFormProps> = ({
+  onLogin,
+  onInitialize,
+  onSkipLogin,
+  isLoading = false,
+  sdkInitialized = false,
+}) => {
   const [userId, setUserId] = useState("");
   const [gender, setGender] = useState<"MALE" | "FEMALE">("MALE");
   const [birthYear, setBirthYear] = useState("1990");
@@ -81,6 +90,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading = false }) => 
     <View style={styles.container}>
       <Text style={styles.title}>AdChain SDK 로그인</Text>
 
+      {!sdkInitialized && (
+        <TouchableOpacity
+          style={[styles.initButton, isLoading && styles.loginButtonDisabled]}
+          onPress={onInitialize}
+          disabled={isLoading}>
+          <Text style={styles.initButtonText}>Initialize SDK</Text>
+        </TouchableOpacity>
+      )}
+
+      {sdkInitialized && (
+        <View style={styles.statusBanner}>
+          <Text style={styles.statusText}>✓ SDK Initialized</Text>
+        </View>
+      )}
+
       <View style={styles.inputGroup}>
         <Text style={styles.label}>User ID</Text>
         <TextInput
@@ -135,10 +159,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading = false }) => 
       </View>
 
       <TouchableOpacity
-        style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+        style={[styles.loginButton, (!sdkInitialized || isLoading) && styles.loginButtonDisabled]}
         onPress={handleLogin}
-        disabled={isLoading}>
+        disabled={!sdkInitialized || isLoading}>
         {isLoading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.loginButtonText}>로그인</Text>}
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.skipButton, isLoading && styles.loginButtonDisabled]}
+        onPress={onSkipLogin}
+        disabled={isLoading}>
+        <Text style={styles.skipButtonText}>Skip Login (Test Mode)</Text>
       </TouchableOpacity>
     </View>
   );
@@ -228,6 +259,42 @@ const styles = StyleSheet.create({
   disabledInput: {
     backgroundColor: "#F5F5F5",
     borderColor: "#E0E0E0",
+  },
+  initButton: {
+    backgroundColor: "#4CAF50",
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  initButtonText: {
+    color: "#FFF",
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  skipButton: {
+    backgroundColor: "#FF9800",
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  skipButtonText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  statusBanner: {
+    backgroundColor: "#E8F5E9",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  statusText: {
+    color: "#2E7D32",
+    fontSize: 14,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
 
