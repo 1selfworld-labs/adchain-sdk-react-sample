@@ -11,6 +11,7 @@ AdChain SDK는 앱에 광고 기반 리워드 시스템을 쉽게 통합할 수 
 - **Mission 모듈**: 특정 조건 달성 시 리워드를 제공하는 미션 시스템
 - **Banner 광고**: 네이티브 배너 광고 표시
 - **Offerwall**: 다양한 광고 상품을 한 곳에서 제공하는 오퍼월
+- **ADJOE Offerwall**: 앱 설치/실행 기반 리워드 광고 플랫폼 (성별/나이 타겟팅 지원)
 - **이벤트 트래킹**: 사용자 행동 분석 및 리워드 최적화
 
 ### SDK 내부 동작
@@ -52,6 +53,9 @@ adchain-sdk-react-sample/
 │   │   │   └── MissionSkeleton.tsx     ✅ 복사 가능 (로딩 스켈레톤)
 │   │   ├── banner/
 │   │   │   └── index.tsx               ✅ 복사 가능 (Banner 광고 컴포넌트)
+│   │   ├── adjoe/
+│   │   │   ├── Adjoe.tsx               ✅ 복사 가능 (ADJOE Offerwall 컴포넌트)
+│   │   │   └── index.tsx               ✅ 복사 가능 (내보내기)
 │   │   └── debug/                      ⚠️  참고 (디버그 도구)
 │   ├── navigation/                     ⚠️  참고 (네비게이션 설정)
 │   ├── interface/                      ⚠️  참고 (TypeScript 인터페이스)
@@ -241,6 +245,18 @@ adchain-sdk-react-sample/src/components/banner/
 
 # 귀사 프로젝트로
 your-app/src/components/banner/
+```
+
+### ADJOE 컴포넌트 복사
+
+```bash
+# 샘플에서 복사
+adchain-sdk-react-sample/src/components/adjoe/
+├── Adjoe.tsx
+└── index.tsx
+
+# 귀사 프로젝트로
+your-app/src/components/adjoe/
 ```
 
 ---
@@ -547,6 +563,17 @@ const openOfferwall = async () => {
   // 또는 placementId와 함께 호출
   await AdchainSdk.openOfferwall("MAIN_OFFERWALL");
 };
+
+// ADJOE 오퍼월 열기
+const openAdjoeOfferwall = async () => {
+  try {
+    // placementId와 함께 호출 (추적 및 분석용)
+    await AdchainSdk.openAdjoeOfferwall("main_adjoe_offerwall");
+    console.log('ADJOE Offerwall 열림');
+  } catch (error) {
+    console.error('ADJOE Offerwall 오류:', error);
+  }
+};
 ```
 
 ### Banner 광고 사용 예시
@@ -696,6 +723,7 @@ interface MissionListResponse {
 | 메서드 | 설명 | 파라미터 | 반환값 |
 |---------|------|----------|--------|
 | `openOfferwall()` | 오퍼월 열기 | `placementId?: string` 선택 | `Promise<SuccessResponse>` |
+| `openAdjoeOfferwall()` | ADJOE 오퍼월 열기 | `placementId?: string` 선택 | `Promise<SuccessResponse>` |
 | `openOfferwallWithUrl()` | URL로 오퍼월 열기 | `url: string,`<br>`placementId?: string` 선택 | `Promise<SuccessResponse>` |
 | `openExternalBrowser()` | 외부 브라우저 열기 | `url: string` | `Promise<SuccessResponse>` |
 | `getBannerInfo()` | 배너 정보 불러오기 | `placementId: string` | `Promise<any>` |
@@ -768,6 +796,7 @@ npx react-native run-ios
 | `src/components/quiz/*` | `src/components/quiz/*` | ⭕ 선택 | 스타일 |
 | `src/components/mission/*` | `src/components/mission/*` | ⭕ 선택 | 스타일 |
 | `src/components/banner/*` | `src/components/banner/*` | ⭕ 선택 | 스타일 |
+| `src/components/adjoe/*` | `src/components/adjoe/*` | ⭕ 선택 | 스타일 |
 | `App.tsx` | - | 참고용 | SDK_CONFIG |
 
 ---
