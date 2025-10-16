@@ -82,7 +82,7 @@ dependencies {
     // 기존 dependencies는 그대로 유지하고 아래 내용 추가
 
     // AdChain SDK - 아래 한 줄만 추가하면 됩니다!
-    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.21'
+    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.23'
 
     // AdChain SDK가 필요로 하는 의존성들
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
@@ -118,7 +118,7 @@ target 'YourAppName' do
   # 기존 내용 유지...
 
   # AdChain SDK 추가 - 아래 한 줄만 추가!
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.33'
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.36'
 end
 ```
 
@@ -421,6 +421,109 @@ useEffect(() => {
 }, []);
 ```
 
+### adjoe 통합 시 Gender/Age 전달
+
+adjoe SDK는 사용자의 성별과 나이 정보를 활용하여 더 타겟팅된 광고를 제공합니다.
+AdChain SDK는 로그인 시 제공된 사용자 정보를 자동으로 네이티브 SDK에 전달합니다.
+
+#### 사용자 프로필 정보 설정
+
+```typescript
+// 모든 정보 포함
+await AdchainSdk.login({
+  userId: 'user123',              // 필수
+  gender: 'MALE',                 // 선택 ('MALE' | 'FEMALE' | 'OTHER')
+  birthYear: 1990,                // 선택 (출생년도)
+});
+
+// 필수 정보만 (gender/birthYear 없이)
+await AdchainSdk.login({
+  userId: 'user123'
+});
+```
+
+#### 지원되는 값
+
+| 속성 | 타입 | 설명 | 필수 여부 |
+|------|------|------|-----------|
+| `gender` | `'MALE' \| 'FEMALE' \| 'OTHER' \| 'M' \| 'F'` | 사용자 성별 | 선택 |
+| `birthYear` | `number` | 출생년도 (예: 1990) | 선택 |
+
+#### 중요 사항
+
+1. **Optional 필드**: gender와 birthYear는 선택사항입니다
+   - 정보가 없으면 undefined → adjoe는 정보 없이 동작
+   - 정보가 있으면 자동으로 네이티브 SDK로 전달됩니다
+
+2. **재초기화 불가**: adjoe SDK는 재초기화를 지원하지 않습니다
+   - **로그인 시점에 모든 정보를 제공**해야 합니다
+   - 나중에 정보를 얻은 경우: 로그아웃 후 재로그인 필요
+
+3. **플랫폼별 자동 처리**:
+   - **Android**: `PlaytimeUserProfile` 객체로 변환
+   - **iOS**: PlaytimeWeb URL 파라미터로 변환 (gender → string, birthYear → age)
+
+#### 예시 코드
+
+**정보가 있는 경우:**
+```typescript
+const handleLogin = async (userId: string) => {
+  try {
+    // 사용자 정보를 모두 알고 있는 경우
+    await AdchainSdk.login({
+      userId: userId,
+      gender: 'MALE',
+      birthYear: 1990,
+      customProperties: {
+        plan: 'premium'
+      }
+    });
+
+    console.log('로그인 성공!');
+  } catch (error) {
+    console.error('로그인 실패:', error);
+  }
+};
+```
+
+**정보가 없는 경우:**
+```typescript
+const handleLogin = async (userId: string) => {
+  try {
+    // 사용자 정보를 모르는 경우 (adjoe는 정보 없이 동작)
+    await AdchainSdk.login({
+      userId: userId
+      // gender, birthYear 생략
+    });
+
+    console.log('로그인 성공!');
+  } catch (error) {
+    console.error('로그인 실패:', error);
+  }
+};
+```
+
+**나중에 정보를 얻은 경우:**
+```typescript
+const updateUserProfile = async () => {
+  try {
+    // 1. 로그아웃
+    await AdchainSdk.logout();
+
+    // 2. 새로운 정보로 재로그인
+    await AdchainSdk.login({
+      userId: 'user123',
+      gender: 'FEMALE',
+      birthYear: 1995
+    });
+
+    console.log('프로필 업데이트 성공!');
+  } catch (error) {
+    console.error('프로필 업데이트 실패:', error);
+  }
+};
+```
+
 ### Quiz/Mission 사용 예시
 
 ```typescript
@@ -682,6 +785,12 @@ npx react-native run-ios
 
 ## 🆕 최신 업데이트
 
+### v1.0.23 (Android) / v1.0.36 (iOS) - 2025-10-16
+- ✨ adjoe SDK 통합 시 사용자 프로필(Gender/Age) 전달 기능 추가
+- 🧪 App Launch Test 도구 추가 (앱 설치 확인 및 실행 테스트)
+- 🔄 SDK 버전 업데이트 및 안정성 개선
+- 📚 adjoe 통합 가이드 추가 (성별/출생년도 전달 방법)
+
 ### v1.0.21 (Android) / v1.0.33 (iOS) - 2025-09-26
 - ✨ Offerwall 메서드에 선택적 placementId 파라미터 추가
   - `openOfferwall(placementId?: string)`
@@ -722,5 +831,5 @@ npx react-native run-ios
 ---
 
 **Version**: 1.0.3
-**Last Updated**: 2025-09-26
+**Last Updated**: 2025-10-16
 **Sample Project**: [adchain-sdk-react-sample](https://github.com/1selfworld-labs/adchain-sdk-react-sample)

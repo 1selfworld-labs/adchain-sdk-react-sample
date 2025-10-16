@@ -3,6 +3,7 @@ import { AppState, StyleSheet, Text, TouchableOpacity, View } from "react-native
 import AdchainSdk from "../../src/index";
 import { DebugInfo } from "../interface/debug";
 import Adjoe from "./adjoe";
+import AppLaunchTest from "./appLaunch";
 import Debug from "./debug";
 import Mission from "./mission";
 import Quiz from "./quiz";
@@ -13,7 +14,7 @@ interface TabNavigationProps {
 }
 
 const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) => {
-  const [activeTab, setActiveTab] = useState<"quiz" | "mission" | "adjoe">("quiz");
+  const [activeTab, setActiveTab] = useState<"quiz" | "mission" | "adjoe" | "appLaunch">("quiz");
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({
     userId: "",
     ifa: "",
@@ -118,6 +119,14 @@ const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) =
             Adjoe
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "appLaunch" ? styles.activeTab : styles.inactiveTab]}
+          onPress={() => setActiveTab("appLaunch")}>
+          <Text style={[styles.tabText, activeTab === "appLaunch" ? styles.activeTabText : styles.inactiveTabText]}>
+            App Launch
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.contentContainer}>
@@ -125,8 +134,10 @@ const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) =
           <Quiz isLoggedIn={isLoggedIn} />
         ) : activeTab === "mission" ? (
           <Mission />
-        ) : (
+        ) : activeTab === "adjoe" ? (
           <Adjoe isSkipMode={isSkipMode} />
+        ) : (
+          <AppLaunchTest isSkipMode={isSkipMode} />
         )}
       </View>
       <Debug debugInfo={debugInfo} onRefresh={fetchDebugInfo} />
