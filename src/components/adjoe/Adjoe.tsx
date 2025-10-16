@@ -31,6 +31,52 @@ const Adjoe: React.FC<AdjoeProps> = ({ isSkipMode = false }) => {
     }
   };
 
+  const handleWebviewTest1 = async () => {
+    try {
+      setTestResult("Opening Webview Test #1...");
+      console.log("Attempting to open Webview Test #1");
+
+      const url = "https://adchain-offerwall.1self.world/?placement=adjoe";
+      const result = await AdchainSdk.openOfferwallWithUrl(url, "webview_test_1");
+
+      console.log("Webview Test #1 result:", result);
+      setTestResult("✅ Webview Test #1 opened successfully");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Webview Test #1 error:", errorMessage);
+      setTestResult(`❌ Error: ${errorMessage}`);
+
+      Alert.alert(
+        "Webview Test #1 Error",
+        errorMessage,
+        [{ text: "OK" }]
+      );
+    }
+  };
+
+  const handleWebviewTest2 = async () => {
+    try {
+      setTestResult("Opening Webview Test #2...");
+      console.log("Attempting to open Webview Test #2");
+
+      const url = "https://adchain-offerwall-adjoe.1self.world";
+      const result = await AdchainSdk.openOfferwallWithUrl(url, "webview_test_2");
+
+      console.log("Webview Test #2 result:", result);
+      setTestResult("✅ Webview Test #2 opened successfully");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("Webview Test #2 error:", errorMessage);
+      setTestResult(`❌ Error: ${errorMessage}`);
+
+      Alert.alert(
+        "Webview Test #2 Error",
+        errorMessage,
+        [{ text: "OK" }]
+      );
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -74,6 +120,41 @@ const Adjoe: React.FC<AdjoeProps> = ({ isSkipMode = false }) => {
             <Text style={styles.resultText}>{testResult}</Text>
           </View>
         )}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Test Webview Integration</Text>
+        <Text style={styles.sectionDescription}>
+          Test opening custom URLs using openOfferwallWithUrl SDK method.
+          {"\n\n"}
+          These buttons open predefined URLs in the SDK's webview:
+        </Text>
+
+        <View style={styles.urlInfo}>
+          <Text style={styles.urlLabel}>WEBVIEW TEST #1:</Text>
+          <Text style={styles.urlText}>
+            https://adchain-offerwall.1self.world/?placement=adjoe
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.testButton}
+          onPress={handleWebviewTest1}>
+          <Text style={styles.testButtonText}>WEBVIEW TEST #1</Text>
+        </TouchableOpacity>
+
+        <View style={[styles.urlInfo, { marginTop: 16 }]}>
+          <Text style={styles.urlLabel}>WEBVIEW TEST #2:</Text>
+          <Text style={styles.urlText}>
+            https://adchain-offerwall-adjoe.1self.world
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={[styles.testButton, { marginTop: 12 }]}
+          onPress={handleWebviewTest2}>
+          <Text style={styles.testButtonText}>WEBVIEW TEST #2</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.infoSection}>
@@ -209,6 +290,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#424242",
     lineHeight: 22,
+  },
+  urlInfo: {
+    backgroundColor: "#F0F0F0",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 12,
+    borderLeftWidth: 3,
+    borderLeftColor: "#2196F3",
+  },
+  urlLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#1976D2",
+    marginBottom: 6,
+  },
+  urlText: {
+    fontSize: 12,
+    color: "#424242",
+    lineHeight: 18,
+    fontFamily: "monospace",
   },
 });
 

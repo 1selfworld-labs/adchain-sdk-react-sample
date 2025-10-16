@@ -118,7 +118,7 @@ target 'YourAppName' do
   # 기존 내용 유지...
 
   # AdChain SDK 추가 - 아래 한 줄만 추가!
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.36'
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.38'
 end
 ```
 
@@ -785,11 +785,13 @@ npx react-native run-ios
 
 ## 🆕 최신 업데이트
 
-### v1.0.23 (Android) / v1.0.36 (iOS) - 2025-10-16
+### v1.0.23 (Android) / v1.0.38 (iOS) - 2025-10-16
 - ✨ adjoe SDK 통합 시 사용자 프로필(Gender/Age) 전달 기능 추가
 - 🧪 App Launch Test 도구 추가 (앱 설치 확인 및 실행 테스트)
+- 🧪 Webview 통합 테스트 도구 추가 (URL 파라미터 테스트)
 - 🔄 SDK 버전 업데이트 및 안정성 개선
 - 📚 adjoe 통합 가이드 추가 (성별/출생년도 전달 방법)
+- 🔧 로컬 SDK 참조에서 원격 저장소 사용으로 전환 (Android)
 
 ### v1.0.21 (Android) / v1.0.33 (iOS) - 2025-09-26
 - ✨ Offerwall 메서드에 선택적 placementId 파라미터 추가
