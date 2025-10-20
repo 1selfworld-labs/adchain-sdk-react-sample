@@ -589,14 +589,83 @@ class AdchainSdkModule: RCTEventEmitter {
       }
     }
 
+    class OfferwallEventCallbackImpl: NSObject, OfferwallEventCallback {
+      func onCustomEvent(eventType: String, payload: [String : Any]) {
+        print("[AdchainSdk] [WebView → App] Custom Event: type=\(eventType), payload=\(payload)")
+
+        // Show alert for testing (iOS doesn't have Toast, so use simple alert or notification)
+        DispatchQueue.main.async {
+          let message: String
+          if eventType == "show_toast" {
+            message = payload["message"] as? String ?? "Unknown message"
+          } else {
+            let payloadStr = payload.map { "\($0.key): \($0.value)" }.joined(separator: "\n")
+            message = "Event: \(eventType)\n\(payloadStr)"
+          }
+
+          // Simple banner-style notification at top of screen
+          if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+            let label = UILabel()
+            label.backgroundColor = UIColor.black.withAlphaComponent(0.8)
+            label.textColor = .white
+            label.textAlignment = .center
+            label.font = UIFont.systemFont(ofSize: 14)
+            label.text = message
+            label.numberOfLines = 0
+            label.alpha = 0
+
+            let maxWidth = window.frame.width - 40
+            let size = label.sizeThatFits(CGSize(width: maxWidth, height: CGFloat.greatestFiniteMagnitude))
+            label.frame = CGRect(x: 20, y: 50, width: maxWidth, height: max(44, size.height + 20))
+            label.layer.cornerRadius = 12
+            label.clipsToBounds = true
+
+            window.addSubview(label)
+
+            UIView.animate(withDuration: 0.3, animations: {
+              label.alpha = 1.0
+            }) { _ in
+              UIView.animate(withDuration: 0.3, delay: 2.0, animations: {
+                label.alpha = 0.0
+              }) { _ in
+                label.removeFromSuperview()
+              }
+            }
+          }
+        }
+      }
+
+      func onDataRequest(requestId: String, requestType: String, params: [String : Any]) -> [String : Any]? {
+        print("[AdchainSdk] [WebView → App] Data Request: type=\(requestType), params=\(params)")
+
+        // Return mock data based on request type
+        let response: [String: Any]?
+        switch requestType {
+        case "user_points":
+          response = ["points": 12345, "currency": "KRW"]
+        case "user_profile":
+          response = ["userId": "test_123", "nickname": "TestPlayer", "level": 42]
+        case "app_version":
+          response = ["version": "1.0.0", "buildNumber": 100]
+        default:
+          response = nil
+        }
+
+        print("[AdchainSdk] [App → WebView] Data Response: \(response ?? [:])")
+        return response
+      }
+    }
+
     DispatchQueue.main.async { [weak self] in
       if let topVC = self?.getTopViewController() {
         let callback = OfferwallCallbackImpl(resolver: resolver)
+        let eventCallback = OfferwallEventCallbackImpl()
         let finalPlacementId = (placementId as String?) ?? ""
         AdchainSdk.shared.openOfferwall(
           presentingViewController: topVC,
           placementId: finalPlacementId,
-          callback: callback
+          callback: callback,
+          eventCallback: eventCallback
         )
       } else {
         rejecter("OFFERWALL_ERROR", "No view controller available", nil)
@@ -639,15 +708,84 @@ class AdchainSdkModule: RCTEventEmitter {
       }
     }
 
+    class OfferwallEventCallbackImpl: NSObject, OfferwallEventCallback {
+      func onCustomEvent(eventType: String, payload: [String : Any]) {
+        print("[AdchainSdk] [WebView → App] Custom Event: type=\(eventType), payload=\(payload)")
+
+        // Show alert for testing (iOS doesn't have Toast, so use simple alert or notification)
+        DispatchQueue.main.async {
+          let message: String
+          if eventType == "show_toast" {
+            message = payload["message"] as? String ?? "Unknown message"
+          } else {
+            let payloadStr = payload.map { "\($0.key): \($0.value)" }.joined(separator: "\n")
+            message = "Event: \(eventType)\n\(payloadStr)"
+          }
+
+          // Simple banner-style notification at top of screen
+          if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+            let label = UILabel()
+            label.backgroundColor = UIColor.black.withAlphaComponent(0.8)
+            label.textColor = .white
+            label.textAlignment = .center
+            label.font = UIFont.systemFont(ofSize: 14)
+            label.text = message
+            label.numberOfLines = 0
+            label.alpha = 0
+
+            let maxWidth = window.frame.width - 40
+            let size = label.sizeThatFits(CGSize(width: maxWidth, height: CGFloat.greatestFiniteMagnitude))
+            label.frame = CGRect(x: 20, y: 50, width: maxWidth, height: max(44, size.height + 20))
+            label.layer.cornerRadius = 12
+            label.clipsToBounds = true
+
+            window.addSubview(label)
+
+            UIView.animate(withDuration: 0.3, animations: {
+              label.alpha = 1.0
+            }) { _ in
+              UIView.animate(withDuration: 0.3, delay: 2.0, animations: {
+                label.alpha = 0.0
+              }) { _ in
+                label.removeFromSuperview()
+              }
+            }
+          }
+        }
+      }
+
+      func onDataRequest(requestId: String, requestType: String, params: [String : Any]) -> [String : Any]? {
+        print("[AdchainSdk] [WebView → App] Data Request: type=\(requestType), params=\(params)")
+
+        // Return mock data based on request type
+        let response: [String: Any]?
+        switch requestType {
+        case "user_points":
+          response = ["points": 12345, "currency": "KRW"]
+        case "user_profile":
+          response = ["userId": "test_123", "nickname": "TestPlayer", "level": 42]
+        case "app_version":
+          response = ["version": "1.0.0", "buildNumber": 100]
+        default:
+          response = nil
+        }
+
+        print("[AdchainSdk] [App → WebView] Data Response: \(response ?? [:])")
+        return response
+      }
+    }
+
     DispatchQueue.main.async { [weak self] in
       if let topVC = self?.getTopViewController() {
         let callback = OfferwallCallbackImpl(resolver: resolver)
+        let eventCallback = OfferwallEventCallbackImpl()
         let finalPlacementId = (placementId as String?) ?? ""
         AdchainSdk.shared.openOfferwallWithUrl(
           url as String,
           placementId: finalPlacementId,
           presentingViewController: topVC,
-          callback: callback
+          callback: callback,
+          eventCallback: eventCallback
         )
       } else {
         rejecter("OFFERWALL_ERROR", "No view controller available", nil)

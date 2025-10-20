@@ -111,7 +111,7 @@ dependencies {
     // AdChain SDK - 로컬 모듈 참조 (이벤트 브릿지 기능 테스트용)
     //implementation project(':adchain-sdk')
 
-    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.25'
+    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.27'
 
     // AdChain SDK dependencies
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
