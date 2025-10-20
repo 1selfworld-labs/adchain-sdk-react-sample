@@ -9,6 +9,6 @@ class AdchainSdkPackage : ReactPackage {
   override fun createNativeModules(rc: ReactApplicationContext): List<NativeModule> =
     listOf(AdchainSdkModule(rc))
     
-  override fun createViewManagers(rc: ReactApplicationContext): List<ViewManager<*, *>> = 
-    emptyList()
+  override fun createViewManagers(rc: ReactApplicationContext): List<ViewManager<*, *>> =
+    listOf(AdchainOfferwallViewManager())
 }

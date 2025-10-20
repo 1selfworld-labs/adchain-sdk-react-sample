@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { AppState, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { AppState, BackHandler, ScrollView, StyleSheet, Text, TouchableOpacity, UIManager, View, findNodeHandle } from "react-native";
 import AdchainSdk from "../../src/index";
 import { DebugInfo } from "../interface/debug";
 import Adjoe from "./adjoe";
@@ -7,6 +7,7 @@ import AppLaunchTest from "./appLaunch";
 import Debug from "./debug";
 import Mission from "./mission";
 import Quiz from "./quiz";
+import AdchainOfferwallView from "./OfferwallView";
 
 interface TabNavigationProps {
   isLoggedIn: boolean;
@@ -14,7 +15,8 @@ interface TabNavigationProps {
 }
 
 const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) => {
-  const [activeTab, setActiveTab] = useState<"quiz" | "mission" | "adjoe" | "appLaunch">("quiz");
+  const [activeTab, setActiveTab] = useState<"quiz" | "mission" | "adjoe" | "appLaunch" | "offerwallView">("quiz");
+  const offerwallViewRef = useRef(null);
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({
     userId: "",
     ifa: "",
@@ -93,14 +95,66 @@ const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) =
     fetchDebugInfo();
   }, [activeTab, isLoggedIn]);
 
+  // Handle back button for Offerwall tab
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (activeTab === 'offerwallView' && offerwallViewRef.current) {
+        const viewId = findNodeHandle(offerwallViewRef.current);
+        if (viewId) {
+          console.log('[TabNavigation] Back button pressed in Offerwall tab, calling handleBackPress');
+          UIManager.dispatchViewManagerCommand(
+            viewId,
+            'handleBackPress',
+            []
+          );
+          return true; // Prevent default back behavior
+        }
+      }
+      return false; // Allow default back behavior for other tabs
+    });
+
+    return () => backHandler.remove();
+  }, [activeTab]);
+
   return (
     <View style={styles.container}>
+      {/* Offerwall 탭일 때는 ScrollView 없이 전체 화면 사용 */}
+      {activeTab === "offerwallView" ? (
+        <View style={styles.contentContainer} pointerEvents="box-none">
+          <AdchainOfferwallView
+            ref={offerwallViewRef}
+            placementId="tab_embedded_offerwall"
+            style={{ flex: 1, width: '100%' }}
+            onOfferwallOpened={() => console.log('Offerwall opened in tab')}
+            onOfferwallClosed={() => console.log('Offerwall closed in tab')}
+            onOfferwallError={(error) => console.error('Offerwall error:', error)}
+            onRewardEarned={(amount) => console.log('Reward earned:', amount)}
+          />
+        </View>
+      ) : (
+        <ScrollView style={styles.contentContainer}>
+          {activeTab === "quiz" ? (
+            <Quiz isLoggedIn={isLoggedIn} />
+          ) : activeTab === "mission" ? (
+            <Mission />
+          ) : activeTab === "adjoe" ? (
+            <Adjoe isSkipMode={isSkipMode} />
+          ) : activeTab === "appLaunch" ? (
+            <AppLaunchTest isSkipMode={isSkipMode} />
+          ) : null}
+
+          {/* Debug Info 표시 */}
+          <Debug debugInfo={debugInfo} onRefresh={fetchDebugInfo} />
+        </ScrollView>
+      )}
+
+      {/* 하단 탭 바 (고정) */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, activeTab === "quiz" ? styles.activeTab : styles.inactiveTab]}
           onPress={() => setActiveTab("quiz")}>
           <Text style={[styles.tabText, activeTab === "quiz" ? styles.activeTabText : styles.inactiveTabText]}>
-            데일리 1분 퀴즈
+            퀴즈
           </Text>
         </TouchableOpacity>
 
@@ -108,7 +162,7 @@ const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) =
           style={[styles.tab, activeTab === "mission" ? styles.activeTab : styles.inactiveTab]}
           onPress={() => setActiveTab("mission")}>
           <Text style={[styles.tabText, activeTab === "mission" ? styles.activeTabText : styles.inactiveTabText]}>
-            데일리 미션
+            미션
           </Text>
         </TouchableOpacity>
 
@@ -124,23 +178,18 @@ const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) =
           style={[styles.tab, activeTab === "appLaunch" ? styles.activeTab : styles.inactiveTab]}
           onPress={() => setActiveTab("appLaunch")}>
           <Text style={[styles.tabText, activeTab === "appLaunch" ? styles.activeTabText : styles.inactiveTabText]}>
-            App Launch
+            Launch
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "offerwallView" ? styles.activeTab : styles.inactiveTab]}
+          onPress={() => setActiveTab("offerwallView")}>
+          <Text style={[styles.tabText, activeTab === "offerwallView" ? styles.activeTabText : styles.inactiveTabText]}>
+            Offerwall
           </Text>
         </TouchableOpacity>
       </View>
-
-      <View style={styles.contentContainer}>
-        {activeTab === "quiz" ? (
-          <Quiz isLoggedIn={isLoggedIn} />
-        ) : activeTab === "mission" ? (
-          <Mission />
-        ) : activeTab === "adjoe" ? (
-          <Adjoe isSkipMode={isSkipMode} />
-        ) : (
-          <AppLaunchTest isSkipMode={isSkipMode} />
-        )}
-      </View>
-      <Debug debugInfo={debugInfo} onRefresh={fetchDebugInfo} />
     </View>
   );
 };
@@ -149,38 +198,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  contentContainer: {
+    flex: 1,
+  },
   tabContainer: {
     backgroundColor: "#FFF",
     flexDirection: "row",
-    borderRadius: 16,
-    marginBottom: 20,
-    padding: 4,
+    borderTopWidth: 1,
+    borderTopColor: "#E0E0E0",
+    paddingVertical: 8,
+    paddingHorizontal: 4,
   },
   tab: {
     flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    paddingHorizontal: 8,
     alignItems: "center",
+    justifyContent: "center",
   },
   activeTab: {
-    backgroundColor: "#046BD5",
+    backgroundColor: "transparent",
   },
   inactiveTab: {
     backgroundColor: "transparent",
   },
   tabText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
   },
   activeTabText: {
-    color: "#FFFFFF",
+    color: "#046BD5",
   },
   inactiveTabText: {
     color: "#666666",
-  },
-  contentContainer: {
-    flex: 1,
   },
   missionContainer: {
     paddingHorizontal: 16,

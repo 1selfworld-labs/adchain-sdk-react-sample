@@ -35,6 +35,7 @@ function App(): React.JSX.Element {
 
   const backgroundStyle = {
     backgroundColor: Colors.lighter, // 항상 흰색 배경
+    flex: 1,
   };
 
   // Auto SDK initialization removed - User must click "Initialize SDK" button
@@ -136,9 +137,9 @@ function App(): React.JSX.Element {
           </View>
         )}
 
-        <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
-          <View style={styles.container}>
-            {!isLoggedIn && !isSkipMode ? (
+        {!isLoggedIn && !isSkipMode ? (
+          <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
+            <View style={styles.container}>
               <LoginForm
                 onLogin={handleLogin}
                 onInitialize={initializeSDK}
@@ -146,12 +147,11 @@ function App(): React.JSX.Element {
                 isLoading={isLoggingIn}
                 sdkInitialized={sdkInitialized}
               />
-            ) : (
-              <TabNavigation isLoggedIn={isLoggedIn} isSkipMode={isSkipMode} />
-            )}
-            {/* Debug Information Panel */}
-          </View>
-        </ScrollView>
+            </View>
+          </ScrollView>
+        ) : (
+          <TabNavigation isLoggedIn={isLoggedIn} isSkipMode={isSkipMode} />
+        )}
       </SafeAreaView>
     </SafeAreaProvider>
   );
