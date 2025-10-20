@@ -2,6 +2,46 @@
 
 > 💡 **AdChain SDK를 React Native 프로젝트에 통합하는 완벽한 샘플 앱입니다. 이 샘플을 참고하여 귀사의 앱에 SDK를 빠르게 통합할 수 있습니다.**
 
+[![SDK Version](https://img.shields.io/badge/Android-v1.0.23-blue)](https://github.com/1selfworld-labs/adchain-sdk-android)
+[![SDK Version](https://img.shields.io/badge/iOS-v1.0.38-blue)](https://github.com/1selfworld-labs/adchain-sdk-ios-release)
+[![React Native](https://img.shields.io/badge/React%20Native-%5E0.73.0-blue)](https://reactnative.dev/)
+[![License](https://img.shields.io/badge/License-Proprietary-red)]()
+
+## 📑 목차
+
+- [🎯 AdChain SDK란?](#-adchain-sdk란)
+- [📂 샘플 프로젝트 구조](#-샘플-프로젝트-구조)
+- [🚀 빠른 시작 (5분 안에 통합하기)](#-빠른-시작-5분-안에-통합하기)
+  - [Step 0: 샘플 프로젝트 다운로드](#step-0-샘플-프로젝트-다운로드)
+  - [Step 1: SDK 설치 (2분)](#step-1-sdk-설치-2분)
+  - [Step 2: Native Bridge 파일 복사 (3분)](#-step-2-native-bridge-파일-복사-3분)
+  - [Step 3: UI 컴포넌트 복사 (선택사항)](#-step-3-ui-컴포넌트-복사-선택사항)
+  - [Step 4: TypeScript 인터페이스 설정](#-step-4-typescript-인터페이스-설정)
+  - [Step 5: SDK 사용하기](#-step-5-sdk-사용하기)
+- [📘 타입 정의 참조](#-타입-정의-참조)
+- [✅ 체크리스트](#-체크리스트)
+- [📚 API Reference](#-api-reference)
+- [⚠️ 주의사항](#️-주의사항)
+- [🆘 문제 해결](#-문제-해결)
+- [📁 파일별 복사 요약표](#-파일별-복사-요약표)
+- [🎯 5분 만에 연동 완료하기](#-5분-만에-연동-완료하기)
+- [🆕 최신 업데이트](#-최신-업데이트)
+- [📞 지원](#-지원)
+
+## 🔗 빠른 링크
+
+- **📦 SDK Repository**
+  - [Android SDK](https://github.com/1selfworld-labs/adchain-sdk-android)
+  - [iOS SDK](https://github.com/1selfworld-labs/adchain-sdk-ios-release)
+- **📖 문서**
+  - [공식 문서](https://docs.1self.world)
+  - [샘플 프로젝트](https://github.com/1selfworld-labs/adchain-sdk-react-sample)
+- **💬 지원**
+  - 이메일: contacts@1self.world
+  - 이슈 트래커: [GitHub Issues](https://github.com/1selfworld-labs/adchain-sdk-react-sample/issues)
+
+---
+
 ## 🎯 AdChain SDK란?
 
 AdChain SDK는 앱에 광고 기반 리워드 시스템을 쉽게 통합할 수 있게 해주는 모바일 SDK입니다:
@@ -861,6 +901,16 @@ npx react-native run-ios
 
 ---
 
-**Version**: 1.0.3
-**Last Updated**: 2025-10-16
+## 📝 변경 이력
+
+| 날짜 | 버전 | 변경 내용 |
+|------|------|-----------|
+| 2025-10-20 | 1.0.4 | 📑 목차 및 빠른 링크 섹션 추가, 문서 가독성 개선 |
+| 2025-10-16 | 1.0.3 | adjoe SDK 통합 가이드 추가, 사용자 프로필 전달 기능 문서화 |
+| 2025-09-26 | 1.0.2 | Offerwall placementId 파라미터 문서 추가 |
+
+---
+
+**Version**: 1.0.4
+**Last Updated**: 2025-10-20
 **Sample Project**: [adchain-sdk-react-sample](https://github.com/1selfworld-labs/adchain-sdk-react-sample)

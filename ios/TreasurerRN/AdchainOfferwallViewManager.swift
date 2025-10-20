@@ -13,6 +13,18 @@ class AdchainOfferwallViewManager: RCTViewManager {
     override static func requiresMainQueueSetup() -> Bool {
         return true
     }
+
+    // NEW: Handle sendDataResponse command from React Native
+    @objc func sendDataResponse(_ reactTag: NSNumber, requestId: String, responseData: NSDictionary) {
+        DispatchQueue.main.async { [weak self] in
+            self?.bridge.uiManager.addUIBlock { (uiManager, viewRegistry) in
+                guard let view = viewRegistry?[reactTag] as? AdchainOfferwallRNView else {
+                    return
+                }
+                view.sendDataResponse(requestId, responseData: responseData as! [String: Any])
+            }
+        }
+    }
 }
 
 // Wrapper view for React Native
@@ -36,6 +48,11 @@ class AdchainOfferwallRNView: UIView {
     @objc var onOfferwallClosed: RCTDirectEventBlock?
     @objc var onOfferwallError: RCTDirectEventBlock?
     @objc var onRewardEarned: RCTDirectEventBlock?
+    @objc var onCustomEvent: RCTDirectEventBlock?  // NEW
+    @objc var onDataRequest: RCTDirectEventBlock?  // NEW
+
+    // Store pending data responses
+    private var pendingDataResponses: [String: [String: Any]] = [:]
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -89,6 +106,39 @@ class AdchainOfferwallRNView: UIView {
             }
         ))
 
+        // NEW: Set event callback for custom events
+        view.setEventCallback(RNEventCallback(
+            onCustomEvent: { [weak self] (eventType, payload) in
+                self?.sendEvent(name: "onCustomEvent", body: [
+                    "eventType": eventType,
+                    "payload": payload
+                ])
+            },
+            onDataRequest: { [weak self] (requestId, requestType, params) -> [String: Any]? in
+                guard let self = self else { return nil }
+
+                // Send event to React Native
+                self.sendEvent(name: "onDataRequest", body: [
+                    "requestId": requestId,
+                    "requestType": requestType,
+                    "params": params
+                ])
+
+                // Wait for response from React Native (with timeout)
+                let startTime = Date()
+                let timeout: TimeInterval = 5.0  // 5 seconds
+
+                while Date().timeIntervalSince(startTime) < timeout {
+                    if let response = self.pendingDataResponses.removeValue(forKey: requestId) {
+                        return response
+                    }
+                    Thread.sleep(forTimeInterval: 0.01)
+                }
+
+                return nil
+            }
+        ))
+
         // Load offerwall
         view.loadOfferwall(
             baseUrl: offerwallUrl,
@@ -111,6 +161,10 @@ class AdchainOfferwallRNView: UIView {
             onOfferwallError?(body)
         case "onRewardEarned":
             onRewardEarned?(body)
+        case "onCustomEvent":  // NEW
+            onCustomEvent?(body)
+        case "onDataRequest":  // NEW
+            onDataRequest?(body)
         default:
             break
         }
@@ -118,6 +172,11 @@ class AdchainOfferwallRNView: UIView {
 
     private func sendErrorEvent(error: String) {
         sendEvent(name: "onOfferwallError", body: ["error": error])
+    }
+
+    // NEW: Handle data response from React Native
+    @objc func sendDataResponse(_ requestId: String, responseData: [String: Any]) {
+        pendingDataResponses[requestId] = responseData
     }
 
     override func layoutSubviews() {
@@ -157,5 +216,27 @@ class RNOfferwallCallback: OfferwallCallback {
 
     func onRewardEarned(_ amount: Int) {
         onRewardEarnedHandler(amount)
+    }
+}
+
+// NEW: Custom event callback implementation for React Native
+class RNEventCallback: OfferwallEventCallback {
+    private let onCustomEventHandler: (String, [String: Any]) -> Void
+    private let onDataRequestHandler: (String, String, [String: Any]) -> [String: Any]?
+
+    init(
+        onCustomEvent: @escaping (String, [String: Any]) -> Void,
+        onDataRequest: @escaping (String, String, [String: Any]) -> [String: Any]?
+    ) {
+        self.onCustomEventHandler = onCustomEvent
+        self.onDataRequestHandler = onDataRequest
+    }
+
+    func onCustomEvent(eventType: String, payload: [String: Any]) {
+        onCustomEventHandler(eventType, payload)
+    }
+
+    func onDataRequest(requestId: String, requestType: String, params: [String: Any]) -> [String: Any]? {
+        return onDataRequestHandler(requestId, requestType, params)
     }
 }

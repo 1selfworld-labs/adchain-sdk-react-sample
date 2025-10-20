@@ -4,6 +4,6 @@ include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
 
-// AdChain SDK 로컬 모듈 추가
-include ':adchain-sdk'
-project(':adchain-sdk').projectDir = new File(rootProject.projectDir, '../../adchain-sdk-android/adchain-sdk')
+// AdChain SDK 로컬 모듈 추가 (이벤트 브릿지 기능 테스트용)
+//include ':adchain-sdk'
+//project(':adchain-sdk').projectDir = new File(rootProject.projectDir, '../../adchain-sdk-android/adchain-sdk')

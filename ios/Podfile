@@ -21,9 +21,9 @@ target 'TreasurerRN' do
     :hermes_enabled => true
   )
   
-  # AdChain SDK - Remote repository
-  #pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.38'
-  pod 'AdChainSDK', :path => '../../adchain-sdk-ios'  # 로컬 디버깅용
+  # AdChain SDK - 로컬 SDK 사용 (이벤트 브릿지 기능 테스트용)
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.41'
+  #pod 'AdChainSDK', :path => '../../adchain-sdk-ios'  # 로컬 디버깅용
 
   target 'TreasurerRNTests' do
     inherit! :complete

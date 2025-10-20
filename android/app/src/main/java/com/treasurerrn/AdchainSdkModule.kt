@@ -580,8 +580,43 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
           }
         }
 
+        // Event callback for custom events
+        val eventCallback = object : OfferwallEventCallback {
+          override fun onCustomEvent(eventType: String, payload: Map<String, Any?>) {
+            android.util.Log.d("AdchainSdk", "[WebView → App] Custom Event: type=$eventType, payload=$payload")
+
+            // Show Toast for testing (works even on top of Full Screen Activity)
+            Handler(Looper.getMainLooper()).post {
+              val message = when (eventType) {
+                "show_toast" -> payload["message"]?.toString() ?: "Unknown message"
+                else -> "Event: $eventType\n${payload.entries.joinToString("\n") { "${it.key}: ${it.value}" }}"
+              }
+              android.widget.Toast.makeText(
+                reactApplicationContext,
+                message,
+                android.widget.Toast.LENGTH_LONG
+              ).show()
+            }
+          }
+
+          override fun onDataRequest(requestId: String, requestType: String, params: Map<String, Any?>): Map<String, Any?>? {
+            android.util.Log.d("AdchainSdk", "[WebView → App] Data Request: type=$requestType, params=$params")
+
+            // Return mock data based on request type
+            val response = when (requestType) {
+              "user_points" -> mapOf("points" to 12345, "currency" to "KRW")
+              "user_profile" -> mapOf("userId" to "test_123", "nickname" to "TestPlayer", "level" to 42)
+              "app_version" -> mapOf("version" to "1.0.0", "buildNumber" to 100)
+              else -> null
+            }
+
+            android.util.Log.d("AdchainSdk", "[App → WebView] Data Response: $response")
+            return response
+          }
+        }
+
         val finalPlacementId = placementId ?: ""
-        AdchainSdk.openOfferwall(activity, finalPlacementId, callback)
+        AdchainSdk.openOfferwall(activity, finalPlacementId, callback, eventCallback)
       } ?: promise.reject("OFFERWALL_ERROR", "Current activity is null")
     } catch (t: Throwable) {
       promise.reject("OFFERWALL_ERROR", t.message, t)
@@ -610,8 +645,43 @@ class AdchainSdkModule(private val reactContext: ReactApplicationContext)
           }
         }
 
+        // Event callback for custom events
+        val eventCallback = object : OfferwallEventCallback {
+          override fun onCustomEvent(eventType: String, payload: Map<String, Any?>) {
+            android.util.Log.d("AdchainSdk", "[WebView → App] Custom Event: type=$eventType, payload=$payload")
+
+            // Show Toast for testing (works even on top of Full Screen Activity)
+            Handler(Looper.getMainLooper()).post {
+              val message = when (eventType) {
+                "show_toast" -> payload["message"]?.toString() ?: "Unknown message"
+                else -> "Event: $eventType\n${payload.entries.joinToString("\n") { "${it.key}: ${it.value}" }}"
+              }
+              android.widget.Toast.makeText(
+                reactApplicationContext,
+                message,
+                android.widget.Toast.LENGTH_LONG
+              ).show()
+            }
+          }
+
+          override fun onDataRequest(requestId: String, requestType: String, params: Map<String, Any?>): Map<String, Any?>? {
+            android.util.Log.d("AdchainSdk", "[WebView → App] Data Request: type=$requestType, params=$params")
+
+            // Return mock data based on request type
+            val response = when (requestType) {
+              "user_points" -> mapOf("points" to 12345, "currency" to "KRW")
+              "user_profile" -> mapOf("userId" to "test_123", "nickname" to "TestPlayer", "level" to 42)
+              "app_version" -> mapOf("version" to "1.0.0", "buildNumber" to 100)
+              else -> null
+            }
+
+            android.util.Log.d("AdchainSdk", "[App → WebView] Data Response: $response")
+            return response
+          }
+        }
+
         val finalPlacementId = placementId ?: ""
-        AdchainSdk.openOfferwallWithUrl(url, activity, finalPlacementId, callback)
+        AdchainSdk.openOfferwallWithUrl(url, activity, finalPlacementId, callback, eventCallback)
       } ?: promise.reject("OFFERWALL_ERROR", "Current activity is null")
     } catch (t: Throwable) {
       promise.reject("OFFERWALL_ERROR", t.message, t)

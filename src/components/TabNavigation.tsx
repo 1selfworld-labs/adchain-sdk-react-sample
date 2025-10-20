@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { AppState, BackHandler, ScrollView, StyleSheet, Text, TouchableOpacity, UIManager, View, findNodeHandle } from "react-native";
+import { Alert, AppState, BackHandler, ScrollView, StyleSheet, Text, TouchableOpacity, UIManager, View, findNodeHandle } from "react-native";
 import AdchainSdk from "../../src/index";
 import { DebugInfo } from "../interface/debug";
 import Adjoe from "./adjoe";
@@ -129,6 +129,35 @@ const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) =
             onOfferwallClosed={() => console.log('Offerwall closed in tab')}
             onOfferwallError={(error) => console.error('Offerwall error:', error)}
             onRewardEarned={(amount) => console.log('Reward earned:', amount)}
+            onCustomEvent={(eventType, payload) => {
+              console.log('[WebView → App] Custom Event:', eventType, payload);
+
+              // 이벤트 타입별 처리
+              if (eventType === 'show_toast') {
+                Alert.alert('WebView Message', payload.message || JSON.stringify(payload));
+              } else if (eventType === 'navigate') {
+                Alert.alert('Navigation Request', `Target: ${payload.screen || 'unknown'}`);
+              } else if (eventType === 'share') {
+                Alert.alert('Share Request', `Title: ${payload.title || ''}\nURL: ${payload.url || ''}`);
+              } else {
+                Alert.alert('Custom Event', `Type: ${eventType}\n\n${JSON.stringify(payload, null, 2)}`);
+              }
+            }}
+            onDataRequest={(requestType, params) => {
+              console.log('[WebView → App] Data Request:', requestType, params);
+
+              // 요청 타입별 응답 데이터
+              const responses: Record<string, any> = {
+                'user_points': { points: 12345, currency: 'KRW' },
+                'user_profile': { userId: 'test_123', nickname: 'TestPlayer', level: 42 },
+                'app_version': { version: '1.0.0', buildNumber: 100 }
+              };
+
+              const response = responses[requestType] || null;
+              console.log('[App → WebView] Data Response:', response);
+
+              return response;
+            }}
           />
         </View>
       ) : (

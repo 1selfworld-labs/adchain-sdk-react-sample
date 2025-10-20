@@ -30,6 +30,29 @@ interface OfferwallHeightChangeEvent {
 }
 
 /**
+ * Custom event from WebView
+ * @since 1.0.41
+ */
+interface OfferwallCustomEvent {
+  nativeEvent: {
+    eventType: string;
+    payload: any;
+  };
+}
+
+/**
+ * Data request from WebView
+ * @since 1.0.41
+ */
+interface OfferwallDataRequestEvent {
+  nativeEvent: {
+    requestId: string;
+    requestType: string;
+    params: any;
+  };
+}
+
+/**
  * Props for AdchainOfferwallView component
  */
 export interface AdchainOfferwallViewProps {
@@ -45,6 +68,25 @@ export interface AdchainOfferwallViewProps {
   onOfferwallError?: (error: string) => void;
   /** Callback when user earns a reward */
   onRewardEarned?: (amount: number) => void;
+
+  // ===== NEW: Event Bridge Callbacks (v1.0.41+) =====
+
+  /**
+   * Callback when WebView sends a custom event
+   * @param eventType - Type of event (e.g., "navigate", "show_toast")
+   * @param payload - Event data
+   * @since 1.0.41
+   */
+  onCustomEvent?: (eventType: string, payload: any) => void;
+
+  /**
+   * Callback when WebView requests data from the app
+   * @param requestType - Type of data requested (e.g., "user_points", "user_profile")
+   * @param params - Request parameters
+   * @returns Data to send back to WebView, or null/undefined if unavailable
+   * @since 1.0.41
+   */
+  onDataRequest?: (requestType: string, params: any) => any;
 }
 
 /**
@@ -58,6 +100,8 @@ interface NativeOfferwallViewProps {
   onOfferwallError?: (event: OfferwallErrorEvent) => void;
   onRewardEarned?: (event: OfferwallRewardEvent) => void;
   onHeightChange?: (event: OfferwallHeightChangeEvent) => void;
+  onCustomEvent?: (event: OfferwallCustomEvent) => void;  // NEW
+  onDataRequest?: (event: OfferwallDataRequestEvent) => void;  // NEW
 }
 
 // Require native component
@@ -88,6 +132,8 @@ export const AdchainOfferwallView = React.forwardRef<any, AdchainOfferwallViewPr
     onOfferwallClosed,
     onOfferwallError,
     onRewardEarned,
+    onCustomEvent,
+    onDataRequest,
   },
   ref
 ) => {
@@ -132,6 +178,39 @@ export const AdchainOfferwallView = React.forwardRef<any, AdchainOfferwallViewPr
     }
   };
 
+  // ===== NEW: Handle custom events from WebView =====
+  const handleCustomEvent = (event: OfferwallCustomEvent) => {
+    if (onCustomEvent) {
+      onCustomEvent(event.nativeEvent.eventType, event.nativeEvent.payload);
+    }
+  };
+
+  // ===== NEW: Handle data requests from WebView =====
+  const handleDataRequest = (event: OfferwallDataRequestEvent) => {
+    if (onDataRequest) {
+      const { requestId, requestType, params } = event.nativeEvent;
+
+      // Get data from parent app
+      const responseData = onDataRequest(requestType, params);
+
+      // Send response back to native (which will forward to WebView)
+      if (responseData !== null && responseData !== undefined && viewRef.current) {
+        const viewId = findNodeHandle(viewRef.current);
+        if (viewId) {
+          try {
+            UIManager.dispatchViewManagerCommand(
+              viewId,
+              'sendDataResponse',
+              [requestId, responseData]
+            );
+          } catch (error) {
+            console.error('[OfferwallView] Failed to send data response:', error);
+          }
+        }
+      }
+    }
+  };
+
   return (
     <NativeOfferwallView
       ref={viewRef}
@@ -141,6 +220,8 @@ export const AdchainOfferwallView = React.forwardRef<any, AdchainOfferwallViewPr
       onOfferwallClosed={onOfferwallClosed}
       onOfferwallError={handleOfferwallError}
       onRewardEarned={handleRewardEarned}
+      onCustomEvent={handleCustomEvent}  // NEW
+      onDataRequest={handleDataRequest}  // NEW
     />
   );
 });

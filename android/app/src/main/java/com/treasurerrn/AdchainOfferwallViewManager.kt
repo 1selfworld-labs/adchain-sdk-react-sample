@@ -11,6 +11,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.adchain.sdk.core.AdchainSdk
 import com.adchain.sdk.offerwall.AdchainOfferwallView
 import com.adchain.sdk.offerwall.OfferwallCallback
+import com.adchain.sdk.offerwall.OfferwallEventCallback
 
 class AdchainOfferwallViewManager : SimpleViewManager<AdchainOfferwallView>() {
 
@@ -19,6 +20,7 @@ class AdchainOfferwallViewManager : SimpleViewManager<AdchainOfferwallView>() {
         private const val REACT_CLASS = "AdchainOfferwallView"
         private const val COMMAND_LOAD_OFFERWALL = 1
         private const val COMMAND_HANDLE_BACK_PRESS = 2
+        private const val COMMAND_SEND_DATA_RESPONSE = 3  // NEW
     }
 
     override fun getName() = REACT_CLASS
@@ -32,9 +34,13 @@ class AdchainOfferwallViewManager : SimpleViewManager<AdchainOfferwallView>() {
         Log.d(TAG, "getCommandsMap called")
         return mapOf(
             "loadOfferwall" to COMMAND_LOAD_OFFERWALL,
-            "handleBackPress" to COMMAND_HANDLE_BACK_PRESS
+            "handleBackPress" to COMMAND_HANDLE_BACK_PRESS,
+            "sendDataResponse" to COMMAND_SEND_DATA_RESPONSE  // NEW
         )
     }
+
+    // Store pending data request responses
+    private val pendingDataResponses = mutableMapOf<String, Map<String, Any?>>()
 
     override fun receiveCommand(
         root: AdchainOfferwallView,
@@ -52,6 +58,14 @@ class AdchainOfferwallViewManager : SimpleViewManager<AdchainOfferwallView>() {
                 Log.d(TAG, "handleBackPress command")
                 val handled = root.handleBackPress()
                 Log.d(TAG, "handleBackPress result: $handled")
+            }
+            "sendDataResponse" -> {  // NEW
+                val requestId = args?.getString(0) ?: ""
+                val responseData = args?.getMap(1)?.toHashMap()
+                Log.d(TAG, "sendDataResponse command - requestId: $requestId, data: $responseData")
+                if (responseData != null) {
+                    pendingDataResponses[requestId] = responseData
+                }
             }
             else -> {
                 Log.w(TAG, "Unknown command: $commandId")
@@ -130,6 +144,65 @@ class AdchainOfferwallViewManager : SimpleViewManager<AdchainOfferwallView>() {
                 }
             })
 
+            // NEW: Set event callback for custom events
+            Log.d(TAG, "Setting event callback...")
+            view.setEventCallback(object : OfferwallEventCallback {
+                override fun onCustomEvent(eventType: String, payload: Map<String, Any?>) {
+                    Log.d(TAG, "onCustomEvent received - type: $eventType, payload: $payload")
+
+                    // Show Toast for testing
+                    android.os.Handler(android.os.Looper.getMainLooper()).post {
+                        val message = when (eventType) {
+                            "show_toast" -> payload["message"]?.toString() ?: "Unknown message"
+                            else -> "Event: $eventType\n${payload.entries.joinToString("\n") { "${it.key}: ${it.value}" }}"
+                        }
+                        android.widget.Toast.makeText(
+                            view.context,
+                            message,
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                    val map = Arguments.createMap().apply {
+                        putString("eventType", eventType)
+                        putMap("payload", convertMapToWritableMap(payload))
+                    }
+                    sendEvent(view, "onCustomEvent", map)
+                }
+
+                override fun onDataRequest(
+                    requestId: String,
+                    requestType: String,
+                    params: Map<String, Any?>
+                ): Map<String, Any?>? {
+                    Log.d(TAG, "onDataRequest received - id: $requestId, type: $requestType, params: $params")
+
+                    // Send event to React Native
+                    val map = Arguments.createMap().apply {
+                        putString("requestId", requestId)
+                        putString("requestType", requestType)
+                        putMap("params", convertMapToWritableMap(params))
+                    }
+                    sendEvent(view, "onDataRequest", map)
+
+                    // Wait for response from React Native (with timeout)
+                    val startTime = System.currentTimeMillis()
+                    val timeout = 5000L // 5 seconds
+
+                    while (System.currentTimeMillis() - startTime < timeout) {
+                        val response = pendingDataResponses.remove(requestId)
+                        if (response != null) {
+                            Log.d(TAG, "Data response received for request: $requestId")
+                            return response
+                        }
+                        Thread.sleep(10)
+                    }
+
+                    Log.w(TAG, "Data request timeout: $requestId")
+                    return null
+                }
+            })
+
             // Load offerwall
             Log.d(TAG, "Calling view.loadOfferwall()...")
             view.loadOfferwall(
@@ -167,7 +240,54 @@ class AdchainOfferwallViewManager : SimpleViewManager<AdchainOfferwallView>() {
             "onOfferwallClosed" to mapOf("registrationName" to "onOfferwallClosed"),
             "onOfferwallError" to mapOf("registrationName" to "onOfferwallError"),
             "onRewardEarned" to mapOf("registrationName" to "onRewardEarned"),
-            "onHeightChange" to mapOf("registrationName" to "onHeightChange")
+            "onHeightChange" to mapOf("registrationName" to "onHeightChange"),
+            "onCustomEvent" to mapOf("registrationName" to "onCustomEvent"),  // NEW
+            "onDataRequest" to mapOf("registrationName" to "onDataRequest")   // NEW
         )
+    }
+
+    // Helper function to convert Map to WritableMap
+    private fun convertMapToWritableMap(map: Map<String, Any?>): WritableMap {
+        val writableMap = Arguments.createMap()
+        map.forEach { (key, value) ->
+            when (value) {
+                null -> writableMap.putNull(key)
+                is String -> writableMap.putString(key, value)
+                is Int -> writableMap.putInt(key, value)
+                is Double -> writableMap.putDouble(key, value)
+                is Boolean -> writableMap.putBoolean(key, value)
+                is Map<*, *> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    writableMap.putMap(key, convertMapToWritableMap(value as Map<String, Any?>))
+                }
+                is List<*> -> {
+                    writableMap.putArray(key, convertListToWritableArray(value))
+                }
+                else -> Log.w(TAG, "Unsupported value type for key: $key")
+            }
+        }
+        return writableMap
+    }
+
+    private fun convertListToWritableArray(list: List<*>): com.facebook.react.bridge.WritableArray {
+        val writableArray = Arguments.createArray()
+        list.forEach { item ->
+            when (item) {
+                null -> writableArray.pushNull()
+                is String -> writableArray.pushString(item)
+                is Int -> writableArray.pushInt(item)
+                is Double -> writableArray.pushDouble(item)
+                is Boolean -> writableArray.pushBoolean(item)
+                is Map<*, *> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    writableArray.pushMap(convertMapToWritableMap(item as Map<String, Any?>))
+                }
+                is List<*> -> {
+                    writableArray.pushArray(convertListToWritableArray(item))
+                }
+                else -> Log.w(TAG, "Unsupported item type in list")
+            }
+        }
+        return writableArray
     }
 }
