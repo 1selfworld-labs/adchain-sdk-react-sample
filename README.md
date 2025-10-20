@@ -2,8 +2,8 @@
 
 > 💡 **AdChain SDK를 React Native 프로젝트에 통합하는 완벽한 샘플 앱입니다. 이 샘플을 참고하여 귀사의 앱에 SDK를 빠르게 통합할 수 있습니다.**
 
-[![SDK Version](https://img.shields.io/badge/Android-v1.0.23-blue)](https://github.com/1selfworld-labs/adchain-sdk-android)
-[![SDK Version](https://img.shields.io/badge/iOS-v1.0.38-blue)](https://github.com/1selfworld-labs/adchain-sdk-ios-release)
+[![SDK Version](https://img.shields.io/badge/Android-v1.0.27-blue)](https://github.com/1selfworld-labs/adchain-sdk-android)
+[![SDK Version](https://img.shields.io/badge/iOS-v1.0.42-blue)](https://github.com/1selfworld-labs/adchain-sdk-ios-release)
 [![React Native](https://img.shields.io/badge/React%20Native-%5E0.73.0-blue)](https://reactnative.dev/)
 [![License](https://img.shields.io/badge/License-Proprietary-red)]()
 
@@ -126,7 +126,7 @@ dependencies {
     // 기존 dependencies는 그대로 유지하고 아래 내용 추가
 
     // AdChain SDK - 아래 한 줄만 추가하면 됩니다!
-    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.23'
+    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.27'
 
     // AdChain SDK가 필요로 하는 의존성들
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
@@ -162,7 +162,7 @@ target 'YourAppName' do
   # 기존 내용 유지...
 
   # AdChain SDK 추가 - 아래 한 줄만 추가!
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.38'
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.42'
 end
 ```
 
@@ -853,6 +853,13 @@ npx react-native run-ios
 ---
 
 ## 🆕 최신 업데이트
+
+### v1.0.27 (Android) / v1.0.42 (iOS) - 2025-10-21
+- ✨ WebView 양방향 이벤트 브릿지 기능 추가
+  - onCustomEvent: WebView → App 커스텀 이벤트 수신 및 토스트 표시
+  - onDataRequest: WebView → App 데이터 요청/응답 (포인트, 프로필, 앱 버전 등)
+- 🔧 openOfferwall/openOfferwallWithUrl 메서드에 eventCallback 파라미터 추가
+- 📦 iOS/Android SDK 버전 동기화
 
 ### v1.0.23 (Android) / v1.0.38 (iOS) - 2025-10-16
 - ✨ adjoe SDK 통합 시 사용자 프로필(Gender/Age) 전달 기능 추가
