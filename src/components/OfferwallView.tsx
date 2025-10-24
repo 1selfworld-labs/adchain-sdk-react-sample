@@ -6,7 +6,9 @@
  * Now it uses the official @1selfworld/adchain-sdk-react-native package.
  */
 
-export { AdchainOfferwallView } from '@1selfworld/adchain-sdk-react-native';
+import { AdchainOfferwallView } from '@1selfworld/adchain-sdk-react-native';
+
+export { AdchainOfferwallView };
 export default AdchainOfferwallView;
 
 // Export type for convenience
