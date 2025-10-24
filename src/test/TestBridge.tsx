@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import AdchainSdk from '../index';
+import AdchainSdk from '@1selfworld/adchain-sdk-react-native';
 
 const TestBridge: React.FC = () => {
   const [results, setResults] = useState<string[]>([]);
