@@ -2,6 +2,7 @@
 
 > 💡 **AdChain SDK를 React Native 프로젝트에 통합하는 완벽한 샘플 앱입니다. 이 샘플을 참고하여 귀사의 앱에 SDK를 빠르게 통합할 수 있습니다.**
 
+[![SDK Version](https://img.shields.io/badge/React%20Native-v1.0.11-blue)](https://www.npmjs.com/package/@1selfworld/adchain-sdk-react-native)
 [![SDK Version](https://img.shields.io/badge/Android-v1.0.27-blue)](https://github.com/1selfworld-labs/adchain-sdk-android)
 [![SDK Version](https://img.shields.io/badge/iOS-v1.0.42-blue)](https://github.com/1selfworld-labs/adchain-sdk-ios-release)
 [![React Native](https://img.shields.io/badge/React%20Native-%5E0.73.0-blue)](https://reactnative.dev/)
@@ -11,20 +12,19 @@
 
 - [🎯 AdChain SDK란?](#-adchain-sdk란)
 - [📂 샘플 프로젝트 구조](#-샘플-프로젝트-구조)
-- [🚀 빠른 시작 (5분 안에 통합하기)](#-빠른-시작-5분-안에-통합하기)
+- [🚀 빠른 시작 (3분 안에 통합하기)](#-빠른-시작-3분-안에-통합하기)
   - [Step 0: 샘플 프로젝트 다운로드](#step-0-샘플-프로젝트-다운로드)
-  - [Step 1: SDK 설치 (2분)](#step-1-sdk-설치-2분)
-  - [Step 2: Native Bridge 파일 복사 (3분)](#-step-2-native-bridge-파일-복사-3분)
+  - [Step 1: NPM 패키지 설치 (1분)](#step-1-npm-패키지-설치-1분)
+  - [Step 2: iOS Pod 설치 (1분)](#-step-2-ios-pod-설치-1분)
   - [Step 3: UI 컴포넌트 복사 (선택사항)](#-step-3-ui-컴포넌트-복사-선택사항)
-  - [Step 4: TypeScript 인터페이스 설정](#-step-4-typescript-인터페이스-설정)
-  - [Step 5: SDK 사용하기](#-step-5-sdk-사용하기)
+  - [Step 4: SDK 사용하기 (1분)](#-step-4-sdk-사용하기-1분)
 - [📘 타입 정의 참조](#-타입-정의-참조)
 - [✅ 체크리스트](#-체크리스트)
 - [📚 API Reference](#-api-reference)
 - [⚠️ 주의사항](#️-주의사항)
 - [🆘 문제 해결](#-문제-해결)
 - [📁 파일별 복사 요약표](#-파일별-복사-요약표)
-- [🎯 5분 만에 연동 완료하기](#-5분-만에-연동-완료하기)
+- [🎯 3분 만에 연동 완료하기](#-3분-만에-연동-완료하기)
 - [🆕 최신 업데이트](#-최신-업데이트)
 - [📞 지원](#-지원)
 
@@ -65,21 +65,19 @@ AdChain SDK는 앱에 광고 기반 리워드 시스템을 쉽게 통합할 수 
 
 먼저 샘플 프로젝트의 구조를 이해하면 통합이 쉬워집니다:
 
+> 💡 **v1.0.11부터**: 네이티브 브릿지 코드가 NPM 패키지(`@1selfworld/adchain-sdk-react-native`)로 제공되어 파일 복사가 불필요합니다!
+
 ```
 adchain-sdk-react-sample/
-├── android/
+├── android/                            ⚠️  참고 (네이티브 설정)
 │   └── app/
 │       └── src/main/java/com/treasurerrn/
-│           ├── AdchainSdkModule.kt      ✅ 복사 필요 (Android Bridge)
-│           ├── AdchainSdkPackage.kt     ✅ 복사 필요 (Android Package)
 │           ├── StorageModule.kt        ⚠️  참고 (Storage 모듈)
 │           ├── StoragePackage.kt       ⚠️  참고 (Storage 패키지)
-│           ├── MainActivity.kt          ⚠️  참고 (메인 액티비티)
-│           └── MainApplication.kt       ⚠️  수정 참고
-├── ios/
+│           ├── MainActivity.kt         ⚠️  참고 (메인 액티비티)
+│           └── MainApplication.kt      ⚠️  참고 (앱 설정)
+├── ios/                                ⚠️  참고 (네이티브 설정)
 │   └── TreasurerRN/
-│       ├── AdchainSdk.swift            ✅ 복사 필요 (iOS Bridge)
-│       ├── AdchainSdk.m                ✅ 복사 필요 (iOS Objective-C Bridge)
 │       ├── Storage.swift               ⚠️  참고 (Storage 모듈)
 │       ├── Storage.m                   ⚠️  참고 (Storage Objective-C Bridge)
 │       └── AppDelegate.mm              ⚠️  참고 (앱 델리게이트)
@@ -96,18 +94,18 @@ adchain-sdk-react-sample/
 │   │   ├── adjoe/
 │   │   │   ├── Adjoe.tsx               ✅ 복사 가능 (ADJOE Offerwall 컴포넌트)
 │   │   │   └── index.tsx               ✅ 복사 가능 (내보내기)
+│   │   ├── OfferwallView.tsx           ✅ 복사 가능 (Offerwall View 컴포넌트)
 │   │   └── debug/                      ⚠️  참고 (디버그 도구)
 │   ├── navigation/                     ⚠️  참고 (네비게이션 설정)
 │   ├── interface/                      ⚠️  참고 (TypeScript 인터페이스)
 │   ├── types/                          ⚠️  참고 (타입 정의)
-│   ├── Storage.ts                      ⚠️  참고 (Storage 유틸리티)
-│   └── index.tsx                       ✅ 복사 필요 (SDK 래퍼)
+│   └── Storage.ts                      ⚠️  참고 (Storage 유틸리티)
 └── App.tsx                             ⚠️  참고 필요 (초기화 및 사용 예시)
 ```
 
 ---
 
-## 🚀 빠른 시작 (5분 안에 통합하기)
+## 🚀 빠른 시작 (3분 안에 통합하기)
 
 ### Step 0: 샘플 프로젝트 다운로드
 
@@ -116,133 +114,33 @@ adchain-sdk-react-sample/
 git clone https://github.com/1selfworld-labs/adchain-sdk-react-sample.git
 ```
 
-### Step 1: SDK 설치 (2분)
+### Step 1: NPM 패키지 설치 (1분)
 
-#### Android SDK 설치
-`android/app/build.gradle`에 다음 내용 추가:
-
-```gradle
-dependencies {
-    // 기존 dependencies는 그대로 유지하고 아래 내용 추가
-
-    // AdChain SDK - 아래 한 줄만 추가하면 됩니다!
-    implementation 'com.github.1selfworld-labs:adchain-sdk-android:v1.0.27'
-
-    // AdChain SDK가 필요로 하는 의존성들
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
-
-    // Retrofit & Network
-    implementation "com.squareup.retrofit2:retrofit:2.9.0"
-    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
-    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
-    implementation "com.squareup.moshi:moshi:1.15.0"
-    implementation "com.squareup.moshi:moshi-kotlin:1.15.0"
-    implementation "com.google.code.gson:gson:2.10.1"
-    implementation "com.squareup.okhttp3:okhttp:4.12.0"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.12.0"
-
-    // AndroidX
-    implementation 'androidx.core:core:1.10.1'
-    implementation 'androidx.core:core-ktx:1.10.1'
-
-    // Google Play Services
-    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
-}
-```
-
-#### iOS SDK 설치
-`ios/Podfile`에 다음 내용 추가:
-
-```ruby
-# use_frameworks 주석 해제 (중요!)
-use_frameworks! :linkage => :static
-
-target 'YourAppName' do
-  # 기존 내용 유지...
-
-  # AdChain SDK 추가 - 아래 한 줄만 추가!
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.42'
-end
-```
+#### React Native 패키지 설치
 
 ```bash
-# Pod 설치
-cd ios && pod install && cd ..
+# AdChain SDK React Native 패키지 설치
+npm install @1selfworld/adchain-sdk-react-native
+
+# 또는 yarn 사용 시
+yarn add @1selfworld/adchain-sdk-react-native
 ```
+
+> 💡 **v1.0.11부터**: 네이티브 브릿지 코드가 NPM 패키지에 포함되어 있어 파일 복사가 불필요합니다!
 
 ---
 
-## 📋 Step 2: Native Bridge 파일 복사 (3분)
+## 📋 Step 2: iOS Pod 설치 (1분)
 
-> 💡 **Native Bridge란?** React Native JavaScript 코드에서 네이티브 SDK 기능을 호출할 수 있도록 연결해주는 브릿지 모듈입니다.
-
-### Android Bridge 파일 복사
-
-#### 1️⃣ 파일 복사
-샘플 프로젝트에서 다음 2개 파일을 복사합니다:
+iOS의 경우 CocoaPods를 사용하여 네이티브 의존성을 설치합니다:
 
 ```bash
-# 샘플 프로젝트에서
-adchain-sdk-react-sample/android/app/src/main/java/com/treasurerrn/
-├── AdchainSdkModule.kt     → 복사
-└── AdchainSdkPackage.kt    → 복사
-
-# 귀사 프로젝트로 (패키지명을 귀사 것으로 변경)
-your-app/android/app/src/main/java/com/yourcompany/
-├── AdchainSdkModule.kt     → 붙여넣기
-└── AdchainSdkPackage.kt    → 붙여넣기
+# iOS Pod 설치
+cd ios && pod install && cd ..
 ```
 
-#### 2️⃣ 패키지명 변경
-복사한 파일들의 첫 줄 package 선언을 귀사 패키지명으로 변경:
-
-```kotlin
-// 변경 전
-package com.treasurerrn
-
-// 변경 후 (귀사 패키지명으로)
-package com.yourcompany
-```
-
-#### 3️⃣ MainApplication 수정
-`MainApplication.kt` (또는 `.java`)에서 패키지 추가:
-
-```kotlin
-// MainApplication.kt 파일에서 getPackages() 함수 찾아서 수정
-
-override fun getPackages(): List<ReactPackage> =
-    PackageList(this).packages.apply {
-        // 아래 한 줄 추가
-        add(AdchainSdkPackage())
-    }
-```
-
-### iOS Bridge 파일 복사
-
-#### 1️⃣ 파일 복사
-샘플 프로젝트에서 다음 2개 파일을 복사합니다:
-
-```bash
-# 샘플 프로젝트에서
-adchain-sdk-react-sample/ios/TreasurerRN/
-├── AdchainSdk.swift    → 복사
-└── AdchainSdk.m        → 복사
-
-# 귀사 프로젝트로
-your-app/ios/YourAppName/
-├── AdchainSdk.swift    → 붙여넣기
-└── AdchainSdk.m        → 붙여넣기
-```
-
-#### 2️⃣ Xcode에서 파일 추가
-1. Xcode로 프로젝트 열기
-2. 프로젝트 네비게이터에서 우클릭 → "Add Files to..."
-3. 복사한 두 파일 선택
-4. ✅ "Copy items if needed" 체크
-5. ✅ 메인 앱 타겟 선택
-
-> 💡 **Bridging Header 관련 팝업이 나타나면 "Create Bridging Header" 선택**
+> ⚠️ **중요**: `ios/Podfile`에 `use_frameworks! :linkage => :static` 설정이 필요합니다.
+> NPM 패키지에 포함된 Podspec이 자동으로 네이티브 SDK를 설치합니다.
 
 ---
 
@@ -301,125 +199,16 @@ your-app/src/components/adjoe/
 
 ---
 
-## 🔧 Step 4: TypeScript 인터페이스 설정
+## 💻 Step 4: SDK 사용하기 (1분)
 
-### 방법 1: 파일 복사 (권장)
-샘플의 `src/index.tsx` 파일을 복사하여 귀사 프로젝트로:
+### App.tsx에서 초기화
 
-```bash
-# 복사 (그대로 사용)
-cp adchain-sdk-react-sample/src/index.tsx your-app/src/index.tsx
-
-# 또는 다른 위치로 복사
-cp adchain-sdk-react-sample/src/index.tsx your-app/src/services/AdchainSdk.ts
-```
-
-### 방법 2: 직접 작성
-`src/services/AdchainSdk.ts` 파일 생성:
+> 💡 NPM 패키지에서 SDK를 바로 import하여 사용할 수 있습니다!
 
 ```typescript
-import { NativeModules } from 'react-native';
-
-// Native Module 가져오기
-const { AdchainSdk } = NativeModules;
-
-// 타입 정의 (필수/선택 파라미터 표시)
-export interface AdchainConfig {
-  appKey: string;                    // 필수: 앱 키
-  appSecret: string;                 // 필수: 앱 시크릿
-  environment?: 'PRODUCTION' | 'STAGING' | 'DEVELOPMENT'; // 선택: 환경 (기본값: 'PRODUCTION')
-  timeout?: number;                  // 선택: 타임아웃 (ms, 기본값: 30000)
-}
-
-export interface AdchainUser {
-  userId: string;                    // 필수: 사용자 ID
-  gender?: 'MALE' | 'FEMALE' | 'OTHER' | 'M' | 'F'; // 선택: 성별
-  birthYear?: number;                // 선택: 출생년도
-  customProperties?: Record<string, string>; // 선택: 커스텀 속성
-}
-
-// AdchainSDK 클래스 정의 (예시)
-class AdchainSDK {
-  async initialize(config: AdchainConfig): Promise<SuccessResponse> {
-    return AdchainSdk.initialize(
-      config.appKey,
-      config.appSecret,
-      { environment: config.environment, timeout: config.timeout }
-    );
-  }
-
-  async login(user: AdchainUser): Promise<SuccessResponse> {
-    return AdchainSdk.login(user.userId, {
-      gender: user.gender,
-      birthYear: user.birthYear,
-      customProperties: user.customProperties
-    });
-  }
-
-  async logout(): Promise<SuccessResponse> {
-    return AdchainSdk.logout();
-  }
-
-  async isLoggedIn(): Promise<boolean> {
-    return AdchainSdk.isLoggedIn();
-  }
-
-  async getCurrentUser(): Promise<AdchainUser | null> {
-    return AdchainSdk.getCurrentUser();
-  }
-
-  async loadQuizList(unitId: string): Promise<QuizResponse> {
-    return AdchainSdk.loadQuizList(unitId);
-  }
-
-  async clickQuiz(unitId: string, quizId: string): Promise<SuccessResponse> {
-    return AdchainSdk.clickQuiz(unitId, quizId);
-  }
-
-  async loadMissionList(unitId: string): Promise<MissionListResponse> {
-    return AdchainSdk.loadMissionList(unitId);
-  }
-
-  async clickMission(unitId: string, missionId: string): Promise<SuccessResponse> {
-    return AdchainSdk.clickMission(unitId, missionId);
-  }
-
-  async claimReward(unitId: string): Promise<any> {
-    return AdchainSdk.claimReward(unitId);
-  }
-
-  async openOfferwall(): Promise<SuccessResponse> {
-    return AdchainSdk.openOfferwall();
-  }
-
-  async openOfferwallWithUrl(url: string): Promise<SuccessResponse> {
-    return AdchainSdk.openOfferwallWithUrl(url);
-  }
-
-  async openExternalBrowser(url: string): Promise<SuccessResponse> {
-    return AdchainSdk.openExternalBrowser(url);
-  }
-
-  async getBannerInfo(placementId: string): Promise<any> {
-    return AdchainSdk.getBannerInfo(placementId);
-  }
-}
-
-// 내보내기
-const sdk = new AdchainSDK();
-export default sdk;
-```
-
----
-
-## 💻 Step 5: SDK 사용하기
-
-### App.tsx에서 초기화 (샘플 코드 참고)
-
-샘플의 `App.tsx`에서 다음 부분을 복사하여 귀사 앱에 적용:
-
-```typescript
-import AdchainSdk from './src/index'; // 또는 './src/services/AdchainSdk' (복사한 위치에 따라)
+import React, { useEffect } from 'react';
+import { Platform } from 'react-native';
+import AdchainSdk from '@1selfworld/adchain-sdk-react-native';
 
 // SDK 설정 (귀사의 APP_KEY와 APP_SECRET으로 변경)
 const SDK_CONFIG = {
@@ -642,11 +431,11 @@ const handleBannerClick = (banner: BannerInfo, placementId: string) => {
 ```typescript
 import { NativeEventEmitter } from 'react-native';
 
-// 이벤트 에미터 생성
-const adchainEventEmitter = new NativeEventEmitter(AdchainSdk);
-
 // 방법 1: 헬퍼 함수 사용 (권장)
-import { addMissionCompletedListener, addQuizCompletedListener } from './src/index';
+import AdchainSdk, {
+  addMissionCompletedListener,
+  addQuizCompletedListener
+} from '@1selfworld/adchain-sdk-react-native';
 
 useEffect(() => {
   const subscription = addMissionCompletedListener((event) => {
@@ -659,6 +448,8 @@ useEffect(() => {
 
 // 방법 2: NativeEventEmitter 직접 사용
 import { NativeEventEmitter } from 'react-native';
+import AdchainSdk from '@1selfworld/adchain-sdk-react-native';
+
 const adchainEventEmitter = new NativeEventEmitter(AdchainSdk);
 
 useEffect(() => {
@@ -723,17 +514,16 @@ interface MissionListResponse {
 ## ✅ 체크리스트
 
 ### 필수 작업
-- [ ] **Step 1**: SDK 의존성 추가 (Android: build.gradle, iOS: Podfile)
-- [ ] **Step 2-Android**: AdchainSdkModule.kt, AdchainSdkPackage.kt 복사
-- [ ] **Step 2-Android**: 패키지명 변경 및 MainApplication 수정
-- [ ] **Step 2-iOS**: AdchainSdk.swift, AdchainSdk.m 복사
-- [ ] **Step 2-iOS**: Xcode에서 파일 추가
-- [ ] **Step 4**: TypeScript 인터페이스 설정
-- [ ] **Step 5**: SDK_CONFIG에 실제 APP_KEY, APP_SECRET 입력
+- [ ] **Step 1**: NPM 패키지 설치 (`npm install @1selfworld/adchain-sdk-react-native`)
+- [ ] **Step 2**: iOS Pod 설치 (`cd ios && pod install`)
+- [ ] **Step 3**: Podfile에 `use_frameworks! :linkage => :static` 설정 확인
+- [ ] **Step 4**: App.tsx에서 SDK import 및 초기화
+- [ ] **Step 4**: SDK_CONFIG에 실제 APP_KEY, APP_SECRET 입력
 
 ### 선택 작업
 - [ ] Quiz/Mission UI 컴포넌트 복사
 - [ ] Banner 컴포넌트 복사
+- [ ] Offerwall View 컴포넌트 복사
 - [ ] 샘플 앱 실행해보기
 - [ ] 이벤트 리스너 설정
 
@@ -826,33 +616,45 @@ npx react-native run-ios
 
 ## 📁 파일별 복사 요약표
 
+> 💡 **v1.0.11부터**: 네이티브 브릿지 코드는 NPM 패키지에 포함되어 복사가 불필요합니다!
+
 | 원본 파일 (샘플) | 대상 파일 (귀사 프로젝트) | 필수/선택 | 수정 필요 |
 |-----------------|------------------------|----------|-----------|
-| `android/.../AdchainSdkModule.kt` | `android/.../AdchainSdkModule.kt` | ✅ 필수 | 패키지명만 |
-| `android/.../AdchainSdkPackage.kt` | `android/.../AdchainSdkPackage.kt` | ✅ 필수 | 패키지명만 |
-| `ios/.../AdchainSdk.swift` | `ios/.../AdchainSdk.swift` | ✅ 필수 | 없음 |
-| `ios/.../AdchainSdk.m` | `ios/.../AdchainSdk.m` | ✅ 필수 | 없음 |
-| `src/index.tsx` | `src/index.tsx` 또는 `src/services/AdchainSdk.ts` | ✅ 필수 | 없음 |
+| NPM 패키지 | `npm install @1selfworld/adchain-sdk-react-native` | ✅ 필수 | 없음 |
 | `src/components/quiz/*` | `src/components/quiz/*` | ⭕ 선택 | 스타일 |
 | `src/components/mission/*` | `src/components/mission/*` | ⭕ 선택 | 스타일 |
 | `src/components/banner/*` | `src/components/banner/*` | ⭕ 선택 | 스타일 |
 | `src/components/adjoe/*` | `src/components/adjoe/*` | ⭕ 선택 | 스타일 |
+| `src/components/OfferwallView.tsx` | `src/components/OfferwallView.tsx` | ⭕ 선택 | 없음 |
 | `App.tsx` | - | 참고용 | SDK_CONFIG |
 
 ---
 
-## 🎯 5분 만에 연동 완료하기
+## 🎯 3분 만에 연동 완료하기
 
-1. **1분**: SDK 의존성 추가 (build.gradle, Podfile)
-2. **2분**: Native Bridge 파일 4개 복사 (Android 2개, iOS 2개)
-3. **1분**: TypeScript 인터페이스 파일 복사
-4. **1분**: App.tsx에 초기화 코드 추가
+1. **1분**: NPM 패키지 설치 (`npm install @1selfworld/adchain-sdk-react-native`)
+2. **1분**: iOS Pod 설치 (`cd ios && pod install`)
+3. **1분**: App.tsx에서 SDK import 및 초기화 코드 추가
 
 **완료!** 🎉
+
+> 💡 **v1.0.11의 장점**: 네이티브 브릿지 파일 복사, 패키지명 변경 등의 번거로운 작업이 모두 사라졌습니다!
 
 ---
 
 ## 🆕 최신 업데이트
+
+### v1.0.11 (React Native) - 2025-10-24
+- 🎉 **NPM 패키지로 전환**: 네이티브 브릿지 파일 복사 불필요
+- 📦 NPM 배포: `@1selfworld/adchain-sdk-react-native`
+- ✨ 설치 시간 단축: 5분 → 3분
+- 🔧 Import 경로 간소화: `@1selfworld/adchain-sdk-react-native`
+- 📝 Metro 설정 추가: 로컬 SDK 개발을 위한 watchFolders
+- 🎯 통합 간소화: 파일 복사, 패키지명 변경 등 번거로운 작업 제거
+- ✅ 포함된 기능:
+  - Offerwall View 컴포넌트 (`AdchainOfferwallView`)
+  - WebView 이벤트 브릿지 (onCustomEvent, onDataRequest)
+  - 모든 네이티브 SDK 기능 래핑
 
 ### v1.0.27 (Android) / v1.0.42 (iOS) - 2025-10-21
 - ✨ WebView 양방향 이벤트 브릿지 기능 추가
@@ -912,12 +714,13 @@ npx react-native run-ios
 
 | 날짜 | 버전 | 변경 내용 |
 |------|------|-----------|
+| 2025-10-24 | 1.0.5 | 🎉 NPM 패키지 전환 문서화, 네이티브 브릿지 복사 과정 제거, 3분 통합 가이드 |
 | 2025-10-20 | 1.0.4 | 📑 목차 및 빠른 링크 섹션 추가, 문서 가독성 개선 |
 | 2025-10-16 | 1.0.3 | adjoe SDK 통합 가이드 추가, 사용자 프로필 전달 기능 문서화 |
 | 2025-09-26 | 1.0.2 | Offerwall placementId 파라미터 문서 추가 |
 
 ---
 
-**Version**: 1.0.4
-**Last Updated**: 2025-10-20
+**Version**: 1.0.5
+**Last Updated**: 2025-10-24
 **Sample Project**: [adchain-sdk-react-sample](https://github.com/1selfworld-labs/adchain-sdk-react-sample)
