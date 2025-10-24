@@ -96,7 +96,6 @@ adchain-sdk-react-sample/
 │   │   │   └── index.tsx               ✅ 복사 가능 (내보내기)
 │   │   ├── OfferwallView.tsx           ✅ 복사 가능 (Offerwall View 컴포넌트)
 │   │   └── debug/                      ⚠️  참고 (디버그 도구)
-│   ├── navigation/                     ⚠️  참고 (네비게이션 설정)
 │   ├── interface/                      ⚠️  참고 (TypeScript 인터페이스)
 │   ├── types/                          ⚠️  참고 (타입 정의)
 │   └── Storage.ts                      ⚠️  참고 (Storage 유틸리티)
