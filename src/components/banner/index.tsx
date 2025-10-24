@@ -1,5 +1,5 @@
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
-import AdchainSdk from "../../index";
+import AdchainSdk from "@1selfworld/adchain-sdk-react-native";
 import { BannerInfo } from "../../interface/banner";
 
 interface BannerProps {

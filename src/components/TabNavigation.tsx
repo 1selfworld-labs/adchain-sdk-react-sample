@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, AppState, BackHandler, ScrollView, StyleSheet, Text, TouchableOpacity, UIManager, View, findNodeHandle } from "react-native";
-import AdchainSdk from "../../src/index";
+import AdchainSdk from '@1selfworld/adchain-sdk-react-native';
 import { DebugInfo } from "../interface/debug";
 import Adjoe from "./adjoe";
 import AppLaunchTest from "./appLaunch";
 import Debug from "./debug";
 import Mission from "./mission";
 import Quiz from "./quiz";
-import AdchainOfferwallView from "./OfferwallView";
+import { AdchainOfferwallView } from '@1selfworld/adchain-sdk-react-native';
 
 interface TabNavigationProps {
   isLoggedIn: boolean;

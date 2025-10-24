@@ -1,9 +1,9 @@
 rootProject.name = 'TreasurerRN'
+
+// Dependency Resolution Management - 모든 하위 프로젝트에 저장소 적용
+// PREFER_PROJECT는 React Native 플러그인과 호환성 문제가 있으므로 사용하지 않음
+// 대신 build.gradle의 allprojects에서 저장소 관리
+
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
-
-
-// AdChain SDK 로컬 모듈 추가 (이벤트 브릿지 기능 테스트용)
-//include ':adchain-sdk'
-//project(':adchain-sdk').projectDir = new File(rootProject.projectDir, '../../adchain-sdk-android/adchain-sdk')

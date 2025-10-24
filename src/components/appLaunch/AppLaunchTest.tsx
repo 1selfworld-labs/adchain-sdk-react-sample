@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert, Clipboard, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import AdchainSdk from "../../index";
+import AdchainSdk from "@1selfworld/adchain-sdk-react-native";
 
 interface AppLaunchTestProps {
   isSkipMode?: boolean;

@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@1selfworld/adchain-sdk-react-native": "^1.0.11",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "react": "18.2.0",

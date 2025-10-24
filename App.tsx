@@ -11,7 +11,7 @@ import TabNavigation from "./src/components/TabNavigation";
 
 // SDK import
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import AdchainSdk from "./src/index";
+import AdchainSdk from "@1selfworld/adchain-sdk-react-native";
 
 // SDK 환경 설정
 const SDK_CONFIG = {

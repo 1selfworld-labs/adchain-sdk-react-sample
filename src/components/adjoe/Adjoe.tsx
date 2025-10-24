@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import AdchainSdk from "../../index";
+import AdchainSdk from "@1selfworld/adchain-sdk-react-native";
 
 interface AdjoeProps {
   isSkipMode?: boolean;

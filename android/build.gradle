@@ -23,9 +23,10 @@ apply plugin: "com.facebook.react.rootproject"
 
 allprojects {
     repositories {
+        // Adjoe 저장소를 먼저 확인 (Adjoe SDK 의존성용)
+        maven { url 'https://releases.adjoe.io/maven' }
         google()
         mavenCentral()
         maven { url 'https://www.jitpack.io' }
-        maven { url 'https://releases.adjoe.io/maven' }
     }
 }

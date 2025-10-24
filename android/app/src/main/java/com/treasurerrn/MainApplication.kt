@@ -19,7 +19,7 @@ class MainApplication : Application(), ReactApplication {
         override fun getPackages(): List<ReactPackage> {
             // Autolinking + 로컬 모듈 수동 추가
             val packages = PackageList(this).packages.toMutableList()
-            packages.add(AdchainSdkPackage())
+            // AdchainSdkPackage는 SDK 패키지 autolinking으로 자동 등록됨
             packages.add(StoragePackage())
             return packages
         }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Animated, Platform, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
-import AdchainSdk, { addMissionCompletedListener, addMissionProgressedListener, addMissionRefreshedListener } from "../../index";
+import AdchainSdk, { addMissionCompletedListener, addMissionProgressedListener, addMissionRefreshedListener } from "@1selfworld/adchain-sdk-react-native";
 import { MissionItem } from "../../interface/mission";
 import MissionModule from "./MissionModule";
 import MissionSkeleton from "./MissionSkeleton";
