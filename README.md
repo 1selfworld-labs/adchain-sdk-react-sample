@@ -2,7 +2,7 @@
 
 > 💡 **AdChain SDK를 React Native 프로젝트에 통합하는 완벽한 샘플 앱입니다. 이 샘플을 참고하여 귀사의 앱에 SDK를 빠르게 통합할 수 있습니다.**
 
-[![SDK Version](https://img.shields.io/badge/React%20Native-v1.0.15-blue)](https://www.npmjs.com/package/@1selfworld/adchain-sdk-react-native)
+[![SDK Version](https://img.shields.io/badge/React%20Native-v1.0.17-blue)](https://www.npmjs.com/package/@1selfworld/adchain-sdk-react-native)
 [![SDK Version](https://img.shields.io/badge/Android-v1.0.29-blue)](https://github.com/1selfworld-labs/adchain-sdk-android)
 [![SDK Version](https://img.shields.io/badge/iOS-v1.0.44-blue)](https://github.com/1selfworld-labs/adchain-sdk-ios-release)
 [![React Native](https://img.shields.io/badge/React%20Native-%5E0.73.0-blue)](https://reactnative.dev/)

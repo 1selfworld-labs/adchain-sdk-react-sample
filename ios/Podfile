@@ -22,7 +22,7 @@ target 'TreasurerRN' do
   )
   
   # AdChain SDK - 로컬 SDK 사용 (이벤트 브릿지 기능 테스트용)
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.44'
+  #pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.44'
   #pod 'AdChainSDK', :path => '../../adchain-sdk-ios'  # 로컬 디버깅용
 
   target 'TreasurerRNTests' do
