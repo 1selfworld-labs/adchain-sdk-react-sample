@@ -2,9 +2,9 @@
 
 > 💡 **AdChain SDK를 React Native 프로젝트에 통합하는 완벽한 샘플 앱입니다. 이 샘플을 참고하여 귀사의 앱에 SDK를 빠르게 통합할 수 있습니다.**
 
-[![SDK Version](https://img.shields.io/badge/React%20Native-v1.0.11-blue)](https://www.npmjs.com/package/@1selfworld/adchain-sdk-react-native)
-[![SDK Version](https://img.shields.io/badge/Android-v1.0.27-blue)](https://github.com/1selfworld-labs/adchain-sdk-android)
-[![SDK Version](https://img.shields.io/badge/iOS-v1.0.42-blue)](https://github.com/1selfworld-labs/adchain-sdk-ios-release)
+[![SDK Version](https://img.shields.io/badge/React%20Native-v1.0.15-blue)](https://www.npmjs.com/package/@1selfworld/adchain-sdk-react-native)
+[![SDK Version](https://img.shields.io/badge/Android-v1.0.29-blue)](https://github.com/1selfworld-labs/adchain-sdk-android)
+[![SDK Version](https://img.shields.io/badge/iOS-v1.0.44-blue)](https://github.com/1selfworld-labs/adchain-sdk-ios-release)
 [![React Native](https://img.shields.io/badge/React%20Native-%5E0.73.0-blue)](https://reactnative.dev/)
 [![License](https://img.shields.io/badge/License-Proprietary-red)]()
 
@@ -402,7 +402,117 @@ const openAdjoeOfferwall = async () => {
     console.error('ADJOE Offerwall 오류:', error);
   }
 };
+
+// NestAds 오퍼월 열기 (v1.0.15+)
+const openNestAdsOfferwall = async () => {
+  try {
+    // placementId와 함께 호출 (추적 및 분석용)
+    await AdchainSdk.openOfferwallNestAds("main_nestads_offerwall");
+    console.log('NestAds Offerwall 열림');
+  } catch (error) {
+    console.error('NestAds Offerwall 오류:', error);
+  }
+};
 ```
+
+### 임베디드 오퍼월 뷰 (v1.0.11+)
+
+탭이나 화면에 직접 임베드할 수 있는 WebView 기반 오퍼월 컴포넌트입니다.
+
+```typescript
+import { AdchainOfferwallView } from '@1selfworld/adchain-sdk-react-native';
+
+<AdchainOfferwallView
+  placementId="tab_embedded_offerwall"
+  style={{ flex: 1 }}
+  onOfferwallOpened={() => console.log('Offerwall opened')}
+  onOfferwallClosed={() => console.log('Offerwall closed')}
+  onOfferwallError={(error) => console.error('Offerwall error:', error)}
+  onRewardEarned={(amount) => console.log('Reward earned:', amount)}
+  onCustomEvent={(eventType, payload) => {
+    // WebView → App 커스텀 이벤트 처리
+    console.log('Custom Event:', eventType, payload);
+  }}
+  onDataRequest={(requestType, params) => {
+    // WebView → App 데이터 요청/응답
+    if (requestType === 'user_points') {
+      return { points: 12345, currency: 'KRW' };
+    }
+    return null;
+  }}
+  onBackPressOnFirstPage={() => {
+    // Android 백버튼: WebView 첫 페이지에서 뒤로가기
+    console.log('Back on first page');
+  }}
+  onBackNavigated={() => {
+    // Android 백버튼: WebView 내부 네비게이션 성공
+    console.log('Navigated back in WebView');
+  }}
+/>
+```
+
+### Android 백버튼 처리 (v1.0.15+)
+
+임베디드 오퍼월 뷰에서 Android 백버튼 이벤트를 처리하는 방법:
+
+```typescript
+import { BackHandler, findNodeHandle, UIManager } from 'react-native';
+import { AdchainOfferwallView } from '@1selfworld/adchain-sdk-react-native';
+
+const [shouldAllowExit, setShouldAllowExit] = useState(false);
+const offerwallViewRef = useRef(null);
+
+// 백버튼 핸들러
+useEffect(() => {
+  const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+    if (activeTab === 'offerwallView' && offerwallViewRef.current) {
+      const viewId = findNodeHandle(offerwallViewRef.current);
+      if (viewId) {
+        // 네이티브 뷰에 백버튼 이벤트 전달
+        UIManager.dispatchViewManagerCommand(
+          viewId,
+          'handleBackPress',
+          []
+        );
+        return true; // 기본 동작 차단
+      }
+    }
+    return false;
+  });
+
+  return () => backHandler.remove();
+}, [activeTab]);
+
+// 앱 종료 처리
+useEffect(() => {
+  if (shouldAllowExit) {
+    const timer = setTimeout(() => {
+      BackHandler.exitApp();
+    }, 100);
+    return () => clearTimeout(timer);
+  }
+}, [shouldAllowExit]);
+
+<AdchainOfferwallView
+  ref={offerwallViewRef}
+  placementId="tab_embedded_offerwall"
+  style={{ flex: 1 }}
+  onBackPressOnFirstPage={() => {
+    // WebView가 첫 페이지 → 앱 종료 허용
+    console.log('Back on first page, allowing app exit');
+    setShouldAllowExit(true);
+  }}
+  onBackNavigated={() => {
+    // WebView 내부 뒤로가기 성공 → 종료 취소
+    console.log('Navigated back in WebView');
+    setShouldAllowExit(false);
+  }}
+/>
+```
+
+**이벤트 설명**:
+- `onBackPressOnFirstPage`: WebView 스택에 페이지가 1개만 있을 때 (더 이상 뒤로갈 수 없음)
+- `onBackNavigated`: WebView 스택에서 성공적으로 뒤로 이동했을 때
 
 ### Banner 광고 사용 예시
 
@@ -553,6 +663,7 @@ interface MissionListResponse {
 |---------|------|----------|--------|
 | `openOfferwall()` | 오퍼월 열기 | `placementId?: string` 선택 | `Promise<SuccessResponse>` |
 | `openAdjoeOfferwall()` | ADJOE 오퍼월 열기 | `placementId?: string` 선택 | `Promise<SuccessResponse>` |
+| `openOfferwallNestAds()` | NestAds 오퍼월 열기 | `placementId: string` | `Promise<SuccessResponse>` |
 | `openOfferwallWithUrl()` | URL로 오퍼월 열기 | `url: string,`<br>`placementId?: string` 선택 | `Promise<SuccessResponse>` |
 | `openExternalBrowser()` | 외부 브라우저 열기 | `url: string` | `Promise<SuccessResponse>` |
 | `getBannerInfo()` | 배너 정보 불러오기 | `placementId: string` | `Promise<any>` |
@@ -643,6 +754,16 @@ npx react-native run-ios
 
 ## 🆕 최신 업데이트
 
+### v1.0.15 (React Native) - 2025-10-29
+- 🎯 **Android 백버튼 이벤트 개선**: AdchainOfferwallView에 백버튼 처리 이벤트 추가
+  - `onBackPressOnFirstPage`: WebView가 첫 페이지일 때 백버튼 이벤트
+  - `onBackNavigated`: WebView 내부 네비게이션 성공 이벤트
+- 🆕 **NestAds 오퍼월 지원**: `openOfferwallNestAds()` 메서드 추가
+- 📦 **네이티브 SDK 업데이트**:
+  - Android SDK: v1.0.29
+  - iOS SDK: v1.0.44
+- 🔧 **샘플 앱**: 백버튼으로 앱 종료 기능 구현 예시 추가
+
 ### v1.0.11 (React Native) - 2025-10-24
 - 🎉 **NPM 패키지로 전환**: 네이티브 브릿지 파일 복사 불필요
 - 📦 NPM 배포: `@1selfworld/adchain-sdk-react-native`
@@ -713,6 +834,7 @@ npx react-native run-ios
 
 | 날짜 | 버전 | 변경 내용 |
 |------|------|-----------|
+| 2025-10-29 | 1.0.6 | 🎯 백버튼 이벤트 처리 가이드, NestAds 오퍼월, SDK v1.0.15 반영 |
 | 2025-10-24 | 1.0.5 | 🎉 NPM 패키지 전환 문서화, 네이티브 브릿지 복사 과정 제거, 3분 통합 가이드 |
 | 2025-10-20 | 1.0.4 | 📑 목차 및 빠른 링크 섹션 추가, 문서 가독성 개선 |
 | 2025-10-16 | 1.0.3 | adjoe SDK 통합 가이드 추가, 사용자 프로필 전달 기능 문서화 |
@@ -720,6 +842,6 @@ npx react-native run-ios
 
 ---
 
-**Version**: 1.0.5
-**Last Updated**: 2025-10-24
+**Version**: 1.0.6
+**Last Updated**: 2025-10-29
 **Sample Project**: [adchain-sdk-react-sample](https://github.com/1selfworld-labs/adchain-sdk-react-sample)
