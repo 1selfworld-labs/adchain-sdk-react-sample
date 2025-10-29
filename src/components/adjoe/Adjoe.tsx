@@ -31,6 +31,28 @@ const Adjoe: React.FC<AdjoeProps> = ({ isSkipMode = false }) => {
     }
   };
 
+  const handleOpenNestAds = async () => {
+    try {
+      setTestResult("Opening NestAds Offerwall...");
+      console.log("Attempting to open NestAds Offerwall");
+
+      const result = await AdchainSdk.openOfferwallNestAds("main_nestads_test");
+
+      console.log("NestAds Offerwall result:", result);
+      setTestResult("✅ NestAds Offerwall opened successfully");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("NestAds Offerwall error:", errorMessage);
+      setTestResult(`❌ Error: ${errorMessage}`);
+
+      Alert.alert(
+        "NestAds Offerwall Error",
+        errorMessage,
+        [{ text: "OK" }]
+      );
+    }
+  };
+
   const handleWebviewTest1 = async () => {
     try {
       setTestResult("Opening Webview Test #1...");
@@ -112,6 +134,12 @@ const Adjoe: React.FC<AdjoeProps> = ({ isSkipMode = false }) => {
           style={styles.testButton}
           onPress={handleOpenAdjoe}>
           <Text style={styles.testButtonText}>Open Adjoe Offerwall</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.testButton, styles.nestadsButton]}
+          onPress={handleOpenNestAds}>
+          <Text style={styles.testButtonText}>Open NestAds Offerwall</Text>
         </TouchableOpacity>
 
         {testResult !== "" && (
@@ -249,6 +277,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 8,
     alignItems: "center",
+  },
+  nestadsButton: {
+    backgroundColor: "#4CAF50",
+    marginTop: 12,
   },
   testButtonText: {
     color: "#FFFFFF",
