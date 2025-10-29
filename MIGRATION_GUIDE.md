@@ -183,9 +183,9 @@ dependencies {
 -project(':adchain-sdk-android').projectDir = new File(rootProject.projectDir, '../adchain-sdk-android')
 ```
 
-#### 2-2. iOS - Native SDK 참조 제거 (있는 경우)
+#### 2-2. iOS - Native SDK 참조 제거
 
-**`ios/Podfile`**에서 로컬 AdChain SDK 참조를 제거하세요:
+**`ios/Podfile`**에서 AdChain SDK 관련 참조를 **모두 제거**하세요:
 
 ```diff
 target 'YourApp' do
@@ -194,16 +194,17 @@ target 'YourApp' do
 -  # AdChain SDK (로컬)
 -  pod 'AdChainSDK', :path => '../../adchain-sdk-ios'
 
+-  # AdChain SDK (원격)
+-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.44'
+
   # ... 다른 pod들
 end
 ```
 
-**⚠️ 주의**: 원격 Git 저장소 참조는 **유지**해야 합니다 (NPM 패키지의 Podspec이 이를 참조합니다):
-
-```ruby
-# ✅ 이것은 유지 (또는 NPM 패키지가 자동으로 처리)
-pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.44'
-```
+**✅ 중요**:
+- **모든** AdChain SDK pod 참조를 제거해야 합니다 (로컬/원격 모두)
+- NPM 패키지(`@1selfworld/adchain-sdk-react-native`)의 **Podspec이 자동으로 처리**합니다
+- `pod install` 실행 시 NPM 패키지가 자동으로 필요한 iOS SDK를 설치합니다
 
 ---
 
