@@ -2,26 +2,26 @@
  * AdChain SDK Sample App with Quiz and Mission
  */
 
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Platform, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Platform, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 
-import { Colors } from "react-native/Libraries/NewAppScreen";
-import LoginForm from "./src/components/LoginForm";
-import TabNavigation from "./src/components/TabNavigation";
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import LoginForm from './src/components/LoginForm';
+import TabNavigation from './src/components/TabNavigation';
 
 // SDK import
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import AdchainSdk from "@1selfworld/adchain-sdk-react-native";
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import AdchainSdk from '@1selfworld/adchain-sdk-react-native';
 
 // SDK 환경 설정
 const SDK_CONFIG = {
   android: {
-    APP_KEY: "123456781",
-    APP_SECRET: "abcdefghigjk",
+    APP_KEY: '123456781',
+    APP_SECRET: 'abcdefghigjk',
   },
   ios: {
-    APP_KEY: "123456782",
-    APP_SECRET: "abcdefghigjk",
+    APP_KEY: '123456782',
+    APP_SECRET: 'abcdefghigjk',
   },
 };
 
@@ -47,17 +47,17 @@ function App(): React.JSX.Element {
         android: {
           appKey: SDK_CONFIG.android.APP_KEY,
           appSecret: SDK_CONFIG.android.APP_SECRET,
-          environment: "PRODUCTION" as const,
+          environment: 'STAGING' as const,
         },
         ios: {
           appKey: SDK_CONFIG.ios.APP_KEY,
           appSecret: SDK_CONFIG.ios.APP_SECRET,
-          environment: "PRODUCTION" as const,
+          environment: 'STAGING' as const,
         },
         default: {
-          appKey: "test-app",
-          appSecret: "test-secret",
-          environment: "DEVELOPMENT" as const,
+          appKey: 'test-app',
+          appSecret: 'test-secret',
+          environment: 'DEVELOPMENT' as const,
         },
       });
 
@@ -76,34 +76,28 @@ function App(): React.JSX.Element {
       setSdkError(null); // Clear any previous errors
       console.log(`AdchainSDK initialized successfully for ${Platform.OS}`);
     } catch (error) {
-      console.error("AdchainSDK initialization error:", error);
-      setSdkError(
-        error instanceof Error
-          ? error.message
-          : typeof error === 'string'
-            ? error
-            : "SDK 초기화 실패"
-      );
+      console.error('AdchainSDK initialization error:', error);
+      setSdkError(error instanceof Error ? error.message : typeof error === 'string' ? error : 'SDK 초기화 실패');
       setSdkInitialized(false); // Keep SDK uninitialized on error
     }
   };
 
   const handleSkipLogin = () => {
-    console.log("Skip Login - Testing without SDK initialization");
+    console.log('Skip Login - Testing without SDK initialization');
     setIsSkipMode(true);
   };
 
-  const handleLogin = async (userId: string, gender?: "MALE" | "FEMALE", birthYear?: number) => {
+  const handleLogin = async (userId: string, gender?: 'MALE' | 'FEMALE', birthYear?: number) => {
     setIsLoggingIn(true);
     try {
       const loginData: any = { userId };
       if (gender) loginData.gender = gender;
       if (birthYear) loginData.birthYear = birthYear;
-      console.log("loginData", loginData);
+      console.log('loginData', loginData);
 
       await AdchainSdk.login(loginData);
       console.log(
-        "AdchainSDK logged in with userId:",
+        'AdchainSDK logged in with userId:',
         userId,
         gender ? gender : undefined,
         birthYear ? birthYear : undefined
@@ -111,14 +105,8 @@ function App(): React.JSX.Element {
       setIsLoggedIn(true);
       setIsSkipMode(false); // Clear skip mode on successful login
     } catch (error) {
-      console.error("Login error:", error);
-      setSdkError(
-        error instanceof Error
-          ? error.message
-          : typeof error === 'string'
-            ? error
-            : "로그인 실패"
-      );
+      console.error('Login error:', error);
+      setSdkError(error instanceof Error ? error.message : typeof error === 'string' ? error : '로그인 실패');
     } finally {
       setIsLoggingIn(false);
     }
@@ -128,7 +116,7 @@ function App(): React.JSX.Element {
     <SafeAreaProvider>
       <SafeAreaView style={backgroundStyle}>
         <StatusBar
-          barStyle={"dark-content"} // 항상 어두운 아이콘 (흰 배경용)
+          barStyle={'dark-content'} // 항상 어두운 아이콘 (흰 배경용)
           backgroundColor={backgroundStyle.backgroundColor}
         />
         {sdkError && (
@@ -138,7 +126,7 @@ function App(): React.JSX.Element {
         )}
 
         {!isLoggedIn && !isSkipMode ? (
-          <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
+          <ScrollView contentInsetAdjustmentBehavior='automatic' style={backgroundStyle}>
             <View style={styles.container}>
               <LoginForm
                 onLogin={handleLogin}
@@ -163,35 +151,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 50,
-    height: "100%",
+    height: '100%',
     flexGrow: 1,
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: "#666",
+    color: '#666',
   },
   errorBanner: {
-    backgroundColor: "#FFE5E5",
+    backgroundColor: '#FFE5E5',
     padding: 10,
     marginHorizontal: 16,
     marginTop: 10,
     borderRadius: 8,
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     zIndex: 1000,
   },
   errorText: {
-    color: "#D32F2F",
+    color: '#D32F2F',
     fontSize: 14,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });
 

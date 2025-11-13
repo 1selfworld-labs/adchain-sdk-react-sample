@@ -1,19 +1,19 @@
 <resources>
 
     <!-- API 27+ specific theme attributes -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
 
-        <!-- Force light theme -->
-        <item name="android:windowBackground">@android:color/white</item>
-        <item name="android:colorBackground">@android:color/white</item>
+        <!-- Follow system theme (Light/Dark) -->
+        <!-- <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:colorBackground">@android:color/white</item> -->
 
-        <!-- 스테이터스바를 흰색으로 설정 (SDK와 동일) -->
-        <item name="android:statusBarColor">@android:color/white</item>
+        <!-- 스테이터스바 설정 -->
+        <!-- <item name="android:statusBarColor">@android:color/white</item> -->
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <!-- <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item> -->
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
 
