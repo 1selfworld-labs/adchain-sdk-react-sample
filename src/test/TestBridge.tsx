@@ -36,9 +36,6 @@ const TestBridge: React.FC = () => {
         userId: 'test-user-123',
         gender: 'MALE',
         birthYear: 1990,
-        customProperties: {
-          region: 'Seoul',
-        },
       });
       addResult(`✅ Login: ${JSON.stringify(result)}`);
     } catch (error: any) {

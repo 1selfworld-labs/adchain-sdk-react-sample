@@ -243,11 +243,7 @@ const initializeSDK = async () => {
     await AdchainSdk.login({
       userId: 'user123',              // 필수
       gender: 'MALE',                 // 선택
-      birthYear: 1990,                // 선택
-      customProperties: {             // 선택
-        plan: 'premium',
-        level: '10'
-      }
+      birthYear: 1990                 // 선택
     });
 
     // 또는 최소 필수 파라미터만 사용
@@ -317,10 +313,7 @@ const handleLogin = async (userId: string) => {
     await AdchainSdk.login({
       userId: userId,
       gender: 'MALE',
-      birthYear: 1990,
-      customProperties: {
-        plan: 'premium'
-      }
+      birthYear: 1990
     });
 
     console.log('로그인 성공!');
@@ -593,7 +586,6 @@ interface AdchainUser {
   userId: string;                    // 필수
   gender?: 'MALE' | 'FEMALE' | 'OTHER' | 'M' | 'F'; // 선택
   birthYear?: number;                // 선택 (1900-현재)
-  customProperties?: Record<string, string>; // 선택 (추가 속성)
 }
 
 // 응답 타입
@@ -644,7 +636,7 @@ interface MissionListResponse {
 | 메서드 | 설명 | 파라미터 | 반환값 |
 |---------|------|----------|--------|
 | `initialize()` | SDK 초기화 | `config: {`<br>`  appKey: string,` 필수<br>`  appSecret: string,` 필수<br>`  environment?: string,` 선택<br>`  timeout?: number` 선택<br>`}` | `Promise<SuccessResponse>` |
-| `login()` | 사용자 로그인 | `user: {`<br>`  userId: string,` 필수<br>`  gender?: string,` 선택<br>`  birthYear?: number,` 선택<br>`  customProperties?: object` 선택<br>`}` | `Promise<SuccessResponse>` |
+| `login()` | 사용자 로그인 | `user: {`<br>`  userId: string,` 필수<br>`  gender?: string,` 선택<br>`  birthYear?: number,` 선택<br>`}` | `Promise<SuccessResponse>` |
 | `logout()` | 로그아웃 | - | `Promise<SuccessResponse>` |
 | `isLoggedIn()` | 로그인 상태 확인 | - | `Promise<boolean>` |
 | `getCurrentUser()` | 현재 사용자 정보 | - | `Promise<AdchainUser \| null>` |
