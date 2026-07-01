@@ -1,4 +1,4 @@
-package com.treasurerrn
+package com.adchainreactsample
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

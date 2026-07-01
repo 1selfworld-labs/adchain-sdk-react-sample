@@ -1,4 +1,4 @@
-package com.treasurerrn
+package com.adchainreactsample
 
 import com.facebook.react.bridge.*
 import com.facebook.react.module.annotations.ReactModule

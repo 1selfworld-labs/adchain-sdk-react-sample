@@ -11,7 +11,7 @@ prepare_react_native_project!
 # Use frameworks for Swift support
 use_frameworks! :linkage => :static
 
-target 'TreasurerRN' do
+target 'AdchainReactSample' do
   config = use_native_modules!
 
   use_react_native!(
@@ -21,11 +21,11 @@ target 'TreasurerRN' do
     :hermes_enabled => true
   )
   
-  # AdChain SDK - 로컬 SDK 사용 (이벤트 브릿지 기능 테스트용)
-  #pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.44'
+  # AdChain SDK - RC2 git pod override (trunk에 rc 미존재, 미커밋 로컬 검증용)
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.52-rc.2'
   #pod 'AdChainSDK', :path => '../../adchain-sdk-ios'  # 로컬 디버깅용
 
-  target 'TreasurerRNTests' do
+  target 'AdchainReactSampleTests' do
     inherit! :complete
     # Pods for testing
   end

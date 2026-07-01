@@ -1,4 +1,4 @@
-rootProject.name = 'TreasurerRN'
+rootProject.name = 'AdchainReactSample'
 
 // Dependency Resolution Management - 모든 하위 프로젝트에 저장소 적용
 // PREFER_PROJECT는 React Native 플러그인과 호환성 문제가 있으므로 사용하지 않음

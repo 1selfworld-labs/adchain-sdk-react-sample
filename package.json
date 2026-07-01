@@ -1,5 +1,5 @@
 {
-  "name": "TreasurerRN",
+  "name": "AdchainReactSample",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@1selfworld/adchain-sdk-react-native": "^1.0.17",
+    "@1selfworld/adchain-sdk-react-native": "^1.0.27-rc.2",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "react": "18.2.0",

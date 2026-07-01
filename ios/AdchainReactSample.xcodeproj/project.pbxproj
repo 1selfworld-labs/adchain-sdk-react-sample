@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* TreasurerRNTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TreasurerRNTests.m */; };
+		00E356F31AD99517003FC87E /* AdchainReactSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* AdchainReactSampleTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		5FF0ECB22F783D63533A1044 /* Pods_TreasurerRN.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5063D2C43FE4468B2F503C2C /* Pods_TreasurerRN.framework */; };
+		5FF0ECB22F783D63533A1044 /* Pods_AdchainReactSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5063D2C43FE4468B2F503C2C /* Pods_AdchainReactSample.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		B87A08262E7A8100007959E4 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87A08252E7A8100007959E4 /* Storage.swift */; };
 		B8E25F972E7A801700FB02EA /* Storage.m in Sources */ = {isa = PBXBuildFile; fileRef = B8E25F962E7A801700FB02EA /* Storage.m */; };
-		CCECA4100326B3D81938B9D9 /* Pods_TreasurerRN_TreasurerRNTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA91E4538BA437F034ED3144 /* Pods_TreasurerRN_TreasurerRNTests.framework */; };
+		CCECA4100326B3D81938B9D9 /* Pods_AdchainReactSample_AdchainReactSampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA91E4538BA437F034ED3144 /* Pods_AdchainReactSample_AdchainReactSampleTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,31 +24,31 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = TreasurerRN;
+			remoteInfo = AdchainReactSample;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* TreasurerRNTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TreasurerRNTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* AdchainReactSampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdchainReactSampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* TreasurerRNTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TreasurerRNTests.m; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* TreasurerRN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TreasurerRN.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = TreasurerRN/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = TreasurerRN/AppDelegate.mm; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TreasurerRN/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TreasurerRN/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = TreasurerRN/main.m; sourceTree = "<group>"; };
-		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = TreasurerRN/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		2D1D7B5AFB4E8F5EEC422B2E /* Pods-TreasurerRN-TreasurerRNTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN-TreasurerRNTests.release.xcconfig"; path = "Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests.release.xcconfig"; sourceTree = "<group>"; };
-		5063D2C43FE4468B2F503C2C /* Pods_TreasurerRN.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TreasurerRN.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5A83AED717509256D113C7FE /* Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig"; path = "Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig"; sourceTree = "<group>"; };
-		6E600A645863E1FE825584ED /* Pods-TreasurerRN.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN.debug.xcconfig"; path = "Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN.debug.xcconfig"; sourceTree = "<group>"; };
-		725855D62E6ED8110045E37D /* TreasurerRN-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "TreasurerRN-Bridging-Header.h"; path = "TreasurerRN/TreasurerRN-Bridging-Header.h"; sourceTree = "<group>"; };
-		7893625CCDD7581D00C6DAAC /* Pods-TreasurerRN.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TreasurerRN.release.xcconfig"; path = "Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN.release.xcconfig"; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TreasurerRN/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* AdchainReactSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AdchainReactSampleTests.m; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* AdchainReactSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdchainReactSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = AdchainReactSample/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = AdchainReactSample/AppDelegate.mm; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = AdchainReactSample/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = AdchainReactSample/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = AdchainReactSample/main.m; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = AdchainReactSample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2D1D7B5AFB4E8F5EEC422B2E /* Pods-AdchainReactSample-AdchainReactSampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AdchainReactSample-AdchainReactSampleTests.release.xcconfig"; path = "Target Support Files/Pods-AdchainReactSample-AdchainReactSampleTests/Pods-AdchainReactSample-AdchainReactSampleTests.release.xcconfig"; sourceTree = "<group>"; };
+		5063D2C43FE4468B2F503C2C /* Pods_AdchainReactSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AdchainReactSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A83AED717509256D113C7FE /* Pods-AdchainReactSample-AdchainReactSampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AdchainReactSample-AdchainReactSampleTests.debug.xcconfig"; path = "Target Support Files/Pods-AdchainReactSample-AdchainReactSampleTests/Pods-AdchainReactSample-AdchainReactSampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		6E600A645863E1FE825584ED /* Pods-AdchainReactSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AdchainReactSample.debug.xcconfig"; path = "Target Support Files/Pods-AdchainReactSample/Pods-AdchainReactSample.debug.xcconfig"; sourceTree = "<group>"; };
+		725855D62E6ED8110045E37D /* AdchainReactSample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "AdchainReactSample-Bridging-Header.h"; path = "AdchainReactSample/AdchainReactSample-Bridging-Header.h"; sourceTree = "<group>"; };
+		7893625CCDD7581D00C6DAAC /* Pods-AdchainReactSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AdchainReactSample.release.xcconfig"; path = "Target Support Files/Pods-AdchainReactSample/Pods-AdchainReactSample.release.xcconfig"; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AdchainReactSample/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B87A08252E7A8100007959E4 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		B8E25F962E7A801700FB02EA /* Storage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Storage.m; sourceTree = "<group>"; };
-		EA91E4538BA437F034ED3144 /* Pods_TreasurerRN_TreasurerRNTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TreasurerRN_TreasurerRNTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA91E4538BA437F034ED3144 /* Pods_AdchainReactSample_AdchainReactSampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AdchainReactSample_AdchainReactSampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -57,7 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCECA4100326B3D81938B9D9 /* Pods_TreasurerRN_TreasurerRNTests.framework in Frameworks */,
+				CCECA4100326B3D81938B9D9 /* Pods_AdchainReactSample_AdchainReactSampleTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,20 +65,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FF0ECB22F783D63533A1044 /* Pods_TreasurerRN.framework in Frameworks */,
+				5FF0ECB22F783D63533A1044 /* Pods_AdchainReactSample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* TreasurerRNTests */ = {
+		00E356EF1AD99517003FC87E /* AdchainReactSampleTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* TreasurerRNTests.m */,
+				00E356F21AD99517003FC87E /* AdchainReactSampleTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = TreasurerRNTests;
+			path = AdchainReactSampleTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -89,10 +89,10 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* TreasurerRN */ = {
+		13B07FAE1A68108700A75B9A /* AdchainReactSample */ = {
 			isa = PBXGroup;
 			children = (
-				725855D62E6ED8110045E37D /* TreasurerRN-Bridging-Header.h */,
+				725855D62E6ED8110045E37D /* AdchainReactSample-Bridging-Header.h */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				B8E25F962E7A801700FB02EA /* Storage.m */,
 				B87A08252E7A8100007959E4 /* Storage.swift */,
@@ -103,15 +103,15 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 			);
-			name = TreasurerRN;
+			name = AdchainReactSample;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				5063D2C43FE4468B2F503C2C /* Pods_TreasurerRN.framework */,
-				EA91E4538BA437F034ED3144 /* Pods_TreasurerRN_TreasurerRNTests.framework */,
+				5063D2C43FE4468B2F503C2C /* Pods_AdchainReactSample.framework */,
+				EA91E4538BA437F034ED3144 /* Pods_AdchainReactSample_AdchainReactSampleTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -126,9 +126,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* TreasurerRN */,
+				13B07FAE1A68108700A75B9A /* AdchainReactSample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* TreasurerRNTests */,
+				00E356EF1AD99517003FC87E /* AdchainReactSampleTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
@@ -141,8 +141,8 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* TreasurerRN.app */,
-				00E356EE1AD99517003FC87E /* TreasurerRNTests.xctest */,
+				13B07F961A680F5B00A75B9A /* AdchainReactSample.app */,
+				00E356EE1AD99517003FC87E /* AdchainReactSampleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -150,10 +150,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6E600A645863E1FE825584ED /* Pods-TreasurerRN.debug.xcconfig */,
-				7893625CCDD7581D00C6DAAC /* Pods-TreasurerRN.release.xcconfig */,
-				5A83AED717509256D113C7FE /* Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig */,
-				2D1D7B5AFB4E8F5EEC422B2E /* Pods-TreasurerRN-TreasurerRNTests.release.xcconfig */,
+				6E600A645863E1FE825584ED /* Pods-AdchainReactSample.debug.xcconfig */,
+				7893625CCDD7581D00C6DAAC /* Pods-AdchainReactSample.release.xcconfig */,
+				5A83AED717509256D113C7FE /* Pods-AdchainReactSample-AdchainReactSampleTests.debug.xcconfig */,
+				2D1D7B5AFB4E8F5EEC422B2E /* Pods-AdchainReactSample-AdchainReactSampleTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -161,9 +161,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* TreasurerRNTests */ = {
+		00E356ED1AD99517003FC87E /* AdchainReactSampleTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "TreasurerRNTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "AdchainReactSampleTests" */;
 			buildPhases = (
 				B1A60E2680E3DA7CC7FD8FCF /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -177,14 +177,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = TreasurerRNTests;
-			productName = TreasurerRNTests;
-			productReference = 00E356EE1AD99517003FC87E /* TreasurerRNTests.xctest */;
+			name = AdchainReactSampleTests;
+			productName = AdchainReactSampleTests;
+			productReference = 00E356EE1AD99517003FC87E /* AdchainReactSampleTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* TreasurerRN */ = {
+		13B07F861A680F5B00A75B9A /* AdchainReactSample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TreasurerRN" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "AdchainReactSample" */;
 			buildPhases = (
 				62A2B785CF5631C4E01FA635 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -198,9 +198,9 @@
 			);
 			dependencies = (
 			);
-			name = TreasurerRN;
-			productName = TreasurerRN;
-			productReference = 13B07F961A680F5B00A75B9A /* TreasurerRN.app */;
+			name = AdchainReactSample;
+			productName = AdchainReactSample;
+			productReference = 13B07F961A680F5B00A75B9A /* AdchainReactSample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -220,7 +220,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "TreasurerRN" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "AdchainReactSample" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -233,8 +233,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* TreasurerRN */,
-				00E356ED1AD99517003FC87E /* TreasurerRNTests */,
+				13B07F861A680F5B00A75B9A /* AdchainReactSample */,
+				00E356ED1AD99517003FC87E /* AdchainReactSampleTests */,
 			);
 		};
 /* End PBXProject section */
@@ -281,15 +281,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample-AdchainReactSampleTests/Pods-AdchainReactSample-AdchainReactSampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample-AdchainReactSampleTests/Pods-AdchainReactSample-AdchainReactSampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample-AdchainReactSampleTests/Pods-AdchainReactSample-AdchainReactSampleTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		62A2B785CF5631C4E01FA635 /* [CP] Check Pods Manifest.lock */ = {
@@ -307,7 +307,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TreasurerRN-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-AdchainReactSample-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -329,7 +329,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TreasurerRN-TreasurerRNTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-AdchainReactSample-AdchainReactSampleTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -342,15 +342,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample/Pods-AdchainReactSample-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample/Pods-AdchainReactSample-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample/Pods-AdchainReactSample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		D19062874554EF804DB58338 /* [CP] Embed Pods Frameworks */ = {
@@ -359,15 +359,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample/Pods-AdchainReactSample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample/Pods-AdchainReactSample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN/Pods-TreasurerRN-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample/Pods-AdchainReactSample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F02A26DF2CC5663B67933C40 /* [CP] Copy Pods Resources */ = {
@@ -376,15 +376,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample-AdchainReactSampleTests/Pods-AdchainReactSample-AdchainReactSampleTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample-AdchainReactSampleTests/Pods-AdchainReactSample-AdchainReactSampleTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TreasurerRN-TreasurerRNTests/Pods-TreasurerRN-TreasurerRNTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AdchainReactSample-AdchainReactSampleTests/Pods-AdchainReactSample-AdchainReactSampleTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -394,7 +394,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* TreasurerRNTests.m in Sources */,
+				00E356F31AD99517003FC87E /* AdchainReactSampleTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,7 +414,7 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* TreasurerRN */;
+			target = 13B07F861A680F5B00A75B9A /* AdchainReactSample */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -422,14 +422,14 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5A83AED717509256D113C7FE /* Pods-TreasurerRN-TreasurerRNTests.debug.xcconfig */;
+			baseConfigurationReference = 5A83AED717509256D113C7FE /* Pods-AdchainReactSample-AdchainReactSampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = TreasurerRNTests/Info.plist;
+				INFOPLIST_FILE = AdchainReactSampleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -443,17 +443,17 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TreasurerRN.app/TreasurerRN";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AdchainReactSample.app/AdchainReactSample";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2D1D7B5AFB4E8F5EEC422B2E /* Pods-TreasurerRN-TreasurerRNTests.release.xcconfig */;
+			baseConfigurationReference = 2D1D7B5AFB4E8F5EEC422B2E /* Pods-AdchainReactSample-AdchainReactSampleTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = TreasurerRNTests/Info.plist;
+				INFOPLIST_FILE = AdchainReactSampleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -467,20 +467,20 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TreasurerRN.app/TreasurerRN";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AdchainReactSample.app/AdchainReactSample";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6E600A645863E1FE825584ED /* Pods-TreasurerRN.debug.xcconfig */;
+			baseConfigurationReference = 6E600A645863E1FE825584ED /* Pods-AdchainReactSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7KZCV3JQFM;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = TreasurerRN/Info.plist;
+				INFOPLIST_FILE = AdchainReactSample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -492,9 +492,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.adchainreactsample";
-				PRODUCT_NAME = TreasurerRN;
-				SWIFT_OBJC_BRIDGING_HEADER = "TreasurerRN/TreasurerRN-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = com.adchainreactsample;
+				PRODUCT_NAME = AdchainReactSample;
+				SWIFT_OBJC_BRIDGING_HEADER = "AdchainReactSample/AdchainReactSample-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -503,13 +503,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7893625CCDD7581D00C6DAAC /* Pods-TreasurerRN.release.xcconfig */;
+			baseConfigurationReference = 7893625CCDD7581D00C6DAAC /* Pods-AdchainReactSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7KZCV3JQFM;
-				INFOPLIST_FILE = TreasurerRN/Info.plist;
+				INFOPLIST_FILE = AdchainReactSample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -521,9 +521,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.adchainreactsample";
-				PRODUCT_NAME = TreasurerRN;
-				SWIFT_OBJC_BRIDGING_HEADER = "TreasurerRN/TreasurerRN-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = com.adchainreactsample;
+				PRODUCT_NAME = AdchainReactSample;
+				SWIFT_OBJC_BRIDGING_HEADER = "AdchainReactSample/AdchainReactSample-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -713,7 +713,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "TreasurerRNTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "AdchainReactSampleTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -722,7 +722,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TreasurerRN" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "AdchainReactSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -731,7 +731,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "TreasurerRN" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "AdchainReactSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

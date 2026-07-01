@@ -71,13 +71,13 @@ AdChain SDK는 앱에 광고 기반 리워드 시스템을 쉽게 통합할 수 
 adchain-sdk-react-sample/
 ├── android/                            ⚠️  참고 (네이티브 설정)
 │   └── app/
-│       └── src/main/java/com/treasurerrn/
+│       └── src/main/java/com/adchainreactsample/
 │           ├── StorageModule.kt        ⚠️  참고 (Storage 모듈)
 │           ├── StoragePackage.kt       ⚠️  참고 (Storage 패키지)
 │           ├── MainActivity.kt         ⚠️  참고 (메인 액티비티)
 │           └── MainApplication.kt      ⚠️  참고 (앱 설정)
 ├── ios/                                ⚠️  참고 (네이티브 설정)
-│   └── TreasurerRN/
+│   └── AdchainReactSample/
 │       ├── Storage.swift               ⚠️  참고 (Storage 모듈)
 │       ├── Storage.m                   ⚠️  참고 (Storage Objective-C Bridge)
 │       └── AppDelegate.mm              ⚠️  참고 (앱 델리게이트)

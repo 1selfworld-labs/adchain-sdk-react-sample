@@ -1,4 +1,4 @@
-package com.treasurerrn
+package com.adchainreactsample
 
 import android.app.Application
 import com.facebook.react.ReactApplication

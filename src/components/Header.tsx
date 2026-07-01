@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <View style={styles.header}>
       <Text style={styles.logo}>
-        Treasurer<Text style={styles.logoDot}>.</Text>
+        AdChain<Text style={styles.logoDot}>.</Text>
       </Text>
       <View style={styles.headerRight}>
         <TouchableOpacity style={styles.iconButton}>
