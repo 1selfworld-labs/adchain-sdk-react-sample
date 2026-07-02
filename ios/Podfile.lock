@@ -1,8 +1,8 @@
 PODS:
-  - adchain-sdk-react-native (1.0.27-rc.2):
-    - AdChainSDK (= 1.0.52-rc.2)
+  - adchain-sdk-react-native (1.0.27):
+    - AdChainSDK (= 1.0.52)
     - React-Core
-  - AdChainSDK (1.0.52-rc.2)
+  - AdChainSDK (1.0.52)
   - boost (1.83.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.74.0)
@@ -1216,7 +1216,7 @@ PODS:
 
 DEPENDENCIES:
   - "adchain-sdk-react-native (from `../node_modules/@1selfworld/adchain-sdk-react-native`)"
-  - AdChainSDK (from `https://github.com/1selfworld-labs/adchain-sdk-ios-release.git`, tag `v1.0.52-rc.2`)
+  - AdChainSDK (from `https://github.com/1selfworld-labs/adchain-sdk-ios-release.git`, tag `v1.0.52`)
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -1286,7 +1286,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@1selfworld/adchain-sdk-react-native"
   AdChainSDK:
     :git: https://github.com/1selfworld-labs/adchain-sdk-ios-release.git
-    :tag: v1.0.52-rc.2
+    :tag: v1.0.52
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   DoubleConversion:
@@ -1406,11 +1406,11 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   AdChainSDK:
     :git: https://github.com/1selfworld-labs/adchain-sdk-ios-release.git
-    :tag: v1.0.52-rc.2
+    :tag: v1.0.52
 
 SPEC CHECKSUMS:
-  adchain-sdk-react-native: b89455b797aa93fdec20e27e859e188da070dba9
-  AdChainSDK: 5b3bbd23f7bf474794b5e2f68e8ca9c331a2ea95
+  adchain-sdk-react-native: 8b9d872aa71bb3f5a7997032bc24f43be5254b7f
+  AdChainSDK: 6e883aa9a21ddc2a8014307d10e8a0287bd665db
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FBLazyVector: 026c8f4ae67b06e088ae01baa2271ef8a26c0e8c
@@ -1470,6 +1470,6 @@ SPEC CHECKSUMS:
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 3f9165051bbc60b66f6a88c5eeafd9e9faa29500
 
-PODFILE CHECKSUM: 40a8389c6833da24d76817d7d22a3a65ff0e31d2
+PODFILE CHECKSUM: 08ed583524d2c653c532c3aeae0cd48ccbd7aad4
 
 COCOAPODS: 1.16.2

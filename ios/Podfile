@@ -21,8 +21,8 @@ target 'AdchainReactSample' do
     :hermes_enabled => true
   )
   
-  # AdChain SDK - RC2 git pod override (trunk에 rc 미존재, 미커밋 로컬 검증용)
-  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.52-rc.2'
+  # AdChain SDK - release git pod (정식 배포)
+  pod 'AdChainSDK', :git => 'https://github.com/1selfworld-labs/adchain-sdk-ios-release.git', :tag => 'v1.0.52'
   #pod 'AdChainSDK', :path => '../../adchain-sdk-ios'  # 로컬 디버깅용
 
   target 'AdchainReactSampleTests' do
