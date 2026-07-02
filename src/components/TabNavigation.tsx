@@ -6,6 +6,7 @@ import Adjoe from "./adjoe";
 import AppLaunchTest from "./appLaunch";
 import Debug from "./debug";
 import Mission from "./mission";
+import Offerwall from "./offerwall";
 import Quiz from "./quiz";
 import { AdchainOfferwallView } from '@1selfworld/adchain-sdk-react-native';
 
@@ -15,7 +16,7 @@ interface TabNavigationProps {
 }
 
 const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) => {
-  const [activeTab, setActiveTab] = useState<"quiz" | "mission" | "adjoe" | "appLaunch" | "offerwallView">("quiz");
+  const [activeTab, setActiveTab] = useState<"offerwall" | "quiz" | "mission" | "adjoe" | "appLaunch" | "offerwallView">("offerwall");
   const offerwallViewRef = useRef(null);
   const [shouldAllowExit, setShouldAllowExit] = useState(false);
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({
@@ -182,7 +183,9 @@ const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) =
         </View>
       ) : (
         <ScrollView style={styles.contentContainer}>
-          {activeTab === "quiz" ? (
+          {activeTab === "offerwall" ? (
+            <Offerwall />
+          ) : activeTab === "quiz" ? (
             <Quiz isLoggedIn={isLoggedIn} />
           ) : activeTab === "mission" ? (
             <Mission />
@@ -199,6 +202,14 @@ const TabNavigation = ({ isLoggedIn, isSkipMode = false }: TabNavigationProps) =
 
       {/* 하단 탭 바 (고정) */}
       <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "offerwall" ? styles.activeTab : styles.inactiveTab]}
+          onPress={() => setActiveTab("offerwall")}>
+          <Text style={[styles.tabText, activeTab === "offerwall" ? styles.activeTabText : styles.inactiveTabText]}>
+            오퍼월
+          </Text>
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={[styles.tab, activeTab === "quiz" ? styles.activeTab : styles.inactiveTab]}
           onPress={() => setActiveTab("quiz")}>
